@@ -1,4 +1,11 @@
 {
-  "spesa": [],
-  "buoni": []
+  "spesa": [
+    {
+      "id": 1786629334841,
+      "testo": "Uova",
+      "completato": false
+    }
+  ],
+  "buoni": [],
+  "cestino": []
 }
