@@ -4,6 +4,11 @@
       "id": 1786629334841,
       "testo": "Uova",
       "completato": false
+    },
+    {
+      "id": 1786629338575,
+      "testo": "Colla",
+      "completato": false
     }
   ],
   "buoni": [],
