@@ -83,20 +83,21 @@
                     </div>
                 </div>
 
-                <!-- 2. Scadenza -->
+                <!-- 2. Scadenza (Oscurato / Disabilitato inizialmente) -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">2. Data di scadenza</label>
-                    <input type="date" id="scadenza-buono" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">2. Data di scadenza (rilevata automaticamente)</label>
+                    <input type="date" id="scadenza-buono" disabled oninput="verificaStatoSalva()" class="w-full border border-slate-300 rounded-lg px-3 py-2 bg-slate-100 text-slate-400 cursor-not-allowed focus:outline-none">
                 </div>
 
                 <!-- 3. Titolo con autocompletamento -->
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">3. Titolo del buono</label>
-                    <input type="text" id="titolo-buono" list="suggerimenti-titoli" placeholder="Es. Buono Famila 10€" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <input type="text" id="titolo-buono" list="suggerimenti-titoli" oninput="verificaStatoSalva()" placeholder="Es. Buono Famila 10€" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     <datalist id="suggerimenti-titoli"></datalist>
                 </div>
                 
-                <button onclick="aggiungiBuono()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-medium transition mt-2">Salva Buono</button>
+                <!-- Pulsante Salva disabilitato finché l'OCR non rileva la data e il titolo è compilato -->
+                <button id="btn-salva-buono" onclick="aggiungiBuono()" disabled class="w-full bg-slate-300 text-slate-500 py-2 rounded-lg font-medium transition mt-2 cursor-not-allowed">Salva Buono</button>
             </div>
             <div id="lista-buoni" class="grid grid-cols-1 gap-4"></div>
         </div>
@@ -163,9 +164,33 @@
             }
         });
         
-        // --- OCR LOGIC CON BARRA DI PROGRESSO ---
+        // --- CONTROLLO STATO PULSANTE SALVA ---
+        function verificaStatoSalva() {
+            const titolo = document.getElementById('titolo-buono').value.trim();
+            const scadenza = document.getElementById('scadenza-buono').value;
+            const fileInput = document.getElementById('foto-buono');
+            const btnSalva = document.getElementById('btn-salva-buono');
+
+            if (titolo && scadenza && fileInput.files.length > 0) {
+                btnSalva.disabled = false;
+                btnSalva.className = "w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-medium transition mt-2 cursor-pointer";
+            } else {
+                btnSalva.disabled = true;
+                btnSalva.className = "w-full bg-slate-300 text-slate-500 py-2 rounded-lg font-medium transition mt-2 cursor-not-allowed";
+            }
+        }
+
+        // --- OCR LOGIC CON BARRA DI PROGRESSO E SBLOCCO CAMPI ---
         async function analizzaData(input) {
             const file = input.files[0];
+            const scadenzaInput = document.getElementById('scadenza-buono');
+            
+            // Pulisci e disabilita il campo scadenza finché l'OCR lavora
+            scadenzaInput.value = '';
+            scadenzaInput.disabled = true;
+            scadenzaInput.className = "w-full border border-slate-300 rounded-lg px-3 py-2 bg-slate-100 text-slate-400 cursor-not-allowed focus:outline-none";
+            verificaStatoSalva();
+
             if (!file) return;
 
             const ocrContainer = document.getElementById('ocr-container');
@@ -193,6 +218,10 @@
                 const dateRegex = /(\d{1,2})[\/\.\-\s](\d{1,2})[\/\.\-\s](\d{2,4})/;
                 const match = text.match(dateRegex);
                 
+                // Sblocca il campo scadenza in ogni caso al termine dell'OCR (per eventuale correzione manuale se l'OCR fallisce)
+                scadenzaInput.disabled = false;
+                scadenzaInput.className = "w-full border border-slate-300 rounded-lg px-3 py-2 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500";
+
                 if (match) {
                     let d = match[1].padStart(2, '0');
                     let m = match[2].padStart(2, '0');
@@ -200,17 +229,22 @@
                     if (y.length === 2) y = "20" + y;
                     
                     const dateString = `${y}-${m}-${d}`;
-                    document.getElementById('scadenza-buono').value = dateString;
+                    scadenzaInput.value = dateString;
                     
                     progressBar.style.width = '100%';
                     percentSpan.innerText = '100%';
-                    statusText.innerText = "✅ Data rilevata e compilata automaticamente!";
+                    statusText.innerText = "✅ Data rilevata e impostata automaticamente!";
                 } else {
-                    statusText.innerText = "⚠️ Data non trovata automaticamente (puoi selezionarla manualmente).";
+                    statusText.innerText = "⚠️ Data non trovata automaticamente. Inseriscila tu nel campo sottostante.";
                 }
+                
+                verificaStatoSalva();
             } catch (e) {
                 console.error(e);
                 statusText.innerText = "⚠️ Errore durante la scansione OCR.";
+                scadenzaInput.disabled = false;
+                scadenzaInput.className = "w-full border border-slate-300 rounded-lg px-3 py-2 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500";
+                verificaStatoSalva();
             }
         }
 
@@ -326,7 +360,6 @@
             const fileInput = document.getElementById('foto-buono');
             
             if (!titoloInput.value.trim() || fileInput.files.length === 0 || !scadenzaInput.value) {
-                alert("Compila il titolo, seleziona una foto e assicurati che la data di scadenza sia impostata!");
                 return;
             }
             
@@ -352,6 +385,12 @@
                     scadenzaInput.value = '';
                     fileInput.value = '';
                     document.getElementById('ocr-container').classList.add('hidden');
+                    
+                    // Riporta il campo scadenza allo stato disabilitato per il prossimo inserimento
+                    scadenzaInput.disabled = true;
+                    scadenzaInput.className = "w-full border border-slate-300 rounded-lg px-3 py-2 bg-slate-100 text-slate-400 cursor-not-allowed focus:outline-none";
+                    verificaStatoSalva();
+
                     await salvaDatiSuGitHub();
                     renderizzaBuoni();
                 }
