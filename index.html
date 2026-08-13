@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spesa & Buoni Smart</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Caricamento Tesseract.js per OCR -->
     <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
@@ -45,11 +44,13 @@
             <button onclick="apriConfig()" class="bg-indigo-700 hover:bg-indigo-800 px-3 py-1.5 rounded text-sm font-medium transition">⚙️ Config</button>
         </div>
     </header>
+
     <!-- Navigation Tabs -->
     <div class="max-w-md mx-auto mt-4 px-4 flex border-b border-slate-300">
         <button onclick="cambiaTab('spesa')" id="tab-spesa" class="flex-1 py-2 text-center font-semibold border-b-2 border-indigo-600 text-indigo-600">Spesa</button>
         <button onclick="cambiaTab('buoni')" id="tab-buoni" class="flex-1 py-2 text-center font-semibold text-slate-500 border-b-2 border-transparent">Buoni</button>
     </div>
+
     <!-- Main Container -->
     <main class="max-w-md mx-auto p-4">
         
@@ -61,6 +62,7 @@
             </div>
             <ul id="lista-spesa" class="space-y-2"></ul>
         </div>
+
         <!-- Tab Buoni -->
         <div id="section-buoni" class="space-y-4 hidden">
             <div class="bg-white p-4 rounded-xl shadow-sm space-y-3">
@@ -68,13 +70,25 @@
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">1. Scatta o carica la foto del buono</label>
                     <input type="file" id="foto-buono" accept="image/*" capture="environment" onchange="analizzaData(this)" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                    <div id="status-ocr" class="text-xs text-slate-400 italic mt-1 font-medium"></div>
+                    
+                    <!-- Barra di caricamento OCR -->
+                    <div id="ocr-container" class="hidden mt-3 space-y-1">
+                        <div class="flex justify-between text-xs text-slate-500 font-medium">
+                            <span id="status-ocr-text">Analisi immagine in corso...</span>
+                            <span id="status-ocr-percent">0%</span>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                            <div id="ocr-progress-bar" class="bg-indigo-600 h-2 w-0 transition-all duration-150"></div>
+                        </div>
+                    </div>
                 </div>
-                <!-- 2. Scadenza (compilata automaticamente dall'AI o modificabile) -->
+
+                <!-- 2. Scadenza -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">2. Data di scadenza (rilevata o modificabile)</label>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">2. Data di scadenza</label>
                     <input type="date" id="scadenza-buono" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
+
                 <!-- 3. Titolo con autocompletamento -->
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">3. Titolo del buono</label>
@@ -87,6 +101,7 @@
             <div id="lista-buoni" class="grid grid-cols-1 gap-4"></div>
         </div>
     </main>
+
     <!-- Modal Configurazione -->
     <div id="modal-config" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white w-full max-w-sm rounded-2xl p-5 space-y-4 shadow-xl">
@@ -109,11 +124,13 @@
             </div>
         </div>
     </div>
+
     <!-- Modal Visualizzazione Immagine Intera -->
     <div id="modal-img" class="fixed inset-0 bg-black/80 hidden flex flex-col items-center justify-center p-4 z-50" onclick="chiudiImmagine()">
         <img id="img-zoom" class="max-w-full max-h-[75vh] object-contain rounded-lg mb-4" src="">
         <button id="btn-elimina-buono" onclick="event.stopPropagation(); spostaNelCestinoCorrente()" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-medium shadow-lg transition">Elimina nel Cestino</button>
     </div>
+
     <!-- Modal Cestino -->
     <div id="modal-cestino" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white w-full max-w-md rounded-2xl p-5 space-y-4 shadow-xl max-h-[85vh] flex flex-col">
@@ -128,6 +145,7 @@
             </div>
         </div>
     </div>
+
     <script>
         let dbData = { spesa: [], buoni: [], cestino: [] };
         let config = {
@@ -136,6 +154,7 @@
             token: localStorage.getItem('gh_token') || ''
         };
         let idBuonoSelezionato = null;
+
         document.addEventListener('DOMContentLoaded', () => {
             if (!config.user || !config.repo || !config.token) {
                 apriConfig();
@@ -144,20 +163,29 @@
             }
         });
         
-        // --- OCR LOGIC CON RILEVAMENTO AUTOMATICO ---
+        // --- OCR LOGIC CON BARRA DI PROGRESSO ---
         async function analizzaData(input) {
             const file = input.files[0];
             if (!file) return;
-            const statusDiv = document.getElementById('status-ocr');
-            statusDiv.innerText = "⏳ Analisi immagine in corso...";
-            statusDiv.className = "text-xs text-indigo-600 font-semibold italic mt-1";
+
+            const ocrContainer = document.getElementById('ocr-container');
+            const progressBar = document.getElementById('ocr-progress-bar');
+            const percentSpan = document.getElementById('status-ocr-percent');
+            const statusText = document.getElementById('status-ocr-text');
             
+            ocrContainer.classList.remove('hidden');
+            progressBar.style.width = '0%';
+            percentSpan.innerText = '0%';
+            statusText.innerText = "Inizializzazione OCR...";
+
             try {
                 const { data: { text } } = await Tesseract.recognize(file, 'ita+eng', {
                     logger: m => {
                         if (m.status === 'recognizing text') {
                             const percent = Math.round(m.progress * 100);
-                            statusDiv.innerText = `⏳ Lettura OCR: ${percent}%`;
+                            progressBar.style.width = `${percent}%`;
+                            percentSpan.innerText = `${percent}%`;
+                            statusText.innerText = "Riconoscimento testo in corso...";
                         }
                     }
                 });
@@ -173,20 +201,16 @@
                     
                     const dateString = `${y}-${m}-${d}`;
                     document.getElementById('scadenza-buono').value = dateString;
-                    statusDiv.innerText = "✅ Data rilevata automaticamente!";
-                    statusDiv.className = "text-xs text-emerald-600 font-semibold italic mt-1";
+                    
+                    progressBar.style.width = '100%';
+                    percentSpan.innerText = '100%';
+                    statusText.innerText = "✅ Data rilevata e compilata automaticamente!";
                 } else {
-                    const oggi = new Date().toISOString().split('T')[0];
-                    document.getElementById('scadenza-buono').value = oggi;
-                    statusDiv.innerText = "⚠️ Data non rilevata chiaramente: impostata a oggi (puoi modificarla).";
-                    statusDiv.className = "text-xs text-amber-600 font-semibold italic mt-1";
+                    statusText.innerText = "⚠️ Data non trovata automaticamente (puoi selezionarla manualmente).";
                 }
             } catch (e) {
                 console.error(e);
-                const oggi = new Date().toISOString().split('T')[0];
-                document.getElementById('scadenza-buono').value = oggi;
-                statusDiv.innerText = "⚠️ Errore OCR: data impostata a oggi (puoi modificarla).";
-                statusDiv.className = "text-xs text-amber-600 font-semibold italic mt-1";
+                statusText.innerText = "⚠️ Errore durante la scansione OCR.";
             }
         }
 
@@ -252,6 +276,7 @@
             };
             await fetch(url, { method: 'PUT', headers, body: JSON.stringify(body) });
         }
+
         // --- GESTIONE SPESA ---
         function aggiungiSpesa() {
             const input = document.getElementById('nuovo-articolo');
@@ -283,12 +308,12 @@
                     </li>`;
             });
         }
-        // --- GESTIONE BUONI & AUTOCOMPLETAMENTO TITOLI ---
+
+        // --- GESTIONE BUONI & AUTOCOMPLETAMENTO ---
         function aggiornaDatalistTitoli() {
             const datalist = document.getElementById('suggerimenti-titoli');
             if(!datalist) return;
             datalist.innerHTML = '';
-            // Estrae titoli unici dai buoni salvati
             const titoliUnici = [...new Set(dbData.buoni.map(b => b.titolo))];
             titoliUnici.forEach(titolo => {
                 datalist.innerHTML += `<option value="${titolo}">`;
@@ -296,12 +321,12 @@
         }
 
         async function aggiungiBuono() {
-            const titolo = document.getElementById('titolo-buono').value.trim();
-            const scadenza = document.getElementById('scadenza-buono').value;
+            const titoloInput = document.getElementById('titolo-buono');
+            const scadenzaInput = document.getElementById('scadenza-buono');
             const fileInput = document.getElementById('foto-buono');
             
-            if(!titolo || fileInput.files.length === 0) {
-                alert("Inserisci un titolo e seleziona una foto del buono!");
+            if (!titoloInput.value.trim() || fileInput.files.length === 0 || !scadenzaInput.value) {
+                alert("Compila il titolo, seleziona una foto e assicurati che la data di scadenza sia impostata!");
                 return;
             }
             
@@ -318,21 +343,22 @@
                     const fileData = await res.json();
                     dbData.buoni.push({
                         id: Date.now(),
-                        titolo,
-                        scadenza: scadenza || new Date().toISOString().split('T')[0],
+                        titolo: titoloInput.value.trim(),
+                        scadenza: scadenzaInput.value,
                         path: fileName,
                         url: fileData.content.download_url
                     });
-                    document.getElementById('titolo-buono').value = '';
-                    document.getElementById('scadenza-buono').value = '';
+                    titoloInput.value = '';
+                    scadenzaInput.value = '';
                     fileInput.value = '';
-                    document.getElementById('status-ocr').innerText = '';
+                    document.getElementById('ocr-container').classList.add('hidden');
                     await salvaDatiSuGitHub();
                     renderizzaBuoni();
                 }
             };
             reader.readAsDataURL(file);
         }
+
         function renderizzaBuoni() {
             aggiornaDatalistTitoli();
             const lista = document.getElementById('lista-buoni');
@@ -365,12 +391,14 @@
                     </div>`;
             });
         }
+
         function apriImmagine(url, id) {
             idBuonoSelezionato = id;
             document.getElementById('img-zoom').src = url;
             document.getElementById('modal-img').classList.remove('hidden');
         }
         function chiudiImmagine() { document.getElementById('modal-img').classList.add('hidden'); }
+        
         function spostaNelCestinoCorrente() {
             const index = dbData.buoni.findIndex(x => x.id === idBuonoSelezionato);
             if(index !== -1) {
@@ -382,12 +410,14 @@
                 renderizzaBuoni();
             }
         }
+
         // --- GESTIONE CESTINO ---
         function apriCestino() {
             renderizzaCestino();
             document.getElementById('modal-cestino').classList.remove('hidden');
         }
         function chiudiCestino() { document.getElementById('modal-cestino').classList.add('hidden'); }
+        
         function renderizzaCestino() {
             const container = document.getElementById('lista-cestino');
             container.innerHTML = '';
@@ -412,6 +442,7 @@
                     </div>`;
             });
         }
+
         function ripristinaBuono(id) {
             const index = dbData.cestino.findIndex(x => x.id === id);
             if(index !== -1) {
@@ -423,6 +454,7 @@
                 renderizzaBuoni();
             }
         }
+
         async function eliminaDefinitivo(id) {
             const index = dbData.cestino.findIndex(x => x.id === id);
             if(index !== -1) {
@@ -432,6 +464,7 @@
                 renderizzaCestino();
             }
         }
+
         async function svuotaCestinoTotale() {
             if(!confirm("Vuoi svuotare definitivamente tutto il cestino? Le immagini saranno rimosse per sempre.")) return;
             for(const item of dbData.cestino) {
@@ -441,10 +474,11 @@
             salvaDatiSuGitHub();
             renderizzaCestino();
         }
+
         async function pulisciCestinoScaduto() {
             const ora = new Date();
             let modificato = false;
-            const novosCestino = [];
+            const nuoviCestino = [];
             for(const item of dbData.cestino) {
                 const dataDel = new Date(item.deletedAt);
                 const giorniPassati = (ora - dataDel) / (1000 * 60 * 60 * 24);
@@ -452,14 +486,15 @@
                     await rimuoviFileDaGitHub(item.path);
                     modificato = true;
                 } else {
-                    novosCestino.push(item);
+                    nuoviCestino.push(item);
                 }
             }
             if(modificato) {
-                dbData.cestino = novosCestino;
+                dbData.cestino = nuoviCestino;
                 salvaDatiSuGitHub();
             }
         }
+
         async function rimuoviFileDaGitHub(path) {
             try {
                 const url = `https://api.github.com/repos/${config.user}/${config.repo}/contents/${path}`;
@@ -475,10 +510,11 @@
                 }
             } catch(e) { console.error("Errore eliminazione file fisico", e); }
         }
+
         function renderizzaTutto() {
             renderizzaSpesa();
             renderizzaBuoni();
         }
     </script>
 </body>
-</html>S
+</html>
