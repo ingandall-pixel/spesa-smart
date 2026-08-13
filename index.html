@@ -45,6 +45,7 @@
         <h1 class="text-xl font-bold">Spesa-Smart 🛒</h1>
         <div class="flex gap-2">
             <button onclick="apriCestino()" class="bg-indigo-700 hover:bg-indigo-800 px-3 py-1.5 rounded text-sm font-medium transition">🗑️ Cestino</button>
+            <button onclick="apriConfig()" class="bg-indigo-700 hover:bg-indigo-800 px-3 py-1.5 rounded text-sm font-medium transition">⚙️ Config</button>
         </div>
     </header>
 
@@ -79,6 +80,29 @@
 
     </main>
 
+    <!-- Modal Configurazione -->
+    <div id="modal-config" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white w-full max-w-sm rounded-2xl p-5 space-y-4 shadow-xl">
+            <h2 class="text-lg font-bold">Configurazione GitHub</h2>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Username GitHub</label>
+                <input type="text" id="cfg-user" class="w-full border rounded-lg px-3 py-2 text-sm">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Nome Repository</label>
+                <input type="text" id="cfg-repo" class="w-full border rounded-lg px-3 py-2 text-sm">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Personal Access Token (PAT)</label>
+                <input type="password" id="cfg-token" class="w-full border rounded-lg px-3 py-2 text-sm">
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button onclick="chiudiConfig()" class="flex-1 bg-slate-200 hover:bg-slate-300 py-2 rounded-lg text-sm font-medium">Annulla</button>
+                <button onclick="salvaConfig()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg text-sm font-medium">Salva</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Visualizzazione Immagine Intera -->
     <div id="modal-img" class="fixed inset-0 bg-black/80 hidden flex flex-col items-center justify-center p-4 z-50" onclick="chiudiImmagine()">
         <img id="img-zoom" class="max-w-full max-h-[75vh] object-contain rounded-lg mb-4" src="">
@@ -101,19 +125,39 @@
     </div>
 
     <script>
-        // CONFIGURAZIONE FISSA (Nessun login richiesto)
-        const config = {
-            user: "ingandall-pixel",
-            repo: "spesa-smart",
-            token: "INCOLLA_QUI_IL_TUO_TOKEN"
-        };
-
         let dbData = { spesa: [], buoni: [], cestino: [] };
+        let config = {
+            user: localStorage.getItem('gh_user') || '',
+            repo: localStorage.getItem('gh_repo') || '',
+            token: localStorage.getItem('gh_token') || ''
+        };
         let idBuonoSelezionato = null;
 
         document.addEventListener('DOMContentLoaded', () => {
-            caricaDatiDaGitHub();
+            if (!config.user || !config.repo || !config.token) {
+                apriConfig();
+            } else {
+                caricaDatiDaGitHub();
+            }
         });
+
+        function apriConfig() {
+            document.getElementById('cfg-user').value = config.user;
+            document.getElementById('cfg-repo').value = config.repo;
+            document.getElementById('cfg-token').value = config.token;
+            document.getElementById('modal-config').classList.remove('hidden');
+        }
+        function chiudiConfig() { document.getElementById('modal-config').classList.add('hidden'); }
+        function salvaConfig() {
+            config.user = document.getElementById('cfg-user').value.trim();
+            config.repo = document.getElementById('cfg-repo').value.trim();
+            config.token = document.getElementById('cfg-token').value.trim();
+            localStorage.setItem('gh_user', config.user);
+            localStorage.setItem('gh_repo', config.repo);
+            localStorage.setItem('gh_token', config.token);
+            chiudiConfig();
+            caricaDatiDaGitHub();
+        }
 
         function cambiaTab(tab) {
             if(tab === 'spesa') {
@@ -377,7 +421,7 @@
             }
 
             if(modificato) {
-                dbData.cestino = novosCestino = nuoviCestino;
+                dbData.cestino = nuoviCestino;
                 salvaDatiSuGitHub();
             }
         }
