@@ -159,6 +159,11 @@
         let idBuonoSelezionato = null;
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Pulisce subito il badge all'ingresso nella pagina
+            if ('clearAppBadge' in navigator) {
+                navigator.clearAppBadge().catch(() => {});
+            }
+
             if (!config.user || !config.repo || !config.token) {
                 apriConfig();
             } else {
@@ -404,12 +409,29 @@
             lista.innerHTML = ''; 
             const oggi = new Date(); 
             oggi.setHours(0,0,0,0); 
+            
+            let countInScadenza = 0;
+
             dbData.buoni.forEach(b => { 
                 const dataScad = new Date(b.scadenza); 
                 dataScad.setHours(0,0,0,0); 
                 const diffGiorni = Math.ceil((dataScad - oggi) / (1000 * 60 * 60 * 24)); 
+                
+                if (diffGiorni >= 0 && diffGiorni <= 7) {
+                    countInScadenza++;
+                }
+
                 lista.innerHTML += `<div class="bg-white rounded-2xl p-4 shadow-sm space-y-2 border-2 ${diffGiorni < 0 ? 'border-transparent' : (diffGiorni <= 7 ? 'pulsing-border border-red-500' : 'border-transparent')}"><div class="flex justify-between items-center"><h3 class="font-bold text-slate-800">${b.titolo}</h3><span class="text-xs px-2 py-1 rounded font-medium ${diffGiorni < 0 ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-600'}">Scadenza: ${b.scadenza}</span></div><div class="relative cursor-pointer overflow-hidden rounded-xl bg-slate-900 h-48 flex items-center justify-center" onclick="apriImmagine('${b.url}', ${b.id})"><img src="${b.url}" class="w-full h-full object-cover ${diffGiorni < 0 ? 'grayscale-img opacity-60' : ''}">${diffGiorni < 0 ? '<div class="absolute inset-0 flex items-center justify-center"><div class="military-stamp">SCADUTO</div></div>' : ''}</div></div>`; 
             }); 
+
+            // Aggiorna il badge nativo sulla Home se ci sono elementi in scadenza
+            if ('setAppBadge' in navigator) {
+                if (countInScadenza > 0) {
+                    navigator.setAppBadge(countInScadenza).catch(() => {});
+                } else {
+                    navigator.clearAppBadge().catch(() => {});
+                }
+            }
         }
         function apriImmagine(url, id) { idBuonoSelezionato = id; document.getElementById('img-zoom').src = url; document.getElementById('modal-img').classList.remove('hidden'); }
         function chiudiImmagine() { document.getElementById('modal-img').classList.add('hidden'); }
@@ -420,7 +442,7 @@
         function ripristinaBuono(id) { const index = dbData.cestino.findIndex(x => x.id === id); if(index !== -1) { const item = dbData.cestino.splice(index, 1)[0]; delete item.deletedAt; dbData.buoni.push(item); salvaDatiSuGitHub(); renderizzaCestino(); renderizzaBuoni(); } }
         async function eliminaDefinitivo(id) { const index = dbData.cestino.findIndex(x => x.id === id); if(index !== -1) { const item = dbData.cestino.splice(index, 1)[0]; await rimuoviFileDaGitHub(item.path); salvaDatiSuGitHub(); renderizzaCestino(); } }
         async function svuotaCestinoTotale() { if(!confirm("Vuoi svuotare il cestino?")) return; for(const item of dbData.cestino) { await rimuoviFileDaGitHub(item.path); } dbData.cestino = []; salvaDatiSuGitHub(); renderizzaCestino(); }
-        async function pulisciCestinoScaduto() { const ora = new Date(); let modificato = false; const nuoviCestino = []; for(const item of dbData.cestino) { const dataDel = new Date(item.deletedAt); if((ora - dataDel) / (1000 * 60 * 60 * 24) > 30) { await rimuoviFileDaGitHub(item.path); modificato = true; } else { nuoviCestino.push(item); } } if(modificato) { dbData.cestino = novosCestino = nuoviCestino; salvaDatiSuGitHub(); } }
+        async function pulisciCestinoScaduto() { const ora = new Date(); let modificato = false; const nuoviCestino = []; for(const item of dbData.cestino) { const dataDel = new Date(item.deletedAt); if((ora - dataDel) / (1000 * 60 * 60 * 24) > 30) { await rimuoviFileDaGitHub(item.path); modificato = true; } else { nuoviCestino.push(item); } } if(modificato) { dbData.cestino = nuoviCestino; salvaDatiSuGitHub(); } }
         async function rimuoviFileDaGitHub(path) { try { const url = `https://api.github.com/repos/${config.user}/${config.repo}/contents/${path}`; const headers = { 'Authorization': `token ${config.token}` }; const res = await fetch(url, { headers }); if(res.ok) { const fileInfo = await res.json(); await fetch(url, { method: 'DELETE', headers: { 'Authorization': `token ${config.token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Eliminazione file", sha: fileInfo.sha }) }); } } catch(e) { console.error("Errore", e); } }
         function renderizzaTutto() { renderizzaSpesa(); renderizzaBuoni(); }
     </script>
