@@ -102,7 +102,7 @@
         </div>
     </main>
 
-    <!-- Modals (Config, Img, Cestino) rimangono invariati -->
+    <!-- Modals -->
     <div id="modal-config" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white w-full max-w-sm rounded-2xl p-5 space-y-4 shadow-xl">
             <h2 class="text-lg font-bold">Configurazione GitHub</h2>
@@ -207,7 +207,7 @@
                     }
                 });
                 
-                // Regex globale per trovare TUTTE le date
+                // Regex globale per trovare TUTTE le date nel testo
                 const dateRegex = /(\d{1,2})[\/\.\-\s](\d{1,2})[\/\.\-\s](\d{2,4})/g;
                 const matches = [...text.matchAll(dateRegex)];
                 
@@ -215,18 +215,28 @@
                 scadenzaInput.className = "w-full border border-slate-300 rounded-lg px-3 py-2 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500";
 
                 if (matches.length > 0) {
-                    // PRENDI L'ULTIMA DATA TROVATA (Correzione per intervalli es: 04/08 al 17/08 -> prende 17/08)
-                    const lastMatch = matches[matches.length - 1];
-                    let d = lastMatch[1].padStart(2, '0');
-                    let m = lastMatch[2].padStart(2, '0');
-                    let y = lastMatch[3];
-                    if (y.length === 2) y = "20" + y;
-                    
-                    scadenzaInput.value = `${y}-${m}-${d}`;
-                    
-                    progressBar.style.width = '100%';
-                    percentSpan.innerText = '100%';
-                    statusText.innerText = "✅ Data rilevata!";
+                    // Mappa tutte le date trovate in oggetti Date effettivi per confrontarle correttamente
+                    let validDates = matches.map(match => {
+                        let d = match[1].padStart(2, '0');
+                        let m = match[2].padStart(2, '0');
+                        let y = match[3];
+                        if (y.length === 2) y = "20" + y;
+                        return { d, m, y, dateObj: new Date(`${y}-${m}-${d}`) };
+                    }).filter(item => !isNaN(item.dateObj));
+
+                    if (validDates.length > 0) {
+                        // Ordina le date in ordine cronologico crescente e seleziona l'ultima (la più lontana nel futuro)
+                        validDates.sort((a, b) => a.dateObj - b.dateObj);
+                        const latest = validDates[validDates.length - 1];
+                        
+                        scadenzaInput.value = `${latest.y}-${latest.m}-${latest.d}`;
+                        
+                        progressBar.style.width = '100%';
+                        percentSpan.innerText = '100%';
+                        statusText.innerText = "✅ Data rilevata!";
+                    } else {
+                        statusText.innerText = "⚠️ Data non valida trovata. Inseriscila manualmente.";
+                    }
                 } else {
                     statusText.innerText = "⚠️ Data non trovata. Inseriscila manualmente.";
                 }
@@ -241,7 +251,6 @@
             }
         }
 
-        // Funzioni rimanenti (aggiungiBuono, salvaDatiSuGitHub, ecc.) invariate
         function aggiungiBuono() {
             const titoloInput = document.getElementById('titolo-buono');
             const scadenzaInput = document.getElementById('scadenza-buono');
@@ -270,7 +279,6 @@
             reader.readAsDataURL(file);
         }
 
-        // ... (resto delle funzioni invariato)
         function apriConfig() { document.getElementById('modal-config').classList.remove('hidden'); }
         function chiudiConfig() { document.getElementById('modal-config').classList.add('hidden'); }
         function salvaConfig() {
