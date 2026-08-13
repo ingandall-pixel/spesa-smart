@@ -91,9 +91,16 @@
 
                 <!-- 3. Titolo -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">3. Titolo del buono</label>
-                    <input type="text" id="titolo-buono" list="suggerimenti-titoli" oninput="verificaStatoSalva()" placeholder="Es. Buono Famila 10€" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <datalist id="suggerimenti-titoli"></datalist>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-xs font-semibold text-slate-600">3. Titolo del buono</label>
+                        <button type="button" id="btn-toggle-titolo" onclick="mostraSelectTitoli()" class="text-xs text-indigo-600 font-medium hover:underline hidden">Usa titoli esistenti</button>
+                    </div>
+                    <!-- Select rotazione iPhone -->
+                    <select id="select-titolo" onchange="gestisciCambioTitolo(this)" class="w-full border border-slate-300 rounded-lg px-3 py-2 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="">Seleziona un titolo...</option>
+                    </select>
+                    <!-- Input testuale alternativo per nuovo titolo -->
+                    <input type="text" id="input-titolo-nuovo" oninput="verificaStatoSalva()" placeholder="Es. Buono Famila 10€" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 hidden">
                 </div>
                 
                 <button id="btn-salva-buono" onclick="aggiungiBuono()" disabled class="w-full bg-slate-300 text-slate-500 py-2 rounded-lg font-medium transition mt-2 cursor-not-allowed">Salva Buono</button>
@@ -160,7 +167,16 @@
         });
         
         function verificaStatoSalva() {
-            const titolo = document.getElementById('titolo-buono').value.trim();
+            const select = document.getElementById('select-titolo');
+            const inputNuovo = document.getElementById('input-titolo-nuovo');
+            
+            let titolo = '';
+            if (!select.classList.contains('hidden')) {
+                titolo = select.value && select.value !== '__nuovo__' ? select.value : '';
+            } else {
+                titolo = inputNuovo.value.trim();
+            }
+
             const scadenza = document.getElementById('scadenza-buono').value;
             const fileInput = document.getElementById('foto-buono');
             const btnSalva = document.getElementById('btn-salva-buono');
@@ -211,33 +227,44 @@
                 scadenzaInput.className = "w-full border border-slate-300 rounded-lg px-3 py-2 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500";
 
                 let targetDateFound = null;
-                const dateRegex = /(\d{1,2})[\/\.\-\s](\d{1,2})[\/\.\-\s](\d{2,4})/g;
-                const matches = [...text.matchAll(dateRegex)];
-                
-                if (matches.length > 0) {
-                    let validDates = matches.map(match => {
+                const lines = text.split('\n');
+                let allDates = [];
+
+                lines.forEach(line => {
+                    const lowLine = line.toLowerCase();
+                    if (lowLine.includes('datetime') || lowLine.includes('lane')) {
+                        return;
+                    }
+
+                    const dateRegex = /(\d{1,2})[\/\.\-\s](\d{1,2})[\/\.\-\s](\d{2,4})/g;
+                    let match;
+                    while ((match = dateRegex.exec(line)) !== null) {
                         let d = match[1].padStart(2, '0');
                         let m = match[2].padStart(2, '0');
                         let y = match[3];
                         if (y.length === 2) y = "20" + y;
-                        return { d, m, y, dateObj: new Date(`${y}-${m}-${d}`), index: match.index };
-                    }).filter(item => !isNaN(item.dateObj));
-
-                    if (validDates.length > 0) {
-                        // 1. Cerca se c'è una data preceduta da parole chiave di scadenza/fine validità
-                        for (let item of validDates) {
-                            const snippetBefore = text.substring(Math.max(0, item.index - 30), item.index).toLowerCase();
-                            if (snippetBefore.includes('fino al') || snippetBefore.includes('scadenza') || snippetBefore.includes('entro il')) {
-                                targetDateFound = item;
-                                break;
-                            }
+                        let dateObj = new Date(`${y}-${m}-${d}`);
+                        if (!isNaN(dateObj)) {
+                            allDates.push({ d, m, y, dateObj, lineText: lowLine });
                         }
+                    }
+                });
 
-                        // 2. Se non ci sono parole chiave esatte, seleziona la data più avanzata nel tempo (es. la fine del range o la scadenza più lontana)
-                        if (!targetDateFound) {
-                            validDates.sort((a, b) => a.dateObj - b.dateObj);
-                            targetDateFound = validDates[validDates.length - 1];
-                        }
+                if (allDates.length > 0) {
+                    let keywordMatch = allDates.find(item => 
+                        item.lineText.includes('fino') || 
+                        item.lineText.includes('al') || 
+                        item.lineText.includes('valida') || 
+                        item.lineText.includes('scadenza') || 
+                        item.lineText.includes('entro') || 
+                        item.lineText.includes('offerta')
+                    );
+
+                    if (keywordMatch) {
+                        targetDateFound = keywordMatch;
+                    } else {
+                        allDates.sort((a, b) => a.dateObj - b.dateObj);
+                        targetDateFound = allDates[allDates.length - 1];
                     }
                 }
 
@@ -261,10 +288,15 @@
         }
 
         function aggiungiBuono() {
-            const titoloInput = document.getElementById('titolo-buono');
+            const select = document.getElementById('select-titolo');
+            const inputNuovo = document.getElementById('input-titolo-nuovo');
+            const titoloVal = !select.classList.contains('hidden') ? select.value : inputNuovo.value.trim();
+            
             const scadenzaInput = document.getElementById('scadenza-buono');
             const fileInput = document.getElementById('foto-buono');
-            if (!titoloInput.value.trim() || fileInput.files.length === 0 || !scadenzaInput.value) return;
+            
+            if (!titoloVal || titoloVal === '__nuovo__' || fileInput.files.length === 0 || !scadenzaInput.value) return;
+            
             const file = fileInput.files[0];
             const reader = new FileReader();
             reader.onload = async function(e) {
@@ -276,16 +308,75 @@
                 const res = await fetch(url, { method: 'PUT', headers, body: JSON.stringify(body) });
                 if(res.ok) {
                     const fileData = await res.json();
-                    dbData.buoni.push({ id: Date.now(), titolo: titoloInput.value.trim(), scadenza: scadenzaInput.value, path: fileName, url: fileData.content.download_url });
-                    titoloInput.value = ''; scadenzaInput.value = ''; fileInput.value = '';
+                    dbData.buoni.push({ id: Date.now(), titolo: titoloVal, scadenza: scadenzaInput.value, path: fileName, url: fileData.content.download_url });
+                    
+                    scadenzaInput.value = ''; fileInput.value = '';
                     document.getElementById('ocr-container').classList.add('hidden');
                     scadenzaInput.disabled = true; scadenzaInput.className = "w-full border border-slate-300 rounded-lg px-3 py-2 bg-slate-100 text-slate-400 cursor-not-allowed focus:outline-none";
+                    
+                    mostraSelectTitoli();
                     verificaStatoSalva();
                     await salvaDatiSuGitHub();
                     renderizzaBuoni();
                 }
             };
             reader.readAsDataURL(file);
+        }
+
+        function aggiornaSelectTitoli() {
+            const select = document.getElementById('select-titolo');
+            if(!select) return;
+            const titoliUnici = [...new Set(dbData.buoni.map(b => b.titolo))];
+            
+            select.innerHTML = '<option value="">Seleziona un titolo...</option>';
+            titoliUnici.forEach(titolo => {
+                select.innerHTML += `<option value="${titolo}">${titolo}</option>`;
+            });
+            select.innerHTML += `<option value="__nuovo__">➕ Inserisci nuovo titolo...</option>`;
+
+            if (titoliUnici.length === 0) {
+                mostraInputNuovoTitolo();
+            }
+        }
+
+        function gestisciCambioTitolo(select) {
+            if (select.value === '__nuovo__') {
+                mostraInputNuovoTitolo();
+            } else {
+                verificaStatoSalva();
+            }
+        }
+
+        function mostraInputNuovoTitolo() {
+            const select = document.getElementById('select-titolo');
+            const inputNuovo = document.getElementById('input-titolo-nuovo');
+            const btnToggle = document.getElementById('btn-toggle-titolo');
+            
+            select.classList.add('hidden');
+            select.value = '';
+            inputNuovo.classList.remove('hidden');
+            inputNuovo.value = '';
+            inputNuovo.focus();
+            
+            if (dbData.buoni.length > 0) {
+                btnToggle.classList.remove('hidden');
+                btnToggle.innerText = "Usa titoli esistenti";
+            }
+            verificaStatoSalva();
+        }
+
+        function mostraSelectTitoli() {
+            const select = document.getElementById('select-titolo');
+            const inputNuovo = document.getElementById('input-titolo-nuovo');
+            const btnToggle = document.getElementById('btn-toggle-titolo');
+            
+            inputNuovo.classList.add('hidden');
+            inputNuovo.value = '';
+            select.classList.remove('hidden');
+            btnToggle.classList.add('hidden');
+            
+            aggiornaSelectTitoli();
+            verificaStatoSalva();
         }
 
         function apriConfig() { document.getElementById('modal-config').classList.remove('hidden'); }
@@ -307,8 +398,19 @@
         function toggleSpesa(id) { const item = dbData.spesa.find(x => x.id === id); if(item) item.completato = !item.completato; salvaDatiSuGitHub(); renderizzaSpesa(); }
         function eliminaSpesa(id) { dbData.spesa = dbData.spesa.filter(x => x.id !== id); salvaDatiSuGitHub(); renderizzaSpesa(); }
         function renderizzaSpesa() { const lista = document.getElementById('lista-spesa'); lista.innerHTML = ''; dbData.spesa.forEach(item => { lista.innerHTML += `<li class="bg-white p-3 rounded-xl shadow-sm flex items-center justify-between"><span onclick="toggleSpesa(${item.id})" class="cursor-pointer select-none flex-1 ${item.completato ? 'line-through text-slate-400' : ''}">${item.testo}</span><button onclick="eliminaSpesa(${item.id})" class="text-slate-400 hover:text-red-500 px-2">🗑️</button></li>`; }); }
-        function aggiornaDatalistTitoli() { const datalist = document.getElementById('suggerimenti-titoli'); if(!datalist) return; datalist.innerHTML = ''; const titoliUnici = [...new Set(dbData.buoni.map(b => b.titolo))]; titoliUnici.forEach(titolo => { datalist.innerHTML += `<option value="${titolo}">`; }); }
-        function renderizzaBuoni() { aggiornaDatalistTitoli(); const lista = document.getElementById('lista-buoni'); lista.innerHTML = ''; const oggi = new Date(); oggi.setHours(0,0,0,0); dbData.buoni.forEach(b => { const dataScad = new Date(b.scadenza); dataScad.setHours(0,0,0,0); const diffGiorni = Math.ceil((dataScad - oggi) / (1000 * 60 * 60 * 24)); lista.innerHTML += `<div class="bg-white rounded-2xl p-4 shadow-sm space-y-2 border-2 ${diffGiorni < 0 ? 'border-transparent' : (diffGiorni <= 7 ? 'pulsing-border border-red-500' : 'border-transparent')}"><div class="flex justify-between items-center"><h3 class="font-bold text-slate-800">${b.titolo}</h3><span class="text-xs px-2 py-1 rounded font-medium ${diffGiorni < 0 ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-600'}">Scadenza: ${b.scadenza}</span></div><div class="relative cursor-pointer overflow-hidden rounded-xl bg-slate-900 h-48 flex items-center justify-center" onclick="apriImmagine('${b.url}', ${b.id})"><img src="${b.url}" class="w-full h-full object-cover ${diffGiorni < 0 ? 'grayscale-img opacity-60' : ''}">${diffGiorni < 0 ? '<div class="absolute inset-0 flex items-center justify-center"><div class="military-stamp">SCADUTO</div></div>' : ''}</div></div>`; }); }
+        function renderizzaBuoni() { 
+            aggiornaSelectTitoli(); 
+            const lista = document.getElementById('lista-buoni'); 
+            lista.innerHTML = ''; 
+            const oggi = new Date(); 
+            oggi.setHours(0,0,0,0); 
+            dbData.buoni.forEach(b => { 
+                const dataScad = new Date(b.scadenza); 
+                dataScad.setHours(0,0,0,0); 
+                const diffGiorni = Math.ceil((dataScad - oggi) / (1000 * 60 * 60 * 24)); 
+                lista.innerHTML += `<div class="bg-white rounded-2xl p-4 shadow-sm space-y-2 border-2 ${diffGiorni < 0 ? 'border-transparent' : (diffGiorni <= 7 ? 'pulsing-border border-red-500' : 'border-transparent')}"><div class="flex justify-between items-center"><h3 class="font-bold text-slate-800">${b.titolo}</h3><span class="text-xs px-2 py-1 rounded font-medium ${diffGiorni < 0 ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-600'}">Scadenza: ${b.scadenza}</span></div><div class="relative cursor-pointer overflow-hidden rounded-xl bg-slate-900 h-48 flex items-center justify-center" onclick="apriImmagine('${b.url}', ${b.id})"><img src="${b.url}" class="w-full h-full object-cover ${diffGiorni < 0 ? 'grayscale-img opacity-60' : ''}">${diffGiorni < 0 ? '<div class="absolute inset-0 flex items-center justify-center"><div class="military-stamp">SCADUTO</div></div>' : ''}</div></div>`; 
+            }); 
+        }
         function apriImmagine(url, id) { idBuonoSelezionato = id; document.getElementById('img-zoom').src = url; document.getElementById('modal-img').classList.remove('hidden'); }
         function chiudiImmagine() { document.getElementById('modal-img').classList.add('hidden'); }
         function spostaNelCestinoCorrente() { const index = dbData.buoni.findIndex(x => x.id === idBuonoSelezionato); if(index !== -1) { const buonoEliminato = dbData.buoni.splice(index, 1)[0]; buonoEliminato.deletedAt = new Date().toISOString(); dbData.cestino.push(buonoEliminato); salvaDatiSuGitHub(); chiudiImmagine(); renderizzaBuoni(); } }
@@ -318,7 +420,7 @@
         function ripristinaBuono(id) { const index = dbData.cestino.findIndex(x => x.id === id); if(index !== -1) { const item = dbData.cestino.splice(index, 1)[0]; delete item.deletedAt; dbData.buoni.push(item); salvaDatiSuGitHub(); renderizzaCestino(); renderizzaBuoni(); } }
         async function eliminaDefinitivo(id) { const index = dbData.cestino.findIndex(x => x.id === id); if(index !== -1) { const item = dbData.cestino.splice(index, 1)[0]; await rimuoviFileDaGitHub(item.path); salvaDatiSuGitHub(); renderizzaCestino(); } }
         async function svuotaCestinoTotale() { if(!confirm("Vuoi svuotare il cestino?")) return; for(const item of dbData.cestino) { await rimuoviFileDaGitHub(item.path); } dbData.cestino = []; salvaDatiSuGitHub(); renderizzaCestino(); }
-        async function pulisciCestinoScaduto() { const ora = new Date(); let modificato = false; const nuoviCestino = []; for(const item of dbData.cestino) { const dataDel = new Date(item.deletedAt); if((ora - dataDel) / (1000 * 60 * 60 * 24) > 30) { await rimuoviFileDaGitHub(item.path); modificato = true; } else { nuoviCestino.push(item); } } if(modificato) { dbData.cestino = nuoviCestino; salvaDatiSuGitHub(); } }
+        async function pulisciCestinoScaduto() { const ora = new Date(); let modificato = false; const nuoviCestino = []; for(const item of dbData.cestino) { const dataDel = new Date(item.deletedAt); if((ora - dataDel) / (1000 * 60 * 60 * 24) > 30) { await rimuoviFileDaGitHub(item.path); modificato = true; } else { nuoviCestino.push(item); } } if(modificato) { dbData.cestino = novosCestino = nuoviCestino; salvaDatiSuGitHub(); } }
         async function rimuoviFileDaGitHub(path) { try { const url = `https://api.github.com/repos/${config.user}/${config.repo}/contents/${path}`; const headers = { 'Authorization': `token ${config.token}` }; const res = await fetch(url, { headers }); if(res.ok) { const fileInfo = await res.json(); await fetch(url, { method: 'DELETE', headers: { 'Authorization': `token ${config.token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Eliminazione file", sha: fileInfo.sha }) }); } } catch(e) { console.error("Errore", e); } }
         function renderizzaTutto() { renderizzaSpesa(); renderizzaBuoni(); }
     </script>
