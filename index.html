@@ -66,7 +66,7 @@
             <div class="bg-white p-4 rounded-xl shadow-sm space-y-3">
                 <input type="text" id="titolo-buono" placeholder="Titolo (es. Buono Esselunga 10€)" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <input type="date" id="scadenza-buono" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <div id="status-ocr" class="text-xs text-slate-400 italic"></div>
+                <div id="status-ocr" class="text-xs text-slate-400 italic font-medium"></div>
                 <input type="file" id="foto-buono" accept="image/*" onchange="analizzaData(this)" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
                 <button onclick="aggiungiBuono()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-medium transition">Salva Buono</button>
             </div>
@@ -130,16 +130,27 @@
             }
         });
         
-        // --- OCR LOGIC ---
+        // --- OCR LOGIC CON FEEDBACK VISIVO ---
         async function analizzaData(input) {
             const file = input.files[0];
             if (!file) return;
             const statusDiv = document.getElementById('status-ocr');
-            statusDiv.innerText = "Analisi data in corso...";
+            statusDiv.innerText = "⏳ Inizializzazione motore OCR...";
+            statusDiv.className = "text-xs text-indigo-600 font-semibold italic";
             
             try {
-                const { data: { text } } = await Tesseract.recognize(file, 'ita+eng');
-                // Regex per formati: DD/MM/YYYY, DD.MM.YYYY, DD-MM-YYYY
+                const { data: { text } } = await Tesseract.recognize(file, 'ita+eng', {
+                    logger: m => {
+                        if (m.status === 'recognizing text') {
+                            const percent = Math.round(m.progress * 100);
+                            statusDiv.innerText = `⏳ Lettura in corso: ${percent}%`;
+                        } else if (m.status === 'loading language traineddata') {
+                            statusDiv.innerText = "⏳ Download dizionario lingua...";
+                        }
+                    }
+                });
+                
+                // Regex per formati: DD/MM/YYYY, DD.MM.YYYY, DD-MM-YYYY (anche con anno a 2 cifre)
                 const dateRegex = /(\d{1,2})[\/\.\-\s](\d{1,2})[\/\.\-\s](\d{2,4})/;
                 const match = text.match(dateRegex);
                 
@@ -147,17 +158,20 @@
                     let d = match[1].padStart(2, '0');
                     let m = match[2].padStart(2, '0');
                     let y = match[3];
-                    if (y.length === 2) y = "20" + y; // Assume 20xx
+                    if (y.length === 2) y = "20" + y;
                     
                     const dateString = `${y}-${m}-${d}`;
                     document.getElementById('scadenza-buono').value = dateString;
-                    statusDiv.innerText = "Data rilevata automaticamente!";
+                    statusDiv.innerText = "✅ Data rilevata automaticamente: " + dateString;
+                    statusDiv.className = "text-xs text-emerald-600 font-semibold italic";
                 } else {
-                    statusDiv.innerText = "Non ho trovato una data chiara, inseriscila a mano.";
+                    statusDiv.innerText = "⚠️ Nessuna data chiara trovata. Inseriscila manualmente.";
+                    statusDiv.className = "text-xs text-amber-600 font-semibold italic";
                 }
             } catch (e) {
                 console.error(e);
-                statusDiv.innerText = "Errore durante l'analisi.";
+                statusDiv.innerText = "❌ Errore durante l'analisi. Inserisci la data a mano.";
+                statusDiv.className = "text-xs text-red-600 font-semibold italic";
             }
         }
 
