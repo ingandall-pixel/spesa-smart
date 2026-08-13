@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Spesa & Buoni Smart</title>
+    <!-- Libreria Tesseract.js per l'OCR (riconoscimento testo) -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <style>
+        :root { --primary: #2196F3; --bg: #f0f2f5; --card: #ffffff; --text: #333333; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 15px; }
+        h2 { margin-top: 0; font-size: 1.2rem; }
+        .card { background: var(--card); padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        
+        /* Lista Spesa */
+        .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        input[type="text"] { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
+        button { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; }
+        ul { list-style-type: none; padding: 0; margin: 0; }
+        li { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid #eee; font-size: 16px; }
+        li.checked span { text-decoration: line-through; color: #888; }
+        input[type="checkbox"] { width: 20px; height: 20px; }
+        
+        /* Buoni Sconto */
+        .camera-btn { display: block; text-align: center; background: #4CAF50; color: white; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        input[type="file"] { display: none; }
+        .preview-container { margin-top: 15px; text-align: center; }
+        canvas { max-width: 100%; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: none; margin-top: 10px; }
+        
+        /* Stato OCR */
+        #status { margin-top: 10px; font-weight: bold; color: #555; text-align: center; }
+        .result-box { background: #e3f2fd; padding: 12px; border-radius: 8px; margin-top: 10px; display: none; border-left: 4px solid var(--primary); }
+    </style>
+</head>
+<body>
+
+    <!-- LISTA DELLA SPESA -->
+    <div class="card">
+        <h2>📝 Lista della Spesa</h2>
+        <div class="input-group">
+            <input type="text" id="itemInput" placeholder="Cosa dobbiamo comprare?">
+            <button onclick="aggiungiOggetto()">Aggiungi</button>
+        </div>
+        <ul id="shoppingList"></ul>
+    </div>
+
+    <!-- BUONI SCONTO -->
+    <div class="card">
+        <h2>📸 Scansione Buono Sconto</h2>
+        <label class="camera-btn">
+            📷 Scatta o carica foto buono
+            <input type="file" id="cameraInput" accept="image/*" capture="environment">
+        </label>
+        
+        <div id="status"></div>
+
+        <div class="preview-container">
+            <!-- Il Canvas mostra l'immagine elaborata con contrasto migliorato -->
+            <canvas id="imageCanvas"></canvas>
+        </div>
+
+        <div id="resultBox" class="result-box">
+            📅 <strong>Data Scadenza Rilevata:</strong> <span id="detectedDate">In elaborazione...</span>
+        </div>
+    </div>
+
+    <script>
+        // --- LISTA DELLA SPESA ---
+        function aggiungiOggetto() {
+            const input = document.getElementById('itemInput');
+            const testo = input.value.trim();
+            if (!testo) return;
+
+            const ul = document.getElementById('shoppingList');
+            const li = document.createElement('li');
+            li.innerHTML = `<input type="checkbox" onchange="this.parentElement.classList.toggle('checked', this.checked)"><span>${testo}</span>`;
+            ul.appendChild(li);
+            input.value = '';
+        }
+
+        // --- ACQUISIZIONE E ELABORAZIONE IMMAGINE ---
+        document.getElementById('cameraInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const status = document.getElementById('status');
+            const resultBox = document.getElementById('resultBox');
+            const canvas = document.getElementById('imageCanvas');
+            const ctx = canvas.getContext('2d');
+
+            status.innerText = "⏳ Ottimizzazione immagine in corso...";
+            resultBox.style.display = 'none';
+
+            const img = new Image();
+            img.onload = function() {
+                // Ridimensionamento per ottimizzare la velocità dell'OCR
+                const maxWidth = 800;
+                const scale = maxWidth / img.width;
+                canvas.width = (img.width > maxWidth) ? maxWidth : img.width;
+                canvas.height = (img.width > maxWidth) ? img.height * scale : img.height;
+
+                // Disegna l'immagine sul canvas
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                // Applica filtro B&W / Contrasto per facilitare la lettura OCR
+                applicaContrasto(ctx, canvas.width, canvas.height);
+                canvas.style.display = 'block';
+
+                // Avvia la lettura automatica OCR
+                avviaOCR(canvas);
+            };
+
+            img.src = URL.createObjectURL(file);
+        });
+
+        // Funzione per aumentare il contrasto visivo del documento
+        function applicaContrasto(ctx, width, height) {
+            const imageData = ctx.getImageData(0, 0, width, height);
+            const data = imageData.data;
+            // Aumenta il contrasto rendendo il testo più nero e lo sfondo più bianco
+            const contrast = 1.4; // fattore di contrasto
+            const factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
+
+            for (let i = 0; i < data.length; i += 4) {
+                // Converti in scala di grigi
+                let avg = 0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2];
+                // Applica contrasto
+                avg = factor * (avg - 128) + 128;
+                avg = Math.min(255, Math.max(0, avg));
+
+                data[i] = avg;     // R
+                data[i+1] = avg;   // G
+                data[i+2] = avg;   // B
+            }
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        // --- RICONOSCIMENTO TESTO CON TESSERACT.JS ---
+        async function avviaOCR(canvas) {
+            const status = document.getElementById('status');
+            const resultBox = document.getElementById('resultBox');
+            const detectedDateSpan = document.getElementById('detectedDate');
+
+            status.innerText = "🔍 Lettura data di scadenza in corso...";
+
+            try {
+                // Esegue l'OCR sul canvas elaborato
+                const worker = await Tesseract.createWorker('ita');
+                const ret = await worker.recognize(canvas);
+                await worker.terminate();
+
+                const testoRilevato = ret.data.text;
+                console.log("Testo letto dall'OCR:", testoRilevato);
+
+                // Cerca una data nel formato GG/MM/AAAA o GG-MM-AAAA o GG.MM.AAAA
+                const regexData = /\b(0[1-9]|[12][0-9]|3[01])[\/\.\-](0[1-9]|1[012])[\/\.\-](20\d\d|\d\d)\b/;
+                const match = testoRilevato.match(regexData);
+
+                if (match) {
+                    detectedDateSpan.innerText = match[0];
+                    status.innerText = "✅ Data rilevata con successo!";
+                } else {
+                    detectedDateSpan.innerText = "Non trovata automaticamente (inserisci manualmente o riprova).";
+                    status.innerText = "⚠️ Impossibile individuare la data con certezza.";
+                }
+                resultBox.style.display = 'block';
+
+            } catch (err) {
+                console.error(err);
+                status.innerText = "❌ Errore durante la lettura OCR.";
+            }
+        }
+    </script>
+</body>
+</html>
