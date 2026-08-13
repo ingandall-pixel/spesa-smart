@@ -211,32 +211,30 @@
                 scadenzaInput.className = "w-full border border-slate-300 rounded-lg px-3 py-2 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500";
 
                 let targetDateFound = null;
+                const dateRegex = /(\d{1,2})[\/\.\-\s](\d{1,2})[\/\.\-\s](\d{2,4})/g;
+                const matches = [...text.matchAll(dateRegex)];
+                
+                if (matches.length > 0) {
+                    let validDates = matches.map(match => {
+                        let d = match[1].padStart(2, '0');
+                        let m = match[2].padStart(2, '0');
+                        let y = match[3];
+                        if (y.length === 2) y = "20" + y;
+                        return { d, m, y, dateObj: new Date(`${y}-${m}-${d}`), index: match.index };
+                    }).filter(item => !isNaN(item.dateObj));
 
-                // 1. Cerca dicitura specifica di fine validità ("offerta valida fino al", "valida fino al", "fino al", "al", "scadenza")
-                const endDateregex = /(?:(?:offerta\s+)?valida\s+)?fino\s+al[^\d]{0,15}(\d{1,2})[\/\.\-\s](\d{1,2})[\/\.\-\s](\d{2,4})/i;
-                const endMatch = text.match(endDateregex);
+                    if (validDates.length > 0) {
+                        // 1. Cerca se c'è una data preceduta da parole chiave di scadenza/fine validità
+                        for (let item of validDates) {
+                            const snippetBefore = text.substring(Math.max(0, item.index - 30), item.index).toLowerCase();
+                            if (snippetBefore.includes('fino al') || snippetBefore.includes('scadenza') || snippetBefore.includes('entro il')) {
+                                targetDateFound = item;
+                                break;
+                            }
+                        }
 
-                if (endMatch) {
-                    let d = endMatch[1].padStart(2, '0');
-                    let m = endMatch[2].padStart(2, '0');
-                    let y = endMatch[3];
-                    if (y.length === 2) y = "20" + y;
-                    targetDateFound = { d, m, y };
-                } else {
-                    // 2. Fallback: trova tutte le date e prende la più avanzata nel tempo (escludendo timestamp generici se presenti)
-                    const dateRegex = /(\d{1,2})[\/\.\-\s](\d{1,2})[\/\.\-\s](\d{2,4})/g;
-                    const matches = [...text.matchAll(dateRegex)];
-                    
-                    if (matches.length > 0) {
-                        let validDates = matches.map(match => {
-                            let d = match[1].padStart(2, '0');
-                            let m = match[2].padStart(2, '0');
-                            let y = match[3];
-                            if (y.length === 2) y = "20" + y;
-                            return { d, m, y, dateObj: new Date(`${y}-${m}-${d}`) };
-                        }).filter(item => !isNaN(item.dateObj));
-
-                        if (validDates.length > 0) {
+                        // 2. Se non ci sono parole chiave esatte, seleziona la data più avanzata nel tempo (es. la fine del range o la scadenza più lontana)
+                        if (!targetDateFound) {
                             validDates.sort((a, b) => a.dateObj - b.dateObj);
                             targetDateFound = validDates[validDates.length - 1];
                         }
@@ -320,7 +318,7 @@
         function ripristinaBuono(id) { const index = dbData.cestino.findIndex(x => x.id === id); if(index !== -1) { const item = dbData.cestino.splice(index, 1)[0]; delete item.deletedAt; dbData.buoni.push(item); salvaDatiSuGitHub(); renderizzaCestino(); renderizzaBuoni(); } }
         async function eliminaDefinitivo(id) { const index = dbData.cestino.findIndex(x => x.id === id); if(index !== -1) { const item = dbData.cestino.splice(index, 1)[0]; await rimuoviFileDaGitHub(item.path); salvaDatiSuGitHub(); renderizzaCestino(); } }
         async function svuotaCestinoTotale() { if(!confirm("Vuoi svuotare il cestino?")) return; for(const item of dbData.cestino) { await rimuoviFileDaGitHub(item.path); } dbData.cestino = []; salvaDatiSuGitHub(); renderizzaCestino(); }
-        async function pulisciCestinoScaduto() { const ora = new Date(); let modificato = false; const nuoviCestino = []; for(const item of dbData.cestino) { const dataDel = new Date(item.deletedAt); if((ora - dataDel) / (1000 * 60 * 60 * 24) > 30) { await rimuoviFileDaGitHub(item.path); modificato = true; } else { nuoviCestino.push(item); } } if(modificato) { dbData.cestino = novosCestino; salvaDatiSuGitHub(); } }
+        async function pulisciCestinoScaduto() { const ora = new Date(); let modificato = false; const nuoviCestino = []; for(const item of dbData.cestino) { const dataDel = new Date(item.deletedAt); if((ora - dataDel) / (1000 * 60 * 60 * 24) > 30) { await rimuoviFileDaGitHub(item.path); modificato = true; } else { nuoviCestino.push(item); } } if(modificato) { dbData.cestino = nuoviCestino; salvaDatiSuGitHub(); } }
         async function rimuoviFileDaGitHub(path) { try { const url = `https://api.github.com/repos/${config.user}/${config.repo}/contents/${path}`; const headers = { 'Authorization': `token ${config.token}` }; const res = await fetch(url, { headers }); if(res.ok) { const fileInfo = await res.json(); await fetch(url, { method: 'DELETE', headers: { 'Authorization': `token ${config.token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: "Eliminazione file", sha: fileInfo.sha }) }); } } catch(e) { console.error("Errore", e); } }
         function renderizzaTutto() { renderizzaSpesa(); renderizzaBuoni(); }
     </script>
