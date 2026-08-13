@@ -3,307 +3,454 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spesa-Smart 🖕</title>
-    <!-- Tailwind CSS per una grafica moderna e responsive -->
+    <title>Spesa & Buoni Smart</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+
+        .military-stamp {
+            font-family: 'Special Elite', monospace;
+            border: 4px solid #dc2626;
+            color: #dc2626;
+            padding: 4px 12px;
+            text-transform: uppercase;
+            font-size: 1.5rem;
+            font-weight: bold;
+            transform: rotate(-12deg);
+            letter-spacing: 2px;
+            box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.3);
+            pointer-events: none;
+        }
+
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.8); border-color: rgba(239, 68, 68, 1); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); border-color: rgba(239, 68, 68, 0.4); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); border-color: rgba(239, 68, 68, 1); }
+        }
+
+        .pulsing-border {
+            animation: pulse-border 2s infinite;
+            border-width: 3px !important;
+        }
+
+        .grayscale-img {
+            filter: grayscale(100%);
+        }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body class="bg-slate-100 min-h-screen text-slate-800">
 
     <!-- Header -->
-    <header class="bg-indigo-600 text-white shadow-md p-4 sticky top-0 z-50 flex justify-between items-center">
-        <h1 class="text-xl font-bold tracking-wide flex items-center gap-2">
-            Spesa-Smart 🖕
-        </h1>
-        <button onclick="openSettings()" class="text-sm bg-indigo-700 px-3 py-1.5 rounded-lg hover:bg-indigo-800 transition">
-            ⚙️ Config
-        </button>
+    <header class="bg-indigo-600 text-white shadow-md p-4 flex justify-between items-center">
+        <h1 class="text-xl font-bold">Spesa-Smart 🛒</h1>
+        <div class="flex gap-2">
+            <button onclick="apriCestino()" class="bg-indigo-700 hover:bg-indigo-800 px-3 py-1.5 rounded text-sm font-medium transition">🗑️ Cestino</button>
+            <button onclick="apriConfig()" class="bg-indigo-700 hover:bg-indigo-800 px-3 py-1.5 rounded text-sm font-medium transition">⚙️ Config</button>
+        </div>
     </header>
 
-    <!-- Container principale -->
-    <main class="flex-1 max-w-md w-full mx-auto p-4 pb-24">
+    <!-- Navigation Tabs -->
+    <div class="max-w-md mx-auto mt-4 px-4 flex border-b border-slate-300">
+        <button onclick="cambiaTab('spesa')" id="tab-spesa" class="flex-1 py-2 text-center font-semibold border-b-2 border-indigo-600 text-indigo-600">Spesa</button>
+        <button onclick="cambiaTab('buoni')" id="tab-buoni" class="flex-1 py-2 text-center font-semibold text-slate-500 border-b-2 border-transparent">Buoni</button>
+    </div>
+
+    <!-- Main Container -->
+    <main class="max-w-md mx-auto p-4">
         
-        <!-- Tab Navigation -->
-        <div class="flex bg-slate-200 p-1 rounded-xl mb-6 shadow-inner">
-            <button onclick="switchTab('spesa')" id="btn-spesa" class="flex-1 py-2 text-sm font-semibold rounded-lg bg-white shadow text-indigo-600 transition">🛒 Spesa</button>
-            <button onclick="switchTab('buoni')" id="btn-buoni" class="flex-1 py-2 text-sm font-semibold rounded-lg text-slate-600 transition">🎟️ Buoni</button>
+        <!-- Tab Spesa -->
+        <div id="section-spesa" class="space-y-4">
+            <div class="bg-white p-4 rounded-xl shadow-sm flex gap-2">
+                <input type="text" id="nuovo-articolo" placeholder="Cosa serve? (es. Latte)" class="flex-1 border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <button onclick="aggiungiSpesa()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition">Aggiungi</button>
+            </div>
+            <ul id="lista-spesa" class="space-y-2"></ul>
         </div>
 
-        <!-- SEZIONE SPESA -->
-        <div id="tab-spesa" class="space-y-4">
-            <div class="flex gap-2">
-                <input type="text" id="new-item" placeholder="Cosa serve comprare? (es. Latte)" class="flex-1 border border-slate-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white shadow-sm">
-                <button onclick="addSpesaItem()" class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl font-semibold shadow hover:bg-indigo-700 transition">Aggiungi</button>
+        <!-- Tab Buoni -->
+        <div id="section-buoni" class="space-y-4 hidden">
+            <div class="bg-white p-4 rounded-xl shadow-sm space-y-3">
+                <input type="text" id="titolo-buono" placeholder="Titolo (es. Buono Esselunga 10€)" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <input type="date" id="scadenza-buono" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <input type="file" id="foto-buono" accept="image/*" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                <button onclick="aggiungiBuono()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-medium transition">Salva Buono</button>
             </div>
-            <div id="lista-spesa" class="space-y-2">
-                <!-- Elementi caricati dinamicamente -->
-            </div>
+            <div id="lista-buoni" class="grid grid-cols-1 gap-4"></div>
         </div>
 
-        <!-- SEZIONE BUONI SCONTO -->
-        <div id="tab-buoni" class="space-y-4 hidden">
-            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
-                <h2 class="font-bold text-slate-700">Nuovo Buono Sconto</h2>
-                <input type="text" id="buono-titolo" placeholder="Titolo (es. Buono Esselunga 10€)" class="w-full border border-slate-300 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <div class="flex gap-2">
-                    <input type="date" id="buono-scadenza" class="flex-1 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <input type="file" id="buono-foto" accept="image/*" class="w-1/2 text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                </div>
-                <button onclick="addBuono()" class="w-full bg-indigo-600 text-white py-2.5 rounded-xl font-semibold shadow hover:bg-indigo-700 transition">Salva Buono</button>
-            </div>
-            <div id="lista-buoni" class="grid grid-cols-1 gap-3">
-                <!-- Buoni caricati dinamicamente -->
-            </div>
-        </div>
     </main>
 
-    <!-- Modale Impostazioni GitHub (Token e Repo) -->
-    <div id="settings-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-xl">
-            <h3 class="font-bold text-lg text-slate-800">Connessione GitHub</h3>
-            <p class="text-xs text-slate-500">Inserisci i dati del tuo repository per sincronizzare spesa e foto direttamente sul web.</p>
+    <!-- Modal Configurazione -->
+    <div id="modal-config" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white w-full max-w-sm rounded-2xl p-5 space-y-4 shadow-xl">
+            <h2 class="text-lg font-bold">Configurazione GitHub</h2>
             <div>
                 <label class="block text-xs font-semibold text-slate-600 mb-1">Username GitHub</label>
-                <input type="text" id="gh-owner" placeholder="es. ingandall-pixel" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm">
+                <input type="text" id="cfg-user" class="w-full border rounded-lg px-3 py-2 text-sm">
             </div>
             <div>
                 <label class="block text-xs font-semibold text-slate-600 mb-1">Nome Repository</label>
-                <input type="text" id="gh-repo" placeholder="es. spesa-smart" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm">
+                <input type="text" id="cfg-repo" class="w-full border rounded-lg px-3 py-2 text-sm">
             </div>
             <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">GitHub Personal Access Token (PAT)</label>
-                <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxx" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm">
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Personal Access Token (PAT)</label>
+                <input type="password" id="cfg-token" class="w-full border rounded-lg px-3 py-2 text-sm">
             </div>
             <div class="flex gap-2 pt-2">
-                <button onclick="closeSettings()" class="flex-1 bg-slate-200 text-slate-700 py-2 rounded-xl font-semibold text-sm hover:bg-slate-300">Annulla</button>
-                <button onclick="saveSettings()" class="flex-1 bg-indigo-600 text-white py-2 rounded-xl font-semibold text-sm hover:bg-indigo-700">Salva e Connetti</button>
+                <button onclick="chiudiConfig()" class="flex-1 bg-slate-200 hover:bg-slate-300 py-2 rounded-lg text-sm font-medium">Annulla</button>
+                <button onclick="salvaConfig()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg text-sm font-medium">Salva</button>
             </div>
         </div>
     </div>
 
-    <!-- Script di gestione app e API GitHub -->
+    <!-- Modal Visualizzazione Immagine Intera -->
+    <div id="modal-img" class="fixed inset-0 bg-black/80 hidden flex flex-col items-center justify-center p-4 z-50" onclick="chiudiImmagine()">
+        <img id="img-zoom" class="max-w-full max-h-[75vh] object-contain rounded-lg mb-4" src="">
+        <button id="btn-elimina-buono" onclick="event.stopPropagation(); spostaNelCestinoCorrente()" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-medium shadow-lg transition">Elimina nel Cestino</button>
+    </div>
+
+    <!-- Modal Cestino -->
+    <div id="modal-cestino" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white w-full max-w-md rounded-2xl p-5 space-y-4 shadow-xl max-h-[85vh] flex flex-col">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h2 class="text-lg font-bold">🗑️ Cestino (Eliminazione automatica dopo 30gg)</h2>
+                <button onclick="chiudiCestino()" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+            </div>
+            <div id="lista-cestino" class="overflow-y-auto flex-1 space-y-2"></div>
+            <div class="pt-2 border-t flex justify-between">
+                <button onclick="svuotaCestinoTotale()" class="bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded-lg text-sm font-medium transition">Svuota Cestino</button>
+                <button onclick="chiudiCestino()" class="bg-slate-200 hover:bg-slate-300 px-4 py-2 rounded-lg text-sm font-medium transition">Chiudi</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        let dbData = { spesa: [], buoni: [] };
-        let fileSha = null;
+        let dbData = { spesa: [], buoni: [], cestino: [] };
+        let config = {
+            user: localStorage.getItem('gh_user') || '',
+            repo: localStorage.getItem('gh_repo') || '',
+            token: localStorage.getItem('gh_token') || ''
+        };
+        let idBuonoSelezionato = null;
 
-        function getConfig() {
-            return {
-                owner: localStorage.getItem('gh_owner'),
-                repo: localStorage.getItem('gh_repo'),
-                token: localStorage.getItem('gh_token')
-            };
-        }
-
-        function openSettings() {
-            const cfg = getConfig();
-            document.getElementById('gh-owner').value = cfg.owner || '';
-            document.getElementById('gh-repo').value = cfg.repo || '';
-            document.getElementById('gh-token').value = cfg.token || '';
-            document.getElementById('settings-modal').classList.remove('hidden');
-        }
-
-        function closeSettings() {
-            document.getElementById('settings-modal').classList.add('hidden');
-        }
-
-        function saveSettings() {
-            localStorage.setItem('gh_owner', document.getElementById('gh-owner').value.trim());
-            localStorage.setItem('gh_repo', document.getElementById('gh-repo').value.trim());
-            localStorage.setItem('gh_token', document.getElementById('gh-token').value.trim());
-            closeSettings();
-            loadDataFromGitHub();
-        }
-
-        function switchTab(tab) {
-            if (tab === 'spesa') {
-                document.getElementById('tab-spesa').classList.remove('hidden');
-                document.getElementById('tab-buoni').classList.add('hidden');
-                document.getElementById('btn-spesa').className = "flex-1 py-2 text-sm font-semibold rounded-lg bg-white shadow text-indigo-600 transition";
-                document.getElementById('btn-buoni').className = "flex-1 py-2 text-sm font-semibold rounded-lg text-slate-600 transition";
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!config.user || !config.repo || !config.token) {
+                apriConfig();
             } else {
-                document.getElementById('tab-spesa').classList.add('hidden');
-                document.getElementById('tab-buoni').classList.remove('hidden');
-                document.getElementById('btn-buoni').className = "flex-1 py-2 text-sm font-semibold rounded-lg bg-white shadow text-indigo-600 transition";
-                document.getElementById('btn-spesa').className = "flex-1 py-2 text-sm font-semibold rounded-lg text-slate-600 transition";
+                caricaDatiDaGitHub();
+            }
+        });
+
+        function apriConfig() {
+            document.getElementById('cfg-user').value = config.user;
+            document.getElementById('cfg-repo').value = config.repo;
+            document.getElementById('cfg-token').value = config.token;
+            document.getElementById('modal-config').classList.remove('hidden');
+        }
+        function chiudiConfig() { document.getElementById('modal-config').classList.add('hidden'); }
+        function salvaConfig() {
+            config.user = document.getElementById('cfg-user').value.trim();
+            config.repo = document.getElementById('cfg-repo').value.trim();
+            config.token = document.getElementById('cfg-token').value.trim();
+            localStorage.setItem('gh_user', config.user);
+            localStorage.setItem('gh_repo', config.repo);
+            localStorage.setItem('gh_token', config.token);
+            chiudiConfig();
+            caricaDatiDaGitHub();
+        }
+
+        function cambiaTab(tab) {
+            if(tab === 'spesa') {
+                document.getElementById('section-spesa').classList.remove('hidden');
+                document.getElementById('section-buoni').classList.add('hidden');
+                document.getElementById('tab-spesa').className = "flex-1 py-2 text-center font-semibold border-b-2 border-indigo-600 text-indigo-600";
+                document.getElementById('tab-buoni').className = "flex-1 py-2 text-center font-semibold text-slate-500 border-b-2 border-transparent";
+            } else {
+                document.getElementById('section-spesa').classList.add('hidden');
+                document.getElementById('section-buoni').classList.remove('hidden');
+                document.getElementById('tab-buoni').className = "flex-1 py-2 text-center font-semibold border-b-2 border-indigo-600 text-indigo-600";
+                document.getElementById('tab-spesa').className = "flex-1 py-2 text-center font-semibold text-slate-500 border-b-2 border-transparent";
             }
         }
 
-        async function loadDataFromGitHub() {
-            const cfg = getConfig();
-            if (!cfg.owner || !cfg.repo || !cfg.token) {
-                openSettings();
-                return;
-            }
+        async function caricaDatiDaGitHub() {
             try {
-                const res = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/data.json`, {
-                    headers: { 'Authorization': `token ${cfg.token}` }
+                const res = await fetch(`https://api.github.com/repos/${config.user}/${config.repo}/contents/data.json`, {
+                    headers: { 'Authorization': `token ${config.token}` }
                 });
                 if (res.ok) {
                     const json = await res.json();
-                    fileSha = json.sha;
-                    const decoded = JSON.parse(atob(json.content));
-                    dbData = decoded;
-                    renderUI();
-                } else {
-                    // Se data.json non esiste ancora, lo inizializziamo
-                    dbData = { spesa: [], buoni: [] };
-                    renderUI();
+                    const content = JSON.parse(atob(json.content));
+                    dbData = { spesa: content.spesa || [], buoni: content.buoni || [], cestino: content.cestino || [] };
+                    
+                    // Controlla ed esegui pulizia automatica cestino > 30 giorni
+                    pulisciCestinoScaduto();
+                    renderizzaTutto();
                 }
-            } catch (err) {
-                console.error("Errore di caricamento:", err);
-            }
+            } catch (e) { console.error("Errore caricamento", e); }
         }
 
-        async function saveDataToGitHub() {
-            const cfg = getConfig();
-            if (!cfg.owner || !cfg.repo || !cfg.token) {
-                alert("Configura prima i dati di GitHub!");
-                openSettings();
-                return;
+        async function salvaDatiSuGitHub() {
+            const url = `https://api.github.com/repos/${config.user}/${config.repo}/contents/data.json`;
+            const headers = { 'Authorization': `token ${config.token}`, 'Content-Type': 'application/json' };
+            
+            const getRes = await fetch(url, { headers });
+            let sha = '';
+            if (getRes.ok) {
+                const fileInfo = await getRes.json();
+                sha = fileInfo.sha;
             }
-            const contentEncoded = btoa(unescape(encodeURIComponent(JSON.stringify(dbData, null, 2))));
-            const bodyData = {
-                message: "Aggiornamento dati Spesa-Smart",
-                content: contentEncoded
+
+            const body = {
+                message: "Aggiornamento dati automatico",
+                content: btoa(unescape(encodeURIComponent(JSON.stringify(dbData, null, 2)))),
+                sha: sha ? sha : undefined
             };
-            if (fileSha) bodyData.sha = fileSha;
 
-            try {
-                const res = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/data.json`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${cfg.token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(bodyData)
-                });
-                if (res.ok) {
-                    const json = await res.json();
-                    fileSha = json.content.sha;
-                } else {
-                    alert("Errore nel salvataggio su GitHub.");
-                }
-            } catch (err) {
-                console.error("Errore salvataggio:", err);
-            }
+            await fetch(url, { method: 'PUT', headers, body: JSON.stringify(body) });
         }
 
-        function renderUI() {
-            // Render Spesa
-            const listaSpesa = document.getElementById('lista-spesa');
-            listaSpesa.innerHTML = '';
-            dbData.spesaforEach((item, index) => {
-                listaSpesa.innerHTML += `
-                    <div class="flex items-center justify-between bg-white p-3 rounded-xl shadow-sm border border-slate-200">
-                        <span class="${item.completato ? 'line-through text-slate-400' : 'text-slate-700'} font-medium">${item.testo}</span>
-                        <div class="flex gap-2">
-                            <button onclick="toggleSpesa(${index})" class="text-xs px-2.5 py-1 rounded-lg ${item.completato ? 'bg-slate-100 text-slate-600' : 'bg-emerald-50 text-emerald-600 font-semibold'}">${item.completato ? 'Annulla' : 'Fatto'}</button>
-                            <button onclick="deleteSpesa(${index})" class="text-xs bg-rose-50 text-rose-600 px-2.5 py-1 rounded-lg font-semibold">Elimina</button>
-                        </div>
-                    </div>
-                `;
-            });
-
-            // Render Buoni
-            const listaBuoni = document.getElementById('lista-buoni');
-            listaBuoni.innerHTML = '';
-            dbData.buoni.forEach((buono, index) => {
-                listaBuoni.innerHTML += `
-                    <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 flex gap-3 items-center">
-                        ${buono.foto ? `<img src="${buono.foto}" class="w-16 h-16 object-cover rounded-lg border">` : '<div class="w-16 h-16 bg-slate-100 rounded-lg flex items-center justify-center text-xs text-slate-400">No Foto</div>'}
-                        <div class="flex-1">
-                            <h4 class="font-bold text-sm text-slate-800">${buono.titolo}</h4>
-                            <p class="text-xs text-slate-500">Scadenza: ${buono.scadenza || 'Nessuna'}</p>
-                        </div>
-                        <button onclick="deleteBuono(${index})" class="text-xs bg-rose-50 text-rose-600 px-2.5 py-1 rounded-lg font-semibold">Elimina</button>
-                    </div>
-                `;
-            });
-        }
-
-        async function addSpesaItem() {
-            const input = document.getElementById('new-item');
-            if (!input.value.trim()) return;
-            dbData.spesa.push({ testo: input.value.trim(), completato: false });
+        // --- GESTIONE SPESA ---
+        function aggiungiSpesa() {
+            const input = document.getElementById('nuovo-articolo');
+            if(!input.value.trim()) return;
+            dbData.spesa.push({ id: Date.now(), testo: input.value.trim(), completato: false });
             input.value = '';
-            renderUI();
-            await saveDataToGitHub();
+            salvaDatiSuGitHub();
+            renderizzaSpesa();
         }
 
-        async function toggleSpesa(index) {
-            dbData.spesa[index].completato = !dbData.spesa[index].completato;
-            renderUI();
-            await saveDataToGitHub();
+        function toggleSpesa(id) {
+            const item = dbData.spesa.find(x => x.id === id);
+            if(item) item.completato = !item.completato;
+            salvaDatiSuGitHub();
+            renderizzaSpesa();
         }
 
-        async function deleteSpesa(index) {
-            dbData.spesa.splice(index, 1);
-            renderUI();
-            await saveDataToGitHub();
+        function eliminaSpesa(id) {
+            dbData.spesa = dbData.spesa.filter(x => x.id !== id);
+            salvaDatiSuGitHub();
+            renderizzaSpesa();
         }
 
-        async function addBuono() {
-            const titolo = document.getElementById('buono-titolo').value.trim();
-            const scadenza = document.getElementById('buono-scadenza').value;
-            const fileInput = document.getElementById('buono-foto');
+        function renderizzaSpesa() {
+            const lista = document.getElementById('lista-spesa');
+            lista.innerHTML = '';
+            dbData.spesa.forEach(item => {
+                lista.innerHTML += `
+                    <li class="bg-white p-3 rounded-xl shadow-sm flex items-center justify-between">
+                        <span onclick="toggleSpesa(${item.id})" class="cursor-pointer select-none flex-1 ${item.completato ? 'line-through text-slate-400' : ''}">${item.testo}</span>
+                        <button onclick="eliminaSpesa(${item.id})" class="text-slate-400 hover:text-red-500 px-2">🗑️</button>
+                    </li>`;
+            });
+        }
 
-            if (!titolo) {
-                alert("Inserisci un titolo per il buono.");
+        // --- GESTIONE BUONI & EFFETTI VISIVI ---
+        async function aggiungiBuono() {
+            const titolo = document.getElementById('titolo-buono').value.trim();
+            const scadenza = document.getElementById('scadenza-buono').value;
+            const fileInput = document.getElementById('foto-buono');
+
+            if(!titolo || !scadenza || fileInput.files.length === 0) {
+                alert("Compila tutti i campi e seleziona un'immagine!");
                 return;
             }
 
-            let fotoUrl = "";
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                fotoUrl = await uploadImageToGitHub(file);
-            }
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const base64Content = e.target.result.split(',')[1];
+                const fileName = `images/buono_${Date.now()}_${file.name}`;
 
-            dbData.buoni.push({ titolo, scadenza, foto: fotoUrl });
-            document.getElementById('buono-titolo').value = '';
-            document.getElementById('buono-scadenza').value = '';
-            fileInput.value = '';
-            renderUI();
-            await saveDataToGitHub();
+                // Carica immagine su GitHub
+                const url = `https://api.github.com/repos/${config.user}/${config.repo}/contents/${fileName}`;
+                const headers = { 'Authorization': `token ${config.token}`, 'Content-Type': 'application/json' };
+                const body = { message: "Upload immagine buono", content: base64Content };
+
+                const res = await fetch(url, { method: 'PUT', headers, body: JSON.stringify(body) });
+                if(res.ok) {
+                    const fileData = await res.json();
+                    dbData.buoni.push({
+                        id: Date.now(),
+                        titolo,
+                        scadenza,
+                        path: fileName,
+                        url: fileData.content.download_url
+                    });
+                    document.getElementById('titolo-buono').value = '';
+                    document.getElementById('scadenza-buono').value = '';
+                    fileInput.value = '';
+                    await salvaDatiSuGitHub();
+                    renderizzaBuoni();
+                }
+            };
+            reader.readAsDataURL(file);
         }
 
-        async function uploadImageToGitHub(file) {
-            const cfg = getConfig();
-            const reader = new FileReader();
-            return new Promise((resolve, reject) => {
-                reader.onload = async function() {
-                    const base64Content = reader.result.split(',')[1];
-                    const fileName = `images/buono_${Date.now()}_${file.name}`;
-                    const res = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${fileName}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Authorization': `token ${cfg.token}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            message: "Caricamento foto buono sconto",
-                            content: base64Content
-                        })
-                    });
-                    if (res.ok) {
-                        const json = await res.json();
-                        // Restituisce l'URL pubblico di GitHub Pages o il raw URL
-                        resolve(`https://${cfg.owner}.github.io/${cfg.repo}/${fileName}`);
-                    } else {
-                        alert("Errore durante il caricamento della foto.");
-                        resolve("");
-                    }
-                };
-                reader.readAsDataURL(file);
+        function renderizzaBuoni() {
+            const lista = document.getElementById('lista-buoni');
+            lista.innerHTML = '';
+            const oggi = new Date();
+            oggi.setHours(0,0,0,0);
+
+            dbData.buoni.forEach(b => {
+                const dataScad = new Date(b.scadenza);
+                dataScad.setHours(0,0,0,0);
+                const diffGiorni = Math.ceil((dataScad - oggi) / (1000 * 60 * 60 * 24));
+
+                let classeContorno = "";
+                let elementoScadutoOverlay = "";
+                let classeImmagine = "";
+
+                if (diffGiorni < 0) {
+                    // Scaduto
+                    classeImmagine = "grayscale-img opacity-60";
+                    elementoScadutoOverlay = `<div class="absolute inset-0 flex items-center justify-center"><div class="military-stamp">SCADUTO</div></div>`;
+                } else if (diffGiorni <= 7) {
+                    // In scadenza (<= 7 giorni)
+                    classeContorno = "pulsing-border border-red-500";
+                }
+
+                lista.innerHTML += `
+                    <div class="bg-white rounded-2xl p-4 shadow-sm space-y-2 border-2 ${classeContorno || 'border-transparent'}">
+                        <div class="flex justify-between items-center">
+                            <h3 class="font-bold text-slate-800">${b.titolo}</h3>
+                            <span class="text-xs px-2 py-1 rounded font-medium ${diffGiorni < 0 ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-600'}">Scadenza: ${b.scadenza}</span>
+                        </div>
+                        <div class="relative cursor-pointer overflow-hidden rounded-xl bg-slate-900 h-48 flex items-center justify-center" onclick="apriImmagine('${b.url}', ${b.id})">
+                            <img src="${b.url}" class="w-full h-full object-cover ${classeImmagine}">
+                            ${elementoScadutoOverlay}
+                        </div>
+                    </div>`;
             });
         }
 
-        async function deleteBuono(index) {
-            dbData.buoni.splice(index, 1);
-            renderUI();
-            await saveDataToGitHub();
+        function apriImmagine(url, id) {
+            idBuonoSelezionato = id;
+            document.getElementById('img-zoom').src = url;
+            document.getElementById('modal-img').classList.remove('hidden');
+        }
+        function chiudiImmagine() { document.getElementById('modal-img').classList.add('hidden'); }
+
+        function spostaNelCestinoCorrente() {
+            const index = dbData.buoni.findIndex(x => x.id === idBuonoSelezionato);
+            if(index !== -1) {
+                const buonoEliminato = dbData.buoni.splice(index, 1)[0];
+                buonoEliminato.deletedAt = new Date().toISOString(); // Salviamo data eliminazione per i 30 giorni
+                dbData.cestino.push(buonoEliminato);
+                salvaDatiSuGitHub();
+                chiudiImmagine();
+                renderizzaBuoni();
+            }
         }
 
-        // Avvio caricamento dati all'apertura
-        window.onload = loadDataFromGitHub;
+        // --- GESTIONE CESTINO E PULIZIA FILE REALI ---
+        function apriCestino() {
+            renderizzaCestino();
+            document.getElementById('modal-cestino').classList.remove('hidden');
+        }
+        function chiudiCestino() { document.getElementById('modal-cestino').classList.add('hidden'); }
+
+        function renderizzaCestino() {
+            const container = document.getElementById('lista-cestino');
+            container.innerHTML = '';
+            if(dbData.cestino.length === 0) {
+                container.innerHTML = `<p class="text-center text-slate-400 py-6">Il cestino è vuoto</p>`;
+                return;
+            }
+            dbData.cestino.forEach(b => {
+                container.innerHTML += `
+                    <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg border">
+                        <div class="flex items-center gap-3">
+                            <img src="${b.url}" class="w-12 h-12 object-cover rounded">
+                            <div>
+                                <h4 class="font-bold text-sm text-slate-700">${b.titolo}</h4>
+                                <span class="text-xs text-slate-400">Scad: ${b.scadenza}</span>
+                            </div>
+                        </div>
+                        <div class="flex gap-1">
+                            <button onclick="ripristinaBuono(${b.id})" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-3 py-1 rounded text-xs font-semibold">Ripristina</button>
+                            <button onclick="eliminaDefinitivo(${b.id})" class="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1 rounded text-xs font-semibold">Elimina</button>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function ripristinaBuono(id) {
+            const index = dbData.cestino.findIndex(x => x.id === id);
+            if(index !== -1) {
+                const item = dbData.cestino.splice(index, 1)[0];
+                delete item.deletedAt;
+                dbData.buoni.push(item);
+                salvaDatiSuGitHub();
+                renderizzaCestino();
+                renderizzaBuoni();
+            }
+        }
+
+        async function eliminaDefinitivo(id) {
+            const index = dbData.cestino.findIndex(x => x.id === id);
+            if(index !== -1) {
+                const item = dbData.cestino.splice(index, 1)[0];
+                await rimuoviFileDaGitHub(item.path);
+                salvaDatiSuGitHub();
+                renderizzaCestino();
+            }
+        }
+
+        async function svuotaCestinoTotale() {
+            if(!confirm("Vuoi svuotare definitivamente tutto il cestino? Le immagini saranno rimosse per sempre.")) return;
+            for(const item of dbData.cestino) {
+                await rimuoviFileDaGitHub(item.path);
+            }
+            dbData.cestino = [];
+            salvaDatiSuGitHub();
+            renderizzaCestino();
+        }
+
+        async function pulisciCestinoScaduto() {
+            const ora = new Date();
+            let modificato = false;
+            const nuoviCestino = [];
+
+            for(const item of dbData.cestino) {
+                const dataDel = new Date(item.deletedAt);
+                const giorniPassati = (ora - dataDel) / (1000 * 60 * 60 * 24);
+                if(giorniPassati > 30) {
+                    // Superati i 30 giorni: eliminazione fisica del file dal server GitHub
+                    await rimuoviFileDaGitHub(item.path);
+                    modificato = true;
+                } else {
+                    nuoviCestino.push(item);
+                }
+            }
+
+            if(modificato) {
+                dbData.cestino = nuoviCestino;
+                salvaDatiSuGitHub();
+            }
+        }
+
+        async function rimuoviFileDaGitHub(path) {
+            try {
+                const url = `https://api.github.com/repos/${config.user}/${config.repo}/contents/${path}`;
+                const headers = { 'Authorization': `token ${config.token}` };
+                const res = await fetch(url, { headers });
+                if(res.ok) {
+                    const fileInfo = await res.json();
+                    await fetch(url, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `token ${config.token}`, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: "Eliminazione file cestino", sha: fileInfo.sha })
+                    });
+                }
+            } catch(e) { console.error("Errore eliminazione file fisico", e); }
+        }
+
+        function renderizzaTutto() {
+            renderizzaSpesa();
+            renderizzaBuoni();
+        }
     </script>
 </body>
 </html>
