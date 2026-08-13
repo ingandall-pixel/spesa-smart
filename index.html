@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spesa & Buoni Smart</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Caricamento Tesseract.js per OCR -->
+    <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
-
         .military-stamp {
             font-family: 'Special Elite', monospace;
             border: 4px solid #dc2626;
@@ -21,25 +22,21 @@
             box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.3);
             pointer-events: none;
         }
-
         @keyframes pulse-border {
             0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.8); border-color: rgba(239, 68, 68, 1); }
             70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); border-color: rgba(239, 68, 68, 0.4); }
             100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); border-color: rgba(239, 68, 68, 1); }
         }
-
         .pulsing-border {
             animation: pulse-border 2s infinite;
             border-width: 3px !important;
         }
-
         .grayscale-img {
             filter: grayscale(100%);
         }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800">
-
     <!-- Header -->
     <header class="bg-indigo-600 text-white shadow-md p-4 flex justify-between items-center">
         <h1 class="text-xl font-bold">Spesa-Smart 🛒</h1>
@@ -48,13 +45,11 @@
             <button onclick="apriConfig()" class="bg-indigo-700 hover:bg-indigo-800 px-3 py-1.5 rounded text-sm font-medium transition">⚙️ Config</button>
         </div>
     </header>
-
     <!-- Navigation Tabs -->
     <div class="max-w-md mx-auto mt-4 px-4 flex border-b border-slate-300">
         <button onclick="cambiaTab('spesa')" id="tab-spesa" class="flex-1 py-2 text-center font-semibold border-b-2 border-indigo-600 text-indigo-600">Spesa</button>
         <button onclick="cambiaTab('buoni')" id="tab-buoni" class="flex-1 py-2 text-center font-semibold text-slate-500 border-b-2 border-transparent">Buoni</button>
     </div>
-
     <!-- Main Container -->
     <main class="max-w-md mx-auto p-4">
         
@@ -66,20 +61,18 @@
             </div>
             <ul id="lista-spesa" class="space-y-2"></ul>
         </div>
-
         <!-- Tab Buoni -->
         <div id="section-buoni" class="space-y-4 hidden">
             <div class="bg-white p-4 rounded-xl shadow-sm space-y-3">
                 <input type="text" id="titolo-buono" placeholder="Titolo (es. Buono Esselunga 10€)" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <input type="date" id="scadenza-buono" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <input type="file" id="foto-buono" accept="image/*" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                <div id="status-ocr" class="text-xs text-slate-400 italic"></div>
+                <input type="file" id="foto-buono" accept="image/*" onchange="analizzaData(this)" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
                 <button onclick="aggiungiBuono()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-medium transition">Salva Buono</button>
             </div>
             <div id="lista-buoni" class="grid grid-cols-1 gap-4"></div>
         </div>
-
     </main>
-
     <!-- Modal Configurazione -->
     <div id="modal-config" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white w-full max-w-sm rounded-2xl p-5 space-y-4 shadow-xl">
@@ -102,13 +95,11 @@
             </div>
         </div>
     </div>
-
     <!-- Modal Visualizzazione Immagine Intera -->
     <div id="modal-img" class="fixed inset-0 bg-black/80 hidden flex flex-col items-center justify-center p-4 z-50" onclick="chiudiImmagine()">
         <img id="img-zoom" class="max-w-full max-h-[75vh] object-contain rounded-lg mb-4" src="">
         <button id="btn-elimina-buono" onclick="event.stopPropagation(); spostaNelCestinoCorrente()" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-medium shadow-lg transition">Elimina nel Cestino</button>
     </div>
-
     <!-- Modal Cestino -->
     <div id="modal-cestino" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white w-full max-w-md rounded-2xl p-5 space-y-4 shadow-xl max-h-[85vh] flex flex-col">
@@ -123,7 +114,6 @@
             </div>
         </div>
     </div>
-
     <script>
         let dbData = { spesa: [], buoni: [], cestino: [] };
         let config = {
@@ -132,7 +122,6 @@
             token: localStorage.getItem('gh_token') || ''
         };
         let idBuonoSelezionato = null;
-
         document.addEventListener('DOMContentLoaded', () => {
             if (!config.user || !config.repo || !config.token) {
                 apriConfig();
@@ -140,6 +129,37 @@
                 caricaDatiDaGitHub();
             }
         });
+        
+        // --- OCR LOGIC ---
+        async function analizzaData(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const statusDiv = document.getElementById('status-ocr');
+            statusDiv.innerText = "Analisi data in corso...";
+            
+            try {
+                const { data: { text } } = await Tesseract.recognize(file, 'ita+eng');
+                // Regex per formati: DD/MM/YYYY, DD.MM.YYYY, DD-MM-YYYY
+                const dateRegex = /(\d{1,2})[\/\.\-\s](\d{1,2})[\/\.\-\s](\d{2,4})/;
+                const match = text.match(dateRegex);
+                
+                if (match) {
+                    let d = match[1].padStart(2, '0');
+                    let m = match[2].padStart(2, '0');
+                    let y = match[3];
+                    if (y.length === 2) y = "20" + y; // Assume 20xx
+                    
+                    const dateString = `${y}-${m}-${d}`;
+                    document.getElementById('scadenza-buono').value = dateString;
+                    statusDiv.innerText = "Data rilevata automaticamente!";
+                } else {
+                    statusDiv.innerText = "Non ho trovato una data chiara, inseriscila a mano.";
+                }
+            } catch (e) {
+                console.error(e);
+                statusDiv.innerText = "Errore durante l'analisi.";
+            }
+        }
 
         function apriConfig() {
             document.getElementById('cfg-user').value = config.user;
@@ -158,7 +178,6 @@
             chiudiConfig();
             caricaDatiDaGitHub();
         }
-
         function cambiaTab(tab) {
             if(tab === 'spesa') {
                 document.getElementById('section-spesa').classList.remove('hidden');
@@ -172,7 +191,6 @@
                 document.getElementById('tab-spesa').className = "flex-1 py-2 text-center font-semibold text-slate-500 border-b-2 border-transparent";
             }
         }
-
         async function caricaDatiDaGitHub() {
             try {
                 const res = await fetch(`https://api.github.com/repos/${config.user}/${config.repo}/contents/data.json`, {
@@ -188,7 +206,6 @@
                 }
             } catch (e) { console.error("Errore caricamento", e); }
         }
-
         async function salvaDatiSuGitHub() {
             const url = `https://api.github.com/repos/${config.user}/${config.repo}/contents/data.json`;
             const headers = { 'Authorization': `token ${config.token}`, 'Content-Type': 'application/json' };
@@ -199,16 +216,13 @@
                 const fileInfo = await getRes.json();
                 sha = fileInfo.sha;
             }
-
             const body = {
                 message: "Aggiornamento dati automatico",
                 content: btoa(unescape(encodeURIComponent(JSON.stringify(dbData, null, 2)))),
                 sha: sha ? sha : undefined
             };
-
             await fetch(url, { method: 'PUT', headers, body: JSON.stringify(body) });
         }
-
         // --- GESTIONE SPESA ---
         function aggiungiSpesa() {
             const input = document.getElementById('nuovo-articolo');
@@ -218,20 +232,17 @@
             salvaDatiSuGitHub();
             renderizzaSpesa();
         }
-
         function toggleSpesa(id) {
             const item = dbData.spesa.find(x => x.id === id);
             if(item) item.completato = !item.completato;
             salvaDatiSuGitHub();
             renderizzaSpesa();
         }
-
         function eliminaSpesa(id) {
             dbData.spesa = dbData.spesa.filter(x => x.id !== id);
             salvaDatiSuGitHub();
             renderizzaSpesa();
         }
-
         function renderizzaSpesa() {
             const lista = document.getElementById('lista-spesa');
             lista.innerHTML = '';
@@ -243,28 +254,23 @@
                     </li>`;
             });
         }
-
         // --- GESTIONE BUONI & EFFETTI VISIVI ---
         async function aggiungiBuono() {
             const titolo = document.getElementById('titolo-buono').value.trim();
             const scadenza = document.getElementById('scadenza-buono').value;
             const fileInput = document.getElementById('foto-buono');
-
             if(!titolo || !scadenza || fileInput.files.length === 0) {
                 alert("Compila tutti i campi e seleziona un'immagine!");
                 return;
             }
-
             const file = fileInput.files[0];
             const reader = new FileReader();
             reader.onload = async function(e) {
                 const base64Content = e.target.result.split(',')[1];
                 const fileName = `images/buono_${Date.now()}_${file.name}`;
-
                 const url = `https://api.github.com/repos/${config.user}/${config.repo}/contents/${fileName}`;
                 const headers = { 'Authorization': `token ${config.token}`, 'Content-Type': 'application/json' };
                 const body = { message: "Upload immagine buono", content: base64Content };
-
                 const res = await fetch(url, { method: 'PUT', headers, body: JSON.stringify(body) });
                 if(res.ok) {
                     const fileData = await res.json();
@@ -278,35 +284,31 @@
                     document.getElementById('titolo-buono').value = '';
                     document.getElementById('scadenza-buono').value = '';
                     fileInput.value = '';
+                    document.getElementById('status-ocr').innerText = '';
                     await salvaDatiSuGitHub();
                     renderizzaBuoni();
                 }
             };
             reader.readAsDataURL(file);
         }
-
         function renderizzaBuoni() {
             const lista = document.getElementById('lista-buoni');
             lista.innerHTML = '';
             const oggi = new Date();
             oggi.setHours(0,0,0,0);
-
             dbData.buoni.forEach(b => {
                 const dataScad = new Date(b.scadenza);
                 dataScad.setHours(0,0,0,0);
                 const diffGiorni = Math.ceil((dataScad - oggi) / (1000 * 60 * 60 * 24));
-
                 let classeContorno = "";
                 let elementoScadutoOverlay = "";
                 let classeImmagine = "";
-
                 if (diffGiorni < 0) {
                     classeImmagine = "grayscale-img opacity-60";
                     elementoScadutoOverlay = `<div class="absolute inset-0 flex items-center justify-center"><div class="military-stamp">SCADUTO</div></div>`;
                 } else if (diffGiorni <= 7) {
                     classeContorno = "pulsing-border border-red-500";
                 }
-
                 lista.innerHTML += `
                     <div class="bg-white rounded-2xl p-4 shadow-sm space-y-2 border-2 ${classeContorno || 'border-transparent'}">
                         <div class="flex justify-between items-center">
@@ -320,14 +322,12 @@
                     </div>`;
             });
         }
-
         function apriImmagine(url, id) {
             idBuonoSelezionato = id;
             document.getElementById('img-zoom').src = url;
             document.getElementById('modal-img').classList.remove('hidden');
         }
         function chiudiImmagine() { document.getElementById('modal-img').classList.add('hidden'); }
-
         function spostaNelCestinoCorrente() {
             const index = dbData.buoni.findIndex(x => x.id === idBuonoSelezionato);
             if(index !== -1) {
@@ -339,14 +339,12 @@
                 renderizzaBuoni();
             }
         }
-
         // --- GESTIONE CESTINO ---
         function apriCestino() {
             renderizzaCestino();
             document.getElementById('modal-cestino').classList.remove('hidden');
         }
         function chiudiCestino() { document.getElementById('modal-cestino').classList.add('hidden'); }
-
         function renderizzaCestino() {
             const container = document.getElementById('lista-cestino');
             container.innerHTML = '';
@@ -371,7 +369,6 @@
                     </div>`;
             });
         }
-
         function ripristinaBuono(id) {
             const index = dbData.cestino.findIndex(x => x.id === id);
             if(index !== -1) {
@@ -383,7 +380,6 @@
                 renderizzaBuoni();
             }
         }
-
         async function eliminaDefinitivo(id) {
             const index = dbData.cestino.findIndex(x => x.id === id);
             if(index !== -1) {
@@ -393,7 +389,6 @@
                 renderizzaCestino();
             }
         }
-
         async function svuotaCestinoTotale() {
             if(!confirm("Vuoi svuotare definitivamente tutto il cestino? Le immagini saranno rimosse per sempre.")) return;
             for(const item of dbData.cestino) {
@@ -403,12 +398,10 @@
             salvaDatiSuGitHub();
             renderizzaCestino();
         }
-
         async function pulisciCestinoScaduto() {
             const ora = new Date();
             let modificato = false;
             const nuoviCestino = [];
-
             for(const item of dbData.cestino) {
                 const dataDel = new Date(item.deletedAt);
                 const giorniPassati = (ora - dataDel) / (1000 * 60 * 60 * 24);
@@ -419,13 +412,11 @@
                     nuoviCestino.push(item);
                 }
             }
-
             if(modificato) {
                 dbData.cestino = nuoviCestino;
                 salvaDatiSuGitHub();
             }
         }
-
         async function rimuoviFileDaGitHub(path) {
             try {
                 const url = `https://api.github.com/repos/${config.user}/${config.repo}/contents/${path}`;
@@ -441,7 +432,6 @@
                 }
             } catch(e) { console.error("Errore eliminazione file fisico", e); }
         }
-
         function renderizzaTutto() {
             renderizzaSpesa();
             renderizzaBuoni();
