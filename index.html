@@ -64,11 +64,25 @@
         <!-- Tab Buoni -->
         <div id="section-buoni" class="space-y-4 hidden">
             <div class="bg-white p-4 rounded-xl shadow-sm space-y-3">
-                <input type="text" id="titolo-buono" placeholder="Titolo (es. Buono Esselunga 10€)" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <input type="date" id="scadenza-buono" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <div id="status-ocr" class="text-xs text-slate-400 italic font-medium"></div>
-                <input type="file" id="foto-buono" accept="image/*" onchange="analizzaData(this)" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                <button onclick="aggiungiBuono()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-medium transition">Salva Buono</button>
+                <!-- 1. Foto prima di tutto -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">1. Scatta o carica la foto del buono</label>
+                    <input type="file" id="foto-buono" accept="image/*" capture="environment" onchange="analizzaData(this)" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                    <div id="status-ocr" class="text-xs text-slate-400 italic mt-1 font-medium"></div>
+                </div>
+                <!-- 2. Scadenza (compilata automaticamente dall'AI o modificabile) -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">2. Data di scadenza (rilevata o modificabile)</label>
+                    <input type="date" id="scadenza-buono" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <!-- 3. Titolo con autocompletamento -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">3. Titolo del buono</label>
+                    <input type="text" id="titolo-buono" list="suggerimenti-titoli" placeholder="Es. Buono Famila 10€" class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <datalist id="suggerimenti-titoli"></datalist>
+                </div>
+                
+                <button onclick="aggiungiBuono()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-medium transition mt-2">Salva Buono</button>
             </div>
             <div id="lista-buoni" class="grid grid-cols-1 gap-4"></div>
         </div>
@@ -130,27 +144,24 @@
             }
         });
         
-        // --- OCR LOGIC CON FEEDBACK VISIVO ---
+        // --- OCR LOGIC CON RILEVAMENTO AUTOMATICO ---
         async function analizzaData(input) {
             const file = input.files[0];
             if (!file) return;
             const statusDiv = document.getElementById('status-ocr');
-            statusDiv.innerText = "⏳ Inizializzazione motore OCR...";
-            statusDiv.className = "text-xs text-indigo-600 font-semibold italic";
+            statusDiv.innerText = "⏳ Analisi immagine in corso...";
+            statusDiv.className = "text-xs text-indigo-600 font-semibold italic mt-1";
             
             try {
                 const { data: { text } } = await Tesseract.recognize(file, 'ita+eng', {
                     logger: m => {
                         if (m.status === 'recognizing text') {
                             const percent = Math.round(m.progress * 100);
-                            statusDiv.innerText = `⏳ Lettura in corso: ${percent}%`;
-                        } else if (m.status === 'loading language traineddata') {
-                            statusDiv.innerText = "⏳ Download dizionario lingua...";
+                            statusDiv.innerText = `⏳ Lettura OCR: ${percent}%`;
                         }
                     }
                 });
                 
-                // Regex per formati: DD/MM/YYYY, DD.MM.YYYY, DD-MM-YYYY (anche con anno a 2 cifre)
                 const dateRegex = /(\d{1,2})[\/\.\-\s](\d{1,2})[\/\.\-\s](\d{2,4})/;
                 const match = text.match(dateRegex);
                 
@@ -162,16 +173,20 @@
                     
                     const dateString = `${y}-${m}-${d}`;
                     document.getElementById('scadenza-buono').value = dateString;
-                    statusDiv.innerText = "✅ Data rilevata automaticamente: " + dateString;
-                    statusDiv.className = "text-xs text-emerald-600 font-semibold italic";
+                    statusDiv.innerText = "✅ Data rilevata automaticamente!";
+                    statusDiv.className = "text-xs text-emerald-600 font-semibold italic mt-1";
                 } else {
-                    statusDiv.innerText = "⚠️ Nessuna data chiara trovata. Inseriscila manualmente.";
-                    statusDiv.className = "text-xs text-amber-600 font-semibold italic";
+                    const oggi = new Date().toISOString().split('T')[0];
+                    document.getElementById('scadenza-buono').value = oggi;
+                    statusDiv.innerText = "⚠️ Data non rilevata chiaramente: impostata a oggi (puoi modificarla).";
+                    statusDiv.className = "text-xs text-amber-600 font-semibold italic mt-1";
                 }
             } catch (e) {
                 console.error(e);
-                statusDiv.innerText = "❌ Errore durante l'analisi. Inserisci la data a mano.";
-                statusDiv.className = "text-xs text-red-600 font-semibold italic";
+                const oggi = new Date().toISOString().split('T')[0];
+                document.getElementById('scadenza-buono').value = oggi;
+                statusDiv.innerText = "⚠️ Errore OCR: data impostata a oggi (puoi modificarla).";
+                statusDiv.className = "text-xs text-amber-600 font-semibold italic mt-1";
             }
         }
 
@@ -268,15 +283,28 @@
                     </li>`;
             });
         }
-        // --- GESTIONE BUONI & EFFETTI VISIVI ---
+        // --- GESTIONE BUONI & AUTOCOMPLETAMENTO TITOLI ---
+        function aggiornaDatalistTitoli() {
+            const datalist = document.getElementById('suggerimenti-titoli');
+            if(!datalist) return;
+            datalist.innerHTML = '';
+            // Estrae titoli unici dai buoni salvati
+            const titoliUnici = [...new Set(dbData.buoni.map(b => b.titolo))];
+            titoliUnici.forEach(titolo => {
+                datalist.innerHTML += `<option value="${titolo}">`;
+            });
+        }
+
         async function aggiungiBuono() {
             const titolo = document.getElementById('titolo-buono').value.trim();
             const scadenza = document.getElementById('scadenza-buono').value;
             const fileInput = document.getElementById('foto-buono');
-            if(!titolo || !scadenza || fileInput.files.length === 0) {
-                alert("Compila tutti i campi e seleziona un'immagine!");
+            
+            if(!titolo || fileInput.files.length === 0) {
+                alert("Inserisci un titolo e seleziona una foto del buono!");
                 return;
             }
+            
             const file = fileInput.files[0];
             const reader = new FileReader();
             reader.onload = async function(e) {
@@ -291,7 +319,7 @@
                     dbData.buoni.push({
                         id: Date.now(),
                         titolo,
-                        scadenza,
+                        scadenza: scadenza || new Date().toISOString().split('T')[0],
                         path: fileName,
                         url: fileData.content.download_url
                     });
@@ -306,6 +334,7 @@
             reader.readAsDataURL(file);
         }
         function renderizzaBuoni() {
+            aggiornaDatalistTitoli();
             const lista = document.getElementById('lista-buoni');
             lista.innerHTML = '';
             const oggi = new Date();
@@ -415,7 +444,7 @@
         async function pulisciCestinoScaduto() {
             const ora = new Date();
             let modificato = false;
-            const nuoviCestino = [];
+            const novosCestino = [];
             for(const item of dbData.cestino) {
                 const dataDel = new Date(item.deletedAt);
                 const giorniPassati = (ora - dataDel) / (1000 * 60 * 60 * 24);
@@ -423,11 +452,11 @@
                     await rimuoviFileDaGitHub(item.path);
                     modificato = true;
                 } else {
-                    nuoviCestino.push(item);
+                    novosCestino.push(item);
                 }
             }
             if(modificato) {
-                dbData.cestino = nuoviCestino;
+                dbData.cestino = novosCestino;
                 salvaDatiSuGitHub();
             }
         }
@@ -452,4 +481,4 @@
         }
     </script>
 </body>
-</html>
+</html>S
