@@ -1,38 +1,5 @@
 {
-  "spesa": [
-    {
-      "id": 1786629334841,
-      "testo": "Uova",
-      "completato": true
-    },
-    {
-      "id": 1786629338575,
-      "testo": "Colla",
-      "completato": false
-    },
-    {
-      "id": 1786629342202,
-      "testo": "Pane",
-      "completato": false
-    }
-  ],
-  "buoni": [
-    {
-      "id": 1786631299232,
-      "titolo": "Ortofrutta",
-      "scadenza": "2026-08-17",
-      "path": "images/buono_1786631294502_image.jpg",
-      "url": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1786631294502_image.jpg"
-    }
-  ],
-  "cestino": [
-    {
-      "id": 1786631303327,
-      "titolo": "",
-      "scadenza": "",
-      "path": "images/buono_1786631298787_image.jpg",
-      "url": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1786631298787_image.jpg",
-      "deletedAt": "2026-08-13T14:34:09.917Z"
-    }
-  ]
+  "spesa": [],
+  "buoni": [],
+  "cestino": []
 }
