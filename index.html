@@ -419,12 +419,11 @@
                 apriGoogleCalendarWeb(titolo, scadenza);
             }
         }
-        // GENERAZIONE FILE ICS PER ANDREA (08:30 - 09:00, 15 min e 1 settimana prima)
+        // GENERAZIONE FILE ICS PER ANDREA (Impostato a 1 settimana prima nativa)
         function generaEventoICS(titolo, dataIso) {
             const dataPura = dataIso.replace(/-/g, '');
             const titoloEvento = `Scade buono - ${titolo}`;
             const noteEvento = `Scadenza buono spesa: ${titolo}`;
-            // 08:30 alle 09:00 del giorno di scadenza
             const dtStart = `${dataPura}T083000`;
             const dtEnd = `${dataPura}T090000`;
             const icsContent = 
@@ -436,11 +435,6 @@ SUMMARY:${titoloEvento}
 DESCRIPTION:${noteEvento}
 DTSTART:${dtStart}
 DTEND:${dtEnd}
-BEGIN:VALARM
-ACTION:DISPLAY
-DESCRIPTION:Promemoria 15 minuti prima
-TRIGGER:-PT15M
-END:VALARM
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Promemoria 1 settimana prima
@@ -606,7 +600,7 @@ END:VCALENDAR`;
             const chks = Array.from(document.querySelectorAll('.chk-cestino:checked'));
             if (chks.length === 0) return;
             const indiciDaRipristinare = chks.map(c => parseInt(c.getAttribute('data-idx'))).sort((a, b) => b - a);
-            indiciDaRipristinare.forEach(idx => {
+            indiciDaRipristinare.externforEach = indiciDaRipristinare.forEach(idx => {
                 const elemento = db.cestino.splice(idx, 1)[0];
                 if (elemento.tipo === 'spesa') {
                     const pos = typeof elemento.posizioneOriginale === 'number' ? elemento.posizioneOriginale : db.spesa.length;
