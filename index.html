@@ -53,24 +53,6 @@
                 border-color: rgba(239, 68, 68, 1);
             }
         }
-        /* Stili per il drag touch personalizzato */
-        .dragging-clone {
-            position: fixed;
-            z-index: 1000;
-            opacity: 0.9;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
-            pointer-events: none;
-            background: #ffffff;
-            border: 1px solid #cbd5e1;
-            border-radius: 0.75rem;
-        }
-        .drag-target-hover {
-            background-color: #e0e7ff !important;
-            border-top: 2px solid #4f46e5 !important;
-        }
-        .drag-handle {
-            touch-action: none;
-        }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800">
@@ -448,21 +430,28 @@
             db.spesa.forEach((item, index) => {
                 const li = document.createElement('li');
                 li.className = "py-2.5 flex justify-between items-center text-sm border-b border-slate-100 last:border-0 bg-white";
-                li.dataset.index = index;
                 const completato = !!item.completato;
 
                 const stileTesto = completato 
                     ? "line-through text-slate-400 italic flex-1 cursor-pointer select-none" 
                     : "font-medium text-slate-700 flex-1 cursor-pointer select-none";
 
-                // Le tre linette attivano il trascinamento touch personalizzato
-                const handleOrdinamento = !completato 
-                    ? `<span class="drag-handle cursor-grab active:cursor-grabbing text-slate-300 hover:text-slate-500 px-2 py-1 select-none text-lg" title="Trascina">☰</span>` 
-                    : `<span class="w-6 inline-block"></span>`;
+                // Pulsante sposta su (se non è il primo e non è completato)
+                const btnSu = (index > 0 && !completato && !db.spesa[index - 1].completato)
+                    ? `<button onclick="spostaSpesa(${index}, -1)" class="text-slate-400 hover:text-slate-700 p-1 text-xs font-bold" title="Sposta su">⬆️</button>`
+                    : `<span class="w-5 inline-block"></span>`;
+
+                // Pulsante sposta giù (se non è l'ultimo della sua categoria e non è completato)
+                const btnGiu = (index < db.spesa.length - 1 && !completato && !db.spesa[index + 1].completato)
+                    ? `<button onclick="spostaSpesa(${index}, 1)" class="text-slate-400 hover:text-slate-700 p-1 text-xs font-bold" title="Sposta giù">⬇️</button>`
+                    : `<span class="w-5 inline-block"></span>`;
 
                 li.innerHTML = `
-                    <div class="flex items-center gap-2 flex-1 min-w-0">
-                        ${handleOrdinamento}
+                    <div class="flex items-center gap-1.5 flex-1 min-w-0">
+                        <div class="flex flex-col shrink-0">
+                            ${btnSu}
+                            ${btnGiu}
+                        </div>
                         <label class="flex items-center gap-2 flex-1 cursor-pointer py-1 min-w-0">
                             <input type="checkbox" ${completato ? 'checked' : ''} onchange="toggleStatoSpesa(${index})" class="w-5 h-5 text-indigo-600 rounded cursor-pointer accent-indigo-600 shrink-0">
                             <span class="${stileTesto} truncate">${item.nome}</span>
@@ -472,89 +461,18 @@
                 `;
                 ul.appendChild(li);
             });
-
-            // Attivazione del gestore di trascinamento touch nativo sulle maniglie ☰
-            attivaTouchDragCustom();
         }
 
-        // SISTEMA TOUCH CUSTOM PER iOS (Evita i conflitti con Safari)
-        function attivaTouchDragCustom() {
-            const handles = document.querySelectorAll('.drag-handle');
-            handles.forEach(handle => {
-                let clone = null;
-                let originalLi = handle.closest('li');
-                let startIndex = parseInt(originalLi.dataset.index);
+        async function spostaSpesa(index, direzione) {
+            const nuovoIndice = index + direzione;
+            if (nuovoIndice < 0 || nuovoIndice >= db.spesa.length) return;
+            if (db.spesa[nuovoIndice].completato) return;
 
-                handle.addEventListener('touchstart', (e) => {
-                    if (db.spesa[startIndex].completato) return;
-                    e.preventDefault(); // Blocca lo scroll della pagina mentre trascini
-                    
-                    const touch = e.touches[0];
-                    const rect = originalLi.getBoundingClientRect();
-                    
-                    // Crea un clone visivo della riga che segue il dito
-                    clone = originalLi.cloneNode(true);
-                    clone.className = 'dragging-clone';
-                    clone.style.width = `${rect.width}px`;
-                    clone.style.left = `${rect.left}px`;
-                    clone.style.top = `${rect.top}px`;
-                    document.body.appendChild(clone);
-                    
-                    originalLi.style.opacity = '0.3';
-                }, { passive: false });
+            const elemento = db.spesa.splice(index, 1)[0];
+            db.spesa.splice(nuovoIndice, 0, elemento);
 
-                handle.addEventListener('touchmove', (e) => {
-                    if (!clone) return;
-                    e.preventDefault();
-                    
-                    const touch = e.touches[0];
-                    clone.style.top = `${touch.clientY - 25}px`;
-
-                    // Trova l'elemento sotto il dito
-                    clone.style.display = 'none';
-                    let elemSotto = document.elementFromPoint(touch.clientX, touch.clientY);
-                    clone.style.display = 'flex';
-
-                    let targetLi = elemSotto ? elemSotto.closest('li') : null;
-                    
-                    // Rimuovi evidenziature precedenti
-                    document.querySelectorAll('#lista-spesa li').forEach(li => li.classList.remove('drag-target-hover'));
-                    
-                    if (targetLi && targetLi !== originalLi) {
-                        let targetIndex = parseInt(targetLi.dataset.index);
-                        if (!db.spesa[targetIndex].completato) {
-                            targetLi.classList.add('drag-target-hover');
-                        }
-                    }
-                }, { passive: false });
-
-                handle.addEventListener('touchend', async (e) => {
-                    if (!clone) return;
-                    e.preventDefault();
-
-                    const touch = e.changedTouches[0];
-                    clone.style.display = 'none';
-                    let elemSotto = document.elementFromPoint(touch.clientX, touch.clientY);
-                    let targetLi = elemSotto ? elemSotto.closest('li') : null;
-
-                    if (targetLi && targetLi !== originalLi) {
-                        let targetIndex = parseInt(targetLi.dataset.index);
-                        if (!db.spesa[targetIndex].completato) {
-                            // Sposta l'elemento nell'array dei dati
-                            let itemSpostato = db.spesa.splice(startIndex, 1)[0];
-                            db.spesa.splice(targetIndex, 0, itemSpostato);
-                            
-                            renderizzaSpesa();
-                            await salvaDatiRemoti();
-                        }
-                    }
-
-                    clone.remove();
-                    clone = null;
-                    originalLi.style.opacity = '1';
-                    document.querySelectorAll('#lista-spesa li').forEach(li => li.classList.remove('drag-target-hover'));
-                }, { passive: false });
-            });
+            renderizzaSpesa();
+            await salvaDatiRemoti();
         }
 
         async function toggleStatoSpesa(index) {
