@@ -419,7 +419,7 @@
                 apriGoogleCalendarWeb(titolo, scadenza);
             }
         }
-        // GENERAZIONE FILE ICS PER ANDREA (08:30 - 09:00, 15 min e 7 giorni prima)
+        // GENERAZIONE FILE ICS PER ANDREA (08:30 - 09:00, 15 min e 1 settimana prima)
         function generaEventoICS(titolo, dataIso) {
             const dataPura = dataIso.replace(/-/g, '');
             const titoloEvento = `Scade buono - ${titolo}`;
@@ -443,8 +443,8 @@ TRIGGER:-PT15M
 END:VALARM
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Promemoria 7 giorni prima
-TRIGGER:-P7D
+DESCRIPTION:Promemoria 1 settimana prima
+TRIGGER:-P1W
 END:VALARM
 END:VEVENT
 END:VCALENDAR`;
