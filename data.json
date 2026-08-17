@@ -11,6 +11,13 @@
       "completato": false
     }
   ],
-  "buoni": [],
+  "buoni": [
+    {
+      "id": 1786966253931,
+      "titolo": "Altro",
+      "scadenza": "2026-09-16",
+      "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1786966250497_fi55gq.jpg"
+    }
+  ],
   "cestino": []
 }
