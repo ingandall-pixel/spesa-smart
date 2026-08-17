@@ -100,8 +100,8 @@
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1">2. Data di Scadenza</label>
                     <!-- Avviso esplicito in caso di fallimento OCR -->
-                    <div id="avviso-manuale" class="hidden mb-1.5 p-2 bg-red-50 border border-red-300 rounded-lg text-xs font-semibold text-red-600 flex items-center gap-1.5 shadow-sm">
-                        <span>⚠️</span> <span>Inseriscila manualmente</span>
+                    <div id="avviso-manuale" class="hidden mb-1.5 p-2 bg-red-50 border border-red-300 rounded-lg text-xs font-semibold text-red-600 items-center gap-1.5 shadow-sm">
+                        <span>⚠️</span> <span>OCR non riuscito: inseriscila manualmente</span>
                     </div>
                     <!-- Campo data nativo -->
                     <input type="date" id="input-scadenza" onchange="validaStatoBuonoForm()" class="w-full px-3 py-2 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm bg-white">
@@ -302,13 +302,15 @@
             const scadenzaVal = inputScadenza.value;
             const selectTitolo = document.getElementById('select-titolo');
             const btnSalva = document.getElementById('btn-salva-buono');
+            const avviso = document.getElementById('avviso-manuale');
             
             const isValido = scadenzaVal !== "";
             selectTitolo.disabled = !isValido;
             
             if (isValido) {
-                // Se l'utente ha inserito/selezionato una data, rimuoviamo l'avviso manuale e il bordo rosso
-                document.getElementById('avviso-manuale').classList.add('hidden');
+                // Nasconde l'avviso e rimuove il bordo rosso se la data è compilata
+                avviso.classList.add('hidden');
+                avviso.classList.remove('flex');
                 inputScadenza.classList.remove('border-red-500', 'bg-red-50');
                 inputScadenza.classList.add('border-slate-300');
             }
@@ -404,10 +406,13 @@
             });
 
             const inputScadenza = document.getElementById('input-scadenza');
+            const avviso = document.getElementById('avviso-manuale');
+
             if (dateTrovate.length > 0) {
                 const ultimaData = dateTrovate[dateTrovate.length - 1].data;
                 inputScadenza.value = ultimaData;
-                document.getElementById('avviso-manuale').classList.add('hidden');
+                avviso.classList.add('hidden');
+                avviso.classList.remove('flex');
                 inputScadenza.classList.remove('border-red-500', 'bg-red-50');
                 inputScadenza.classList.add('border-slate-300');
             } else {
@@ -419,8 +424,10 @@
         function fallbackSelezioneManuale() {
             const inputScadenza = document.getElementById('input-scadenza');
             inputScadenza.value = "";
-            // Mostra l'avviso e illumina il campo data
-            document.getElementById('avviso-manuale').classList.remove('hidden');
+            const avviso = document.getElementById('avviso-manuale');
+            // Mostra correttamente l'avviso e illumina il campo data
+            avviso.classList.remove('hidden');
+            avviso.classList.add('flex');
             inputScadenza.classList.remove('border-slate-300');
             inputScadenza.classList.add('border-red-500', 'bg-red-50');
             validaStatoBuonoForm();
@@ -441,7 +448,9 @@
             db.buoni.push(nuovoBuono);
             document.getElementById('input-foto').value = '';
             inputScadenza.value = '';
-            document.getElementById('avviso-manuale').classList.add('hidden');
+            const avviso = document.getElementById('avviso-manuale');
+            avviso.classList.add('hidden');
+            avviso.classList.remove('flex');
             inputScadenza.classList.remove('border-red-500', 'bg-red-50');
             inputScadenza.classList.add('border-slate-300');
             document.getElementById('select-titolo').value = '';
