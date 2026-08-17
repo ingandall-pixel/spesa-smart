@@ -12,12 +12,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Spesa Smart">
     <link rel="apple-touch-icon" href="images/icon.png?v=12">
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
-
         .military-stamp {
             font-family: 'Special Elite', cursive, monospace;
             border: 4px solid #dc2626;
@@ -33,17 +31,14 @@
             text-shadow: 1px 1px 0px rgba(220, 38, 38, 0.2);
             pointer-events: none;
         }
-
         .grayscale-img {
             filter: grayscale(100%) contrast(120%);
             opacity: 0.7;
         }
-
         .pulsing-border {
             animation: pulse-border 2s infinite;
             border-width: 3px !important;
         }
-
         @keyframes pulse-border {
             0% {
                 box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.8);
@@ -61,7 +56,6 @@
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800">
-
     <!-- Header -->
     <header class="bg-indigo-600 text-white shadow-md sticky top-0 z-10">
         <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
@@ -71,30 +65,25 @@
             </button>
         </div>
     </header>
-
     <!-- Main Container -->
     <main class="max-w-md mx-auto p-4 space-y-4">
-
         <!-- Navigation Tabs -->
         <div class="flex bg-slate-200 p-1 rounded-xl font-medium text-sm">
             <button id="tab-spesa-btn" onclick="cambiaTab('spesa')" class="flex-1 py-2 rounded-lg bg-white shadow-sm text-indigo-600 transition">📝 Spesa</button>
             <button id="tab-buoni-btn" onclick="cambiaTab('buoni')" class="flex-1 py-2 rounded-lg text-slate-600 transition">🎟️ Buoni</button>
         </div>
-
         <!-- SEZIONE SPESA -->
         <section id="tab-spesa" class="space-y-4">
             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex gap-2">
                 <input type="text" id="input-spesa" placeholder="Cosa serve?" class="flex-1 px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm" onkeypress="if(event.key==='Enter') aggiungiSpesa()">
                 <button onclick="aggiungiSpesa()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium text-sm transition">Aggiungi</button>
             </div>
-
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
                 <ul id="lista-spesa" class="divide-y divide-slate-100">
                     <li class="py-3 text-center text-slate-400 text-sm">Nessun articolo presente.</li>
                 </ul>
             </div>
         </section>
-
         <!-- SEZIONE BUONI -->
         <section id="tab-buoni" class="space-y-4 hidden">
             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-3">
@@ -105,16 +94,13 @@
                     </label>
                     <input type="file" id="input-foto" accept="image/*" capture="environment" class="hidden" onchange="gestisciFoto(this)">
                 </div>
-
                 <div id="ocr-loading" class="hidden text-center py-2 text-xs font-medium text-indigo-600">
                     🔄 Lettura data e ottimizzazione foto...
                 </div>
-
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1">2. Data di Scadenza</label>
                     <input type="date" id="input-scadenza" onchange="validaStatoBuonoForm()" class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
                 </div>
-
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1">3. Titolo del buono</label>
                     <select id="select-titolo" disabled onchange="validaStatoBuonoForm()" class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm bg-white disabled:bg-slate-100 disabled:text-slate-400">
@@ -127,19 +113,15 @@
                         <option value="Pesce">Pesce</option>
                     </select>
                 </div>
-
                 <button id="btn-salva-buono" onclick="salvaBuono()" disabled class="w-full py-2 bg-slate-300 text-slate-500 font-semibold rounded-lg text-sm transition disabled:cursor-not-allowed">
                     Salva Buono
                 </button>
             </div>
-
             <div id="lista-buoni" class="space-y-4">
                 <div class="text-center text-slate-400 text-sm py-4">Nessun buono salvato.</div>
             </div>
         </section>
-
     </main>
-
     <!-- Modal Ingrandimento Foto (Zoom) -->
     <div id="modal-foto" class="fixed inset-0 bg-black/90 hidden z-50 flex items-center justify-center p-2">
         <button onclick="chiudiModalFoto()" class="absolute top-4 right-4 bg-white/20 hover:bg-white/40 text-white rounded-full w-10 h-10 flex items-center justify-center text-2xl font-bold transition z-50">
@@ -147,7 +129,6 @@
         </button>
         <img id="img-modal-full" src="" class="max-w-full max-h-full object-contain rounded-lg">
     </div>
-
     <!-- Modal Selezione Utente Calendario (Andrea vs Valeria) -->
     <div id="modal-utente-cal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5 space-y-4 text-center">
@@ -162,11 +143,9 @@
                     👩‍🦰 Sono Valeria (Google Calendar)
                 </button>
             </div>
-
             <button onclick="chiudiModalUtente()" class="text-xs text-slate-400 hover:text-slate-600 font-medium pt-2">Annulla</button>
         </div>
     </div>
-
     <!-- Modal Cestino -->
     <div id="modal-cestino" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[85vh] flex flex-col overflow-hidden">
@@ -178,7 +157,6 @@
             <div class="p-4 overflow-y-auto flex-1 divide-y divide-slate-100" id="contenuto-cestino">
                 <p class="text-center text-slate-400 text-sm py-4">Il cestino è vuoto.</p>
             </div>
-
             <div class="p-3 border-t border-slate-100 bg-slate-50 flex items-center justify-between gap-2">
                 <div class="flex gap-2">
                     <button id="btn-modal-sel" onclick="attivaSelezioneCestino()" class="px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50">
@@ -199,7 +177,6 @@
             </div>
         </div>
     </div>
-
     <!-- Script App -->
     <script>
         let db = {
@@ -207,15 +184,12 @@
             buoni: [],
             cestino: []
         };
-
         let tempFotoBase64 = "";
         let modoSelezioneCestino = false;
         let eventoInCorso = null; // Memorizza temporaneamente il buono per il calendario
-
         document.addEventListener('DOMContentLoaded', () => {
             caricaDatiLocali();
         });
-
         function caricaDatiLocali() {
             const salvati = localStorage.getItem('spesa_smart_db');
             if (salvati) {
@@ -228,16 +202,13 @@
             if(!db.spesa) db.spesa = [];
             if(!db.buoni) db.buoni = [];
             if(!db.cestino) db.cestino = [];
-
             pulisciDuplicatiCestino();
             renderizzaSpesa();
             renderizzaBuoni();
         }
-
         function salvaDatiLocali() {
             localStorage.setItem('spesa_smart_db', JSON.stringify(db));
         }
-
         function pulisciDuplicatiCestino() {
             if (!db.cestino || db.cestino.length === 0) return;
             
@@ -248,20 +219,17 @@
                     const nomeEsistente = c.tipo === 'spesa' ? c.data.nome : c.data.titolo;
                     return c.tipo === item.tipo && nomeEsistente.trim().toLowerCase() === nomeItem.trim().toLowerCase();
                 });
-
                 if (!giaPresente) {
                     cestinoUnico.push(item);
                 }
             });
             db.cestino = cestinoUnico;
         }
-
         function cambiaTab(tab) {
             const tabSpesaBtn = document.getElementById('tab-spesa-btn');
             const tabBuoniBtn = document.getElementById('tab-buoni-btn');
             const secSpesa = document.getElementById('tab-spesa');
             const secBuoni = document.getElementById('tab-buoni');
-
             if (tab === 'spesa') {
                 secSpesa.classList.remove('hidden');
                 secBuoni.classList.add('hidden');
@@ -274,17 +242,14 @@
                 tabBuoniBtn.className = "flex-1 py-2 rounded-lg text-slate-600 transition";
             }
         }
-
         // SPESA CON BARRATURA
         function renderizzaSpesa() {
             const ul = document.getElementById('lista-spesa');
             ul.innerHTML = '';
-
             if (db.spesa.length === 0) {
                 ul.innerHTML = '<li class="py-3 text-center text-slate-400 text-sm">Nessun articolo presente.</li>';
                 return;
             }
-
             db.spesa.forEach((item, index) => {
                 const li = document.createElement('li');
                 li.className = "py-2.5 flex justify-between items-center text-sm border-b border-slate-100 last:border-0";
@@ -293,7 +258,6 @@
                 const stileTesto = completato 
                     ? "line-through text-slate-400 italic flex-1 cursor-pointer select-none" 
                     : "font-medium text-slate-700 flex-1 cursor-pointer select-none";
-
                 li.innerHTML = `
                     <label class="flex items-center gap-3 flex-1 cursor-pointer py-1">
                         <input type="checkbox" ${completato ? 'checked' : ''} onchange="toggleStatoSpesa(${index})" class="w-5 h-5 text-indigo-600 rounded cursor-pointer accent-indigo-600">
@@ -304,48 +268,38 @@
                 ul.appendChild(li);
             });
         }
-
         function toggleStatoSpesa(index) {
             db.spesa[index].completato = !db.spesa[index].completato;
             salvaDatiLocali();
             renderizzaSpesa();
         }
-
         function aggiungiSpesa() {
             const input = document.getElementById('input-spesa');
             const nome = input.value.trim();
             if (!nome) return;
-
             db.spesa.push({ id: Date.now(), nome: nome, completato: false });
             input.value = '';
             renderizzaSpesa();
             salvaDatiLocali();
         }
-
         function eliminaSpesa(index) {
             const rimosso = db.spesa.splice(index, 1)[0];
             const testoNuovo = rimosso.nome.trim().toLowerCase();
-
             const giaPresente = db.cestino.some(item => 
                 item.tipo === 'spesa' && 
                 item.data.nome.trim().toLowerCase() === testoNuovo
             );
-
             if (!giaPresente) {
-                db.cestino.push({ tipo: 'spesa', data: rimosso });
+                db.cestino.push({ tipo: 'spesa', data: rimosso, posizioneOriginale: index });
             }
-
             renderizzaSpesa();
             salvaDatiLocali();
         }
-
         function validaStatoBuonoForm() {
             const scadenzaVal = document.getElementById('input-scadenza').value;
             const selectTitolo = document.getElementById('select-titolo');
             const btnSalva = document.getElementById('btn-salva-buono');
-
             selectTitolo.disabled = !scadenzaVal;
-
             if (scadenzaVal && selectTitolo.value) {
                 btnSalva.disabled = false;
                 btnSalva.className = "w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg text-sm transition cursor-pointer";
@@ -354,16 +308,12 @@
                 btnSalva.className = "w-full py-2 bg-slate-300 text-slate-500 font-semibold rounded-lg text-sm transition disabled:cursor-not-allowed";
             }
         }
-
         // COMPRESSIONE FOTO PER EVITARE PUNTO DI DOMANDA BLU
         function gestisciFoto(input) {
             if (!input.files || !input.files[0]) return;
-
             const file = input.files[0];
             const reader = new FileReader();
-
             document.getElementById('ocr-loading').classList.remove('hidden');
-
             reader.onload = function (e) {
                 const img = new Image();
                 img.onload = async function() {
@@ -371,7 +321,6 @@
                     let width = img.width;
                     let height = img.height;
                     const maxDim = 800;
-
                     if (width > height && width > maxDim) {
                         height *= maxDim / width;
                         width = maxDim;
@@ -379,19 +328,15 @@
                         width *= maxDim / height;
                         height = maxDim;
                     }
-
                     canvas.width = width;
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
-
                     tempFotoBase64 = canvas.toDataURL('image/jpeg', 0.7);
-
                     try {
                         const worker = await Tesseract.createWorker('ita');
                         const ret = await worker.recognize(tempFotoBase64);
                         await worker.terminate();
-
                         estraiDataDaTesto(ret.data.text);
                     } catch (err) {
                         console.error("Errore OCR:", err);
@@ -401,32 +346,24 @@
                 };
                 img.src = e.target.result;
             };
-
             reader.readAsDataURL(file);
         }
-
         // ESTRAZIONE DATA POTENZIATA
         function estraiDataDaTesto(testo) {
             const linee = testo.split('\n');
             let dateTrovate = [];
-
             const rxData = /(\d{1,2})[\/\-\.]\s*(\d{1,2})[\/\-\.]\s*(\d{2,4})/g;
-
             linee.forEach(linea => {
                 const low = linea.toLowerCase().replace(/\s+/g, ' ');
                 let match;
-
                 const paroleChiave = ['offerta valida fino al', 'valida fino al', 'valido fino al', 'scadenza', 'scade il', 'fino al'];
                 const haParolaChiave = paroleChiave.some(p => low.includes(p));
-
                 while ((match = rxData.exec(linea)) !== null) {
                     let giorno = match[1].padStart(2, '0');
                     let mese = match[2].padStart(2, '0');
                     let anno = match[3];
                     if (anno.length === 2) anno = '20' + anno;
-
                     const dataFormatted = `${anno}-${mese}-${giorno}`;
-
                     if (haParolaChiave) {
                         dateTrovate.unshift(dataFormatted);
                     } else {
@@ -434,60 +371,46 @@
                     }
                 }
             });
-
             if (dateTrovate.length > 0) {
                 document.getElementById('input-scadenza').value = dateTrovate[0];
             }
-
             validaStatoBuonoForm();
         }
-
         function salvaBuono() {
             const scadenza = document.getElementById('input-scadenza').value;
             const titolo = document.getElementById('select-titolo').value;
-
             if (!scadenza || !titolo || !tempFotoBase64) return;
-
             const nuovoBuono = {
                 id: Date.now(),
                 titolo: titolo,
                 scadenza: scadenza,
                 foto: tempFotoBase64
             };
-
             db.buoni.push(nuovoBuono);
-
             document.getElementById('input-foto').value = '';
             document.getElementById('input-scadenza').value = '';
             document.getElementById('select-titolo').value = '';
             tempFotoBase64 = '';
             validaStatoBuonoForm();
-
             renderizzaBuoni();
             salvaDatiLocali();
-
             // Apre il modal di scelta utente
             apriModalUtente(titolo, scadenza);
         }
-
         function apriModalUtente(titolo, scadenza) {
             eventoInCorso = { titolo: titolo, scadenza: scadenza };
             document.getElementById('modal-utente-cal').classList.remove('hidden');
             document.getElementById('modal-utente-cal').classList.add('flex');
         }
-
         function chiudiModalUtente() {
             document.getElementById('modal-utente-cal').classList.add('hidden');
             document.getElementById('modal-utente-cal').classList.remove('flex');
             eventoInCorso = null;
         }
-
         function selezionaUtenteCalendario(utente) {
             if (!eventoInCorso) return;
-
             const { titolo, scadenza } = eventoInCorso;
             chiudiModalUtente();
-
             if (utente === 'andrea') {
                 // Avviso per evitare la spunta blu iOS
                 alert("ℹ️ NOTA PER IPHONE:\n\nNella schermata che si aprirà, premi in basso su 'Aggiungi al calendario'.\n\nNON cliccare sulla spunta blu in alto a destra, altrimenti l'evento NON verrà salvato!");
@@ -496,17 +419,14 @@
                 apriGoogleCalendarWeb(titolo, scadenza);
             }
         }
-
         // GENERAZIONE FILE ICS PER ANDREA (08:30 - 09:00, 15 min e 7 giorni prima)
         function generaEventoICS(titolo, dataIso) {
             const dataPura = dataIso.replace(/-/g, '');
             const titoloEvento = `Scade buono - ${titolo}`;
             const noteEvento = `Scadenza buono spesa: ${titolo}`;
-
             // 08:30 alle 09:00 del giorno di scadenza
             const dtStart = `${dataPura}T083000`;
             const dtEnd = `${dataPura}T090000`;
-
             const icsContent = 
 `BEGIN:VCALENDAR
 VERSION:2.0
@@ -528,7 +448,6 @@ TRIGGER:-P7D
 END:VALARM
 END:VEVENT
 END:VCALENDAR`;
-
             const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
@@ -537,7 +456,6 @@ END:VCALENDAR`;
             link.click();
             document.body.removeChild(link);
         }
-
         // APERTURA GOOGLE CALENDAR WEB PER VALERIA
         function apriGoogleCalendarWeb(titolo, dataIso) {
             const dataPura = dataIso.replace(/-/g, '');
@@ -545,42 +463,32 @@ END:VCALENDAR`;
             const dtEnd = `${dataPura}T090000`;
             const titoloEvento = encodeURIComponent(`Scade buono - ${titolo}`);
             const noteEvento = encodeURIComponent(`Scadenza buono spesa: ${titolo}`);
-
             const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${titoloEvento}&dates=${dtStart}/${dtEnd}&details=${noteEvento}`;
             window.open(googleUrl, '_blank');
         }
-
         function renderizzaBuoni() {
             const container = document.getElementById('lista-buoni');
             container.innerHTML = '';
-
             if (db.buoni.length === 0) {
                 container.innerHTML = '<div class="text-center text-slate-400 text-sm py-4">Nessun buono salvato.</div>';
                 return;
             }
-
             db.buoni.sort((a, b) => new Date(a.scadenza) - new Date(b.scadenza));
-
             const oggi = new Date();
             oggi.setHours(0, 0, 0, 0);
-
             db.buoni.forEach((buono, index) => {
                 const dataScad = new Date(buono.scadenza);
                 dataScad.setHours(0, 0, 0, 0);
-
                 const diffGiorni = Math.ceil((dataScad - oggi) / (1000 * 60 * 60 * 24));
-
                 let cardClass = "bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden relative flex flex-col";
                 let imgClass = "w-full h-48 object-cover cursor-pointer";
                 let mostraTimbroScaduto = false;
-
                 if (diffGiorni < 0) {
                     imgClass += " grayscale-img";
                     mostraTimbroScaduto = true;
                 } else if (diffGiorni <= 7) {
                     cardClass += " pulsing-border";
                 }
-
                 const card = document.createElement('div');
                 card.className = cardClass;
                 card.innerHTML = `
@@ -604,58 +512,47 @@ END:VCALENDAR`;
                 container.appendChild(card);
             });
         }
-
         // GESTIONE MODAL ZOOM FOTO
         function apriModalFoto(src) {
             document.getElementById('img-modal-full').src = src;
             document.getElementById('modal-foto').classList.remove('hidden');
         }
-
         function chiudiModalFoto() {
             document.getElementById('modal-foto').classList.add('hidden');
             document.getElementById('img-modal-full').src = '';
         }
-
         function eliminaBuono(index) {
             const rimosso = db.buoni.splice(index, 1)[0];
             const titoloNuovo = rimosso.titolo.trim().toLowerCase();
-
             const giaPresente = db.cestino.some(item => 
                 item.tipo === 'buono' && 
                 item.data.titolo.trim().toLowerCase() === titoloNuovo
             );
-
             if (!giaPresente) {
-                db.cestino.push({ tipo: 'buono', data: rimosso });
+                db.cestino.push({ tipo: 'buono', data: rimosso, posizioneOriginale: index });
             }
-
             renderizzaBuoni();
             salvaDatiLocali();
         }
-
         function mostraModalCestino() {
             modoSelezioneCestino = false;
             document.getElementById('modal-cestino').classList.remove('hidden');
             document.getElementById('modal-cestino').classList.add('flex');
             renderizzaCestino();
         }
-
         function chiudiModalCestino() {
             document.getElementById('modal-cestino').classList.add('hidden');
             document.getElementById('modal-cestino').classList.remove('flex');
         }
-
         function attivaSelezioneCestino() {
             modoSelezioneCestino = true;
             renderizzaCestino();
         }
-
         function selezionaTuttoCestino() {
             const chks = document.querySelectorAll('.chk-cestino');
             chks.forEach(c => c.checked = true);
             aggiornaStatoPulsantiAzioneCestino();
         }
-
         function aggiornaStatoPulsantiAzioneCestino() {
             const chks = document.querySelectorAll('.chk-cestino:checked');
             const btnCancella = document.getElementById('btn-modal-cancella');
@@ -664,18 +561,15 @@ END:VCALENDAR`;
             btnCancella.disabled = !haSelezionati;
             btnRipristina.disabled = !haSelezionati;
         }
-
         function renderizzaCestino() {
             const container = document.getElementById('contenuto-cestino');
             const btnSel = document.getElementById('btn-modal-sel');
             const btnSelTutto = document.getElementById('btn-modal-sel-tutto');
             const btnCancella = document.getElementById('btn-modal-cancella');
             const btnRipristina = document.getElementById('btn-modal-ripristina');
-
             container.innerHTML = '';
             btnCancella.disabled = true;
             btnRipristina.disabled = true;
-
             if (modoSelezioneCestino) {
                 btnSel.classList.add('hidden');
                 btnSelTutto.classList.remove('hidden');
@@ -683,19 +577,15 @@ END:VCALENDAR`;
                 btnSel.classList.remove('hidden');
                 btnSelTutto.classList.add('hidden');
             }
-
             if (!db.cestino || db.cestino.length === 0) {
                 container.innerHTML = '<p class="text-center text-slate-400 text-sm py-4">Il cestino è vuoto.</p>';
                 btnSel.disabled = true;
                 return;
             }
-
             btnSel.disabled = false;
-
             db.cestino.forEach((item, idx) => {
                 const row = document.createElement('div');
                 row.className = "py-2.5 flex items-center justify-between text-sm gap-2";
-
                 let infoText = "";
                 if (item.tipo === 'spesa') {
                     const barrato = item.data.completato ? ' <span class="text-xs text-slate-400 italic">(barrato)</span>' : '';
@@ -703,7 +593,6 @@ END:VCALENDAR`;
                 } else {
                     infoText = `🎟️ <strong>${item.data.titolo}</strong> (Buono)`;
                 }
-
                 row.innerHTML = `
                     <div class="flex items-center gap-2">
                         ${modoSelezioneCestino ? `<input type="checkbox" data-idx="${idx}" class="chk-cestino w-4 h-4 text-indigo-600 rounded" onchange="aggiornaStatoPulsantiAzioneCestino()">` : ''}
@@ -713,38 +602,33 @@ END:VCALENDAR`;
                 container.appendChild(row);
             });
         }
-
         function ripristinaElementiCestino() {
             const chks = Array.from(document.querySelectorAll('.chk-cestino:checked'));
             if (chks.length === 0) return;
-
             const indiciDaRipristinare = chks.map(c => parseInt(c.getAttribute('data-idx'))).sort((a, b) => b - a);
-
             indiciDaRipristinare.forEach(idx => {
                 const elemento = db.cestino.splice(idx, 1)[0];
                 if (elemento.tipo === 'spesa') {
-                    db.spesa.push(elemento.data);
+                    const pos = typeof elemento.posizioneOriginale === 'number' ? elemento.posizioneOriginale : db.spesa.length;
+                    db.spesa.splice(pos, 0, elemento.data);
                 } else if (elemento.tipo === 'buono') {
-                    db.buoni.push(elemento.data);
+                    const pos = typeof elemento.posizioneOriginale === 'number' ? elemento.posizioneOriginale : db.buoni.length;
+                    db.buoni.splice(pos, 0, elemento.data);
                 }
             });
-
             modoSelezioneCestino = false;
             renderizzaSpesa();
             renderizzaBuoni();
             renderizzaCestino();
             salvaDatiLocali();
         }
-
         function confermaCancellazioneCestino() {
             if (confirm("Sei sicuro di voler cancellare definitivamente gli elementi selezionati?")) {
                 const chks = Array.from(document.querySelectorAll('.chk-cestino:checked'));
                 const indiciDaRimuovere = chks.map(c => parseInt(c.getAttribute('data-idx'))).sort((a, b) => b - a);
-
                 indiciDaRimuovere.forEach(idx => {
                     db.cestino.splice(idx, 1);
                 });
-
                 modoSelezioneCestino = false;
                 renderizzaCestino();
                 salvaDatiLocali();
