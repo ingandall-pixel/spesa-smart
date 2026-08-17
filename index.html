@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Spesa Smart">
-    <link rel="apple-touch-icon" href="images/icon.png?v=8">
+    <link rel="apple-touch-icon" href="images/icon.png?v=10">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
@@ -195,12 +195,34 @@
             if(!db.spesa) db.spesa = [];
             if(!db.buoni) db.buoni = [];
             if(!db.cestino) db.cestino = [];
+
+            // Pulizia automatica iniziale di eventuali duplicati storici nel cestino
+            pulisciDuplicatiCestino();
+
             renderizzaSpesa();
             renderizzaBuoni();
         }
 
         function salvaDatiLocali() {
             localStorage.setItem('spesa_smart_db', JSON.stringify(db));
+        }
+
+        function pulisciDuplicatiCestino() {
+            if (!db.cestino || db.cestino.length === 0) return;
+            
+            const cestinoUnico = [];
+            db.cestino.forEach(item => {
+                const nomeItem = item.tipo === 'spesa' ? item.data.nome : item.data.titolo;
+                const giaPresente = cestinoUnico.some(c => {
+                    const nomeEsistente = c.tipo === 'spesa' ? c.data.nome : c.data.titolo;
+                    return c.tipo === item.tipo && nomeEsistente.trim().toLowerCase() === nomeItem.trim().toLowerCase();
+                });
+
+                if (!giaPresente) {
+                    cestinoUnico.push(item);
+                }
+            });
+            db.cestino = cestinoUnico;
         }
 
         function cambiaTab(tab) {
@@ -222,7 +244,7 @@
             }
         }
 
-        // BARRATURA ED ELIMINAZIONE
+        // BARRATURA ED ELIMINAZIONE SPESA
         function renderizzaSpesa() {
             const ul = document.getElementById('lista-spesa');
             ul.innerHTML = '';
@@ -234,18 +256,18 @@
 
             db.spesa.forEach((item, index) => {
                 const li = document.createElement('li');
-                li.className = "py-2.5 flex justify-between items-center text-sm border-b border-slate-50 last:border-0";
+                li.className = "py-2.5 flex justify-between items-center text-sm border-b border-slate-100 last:border-0";
                 
-                const completato = item.completato || false;
+                const completato = !!item.completato;
                 const stileTesto = completato 
-                    ? "line-through text-slate-400 italic cursor-pointer flex-1 select-none" 
-                    : "font-medium text-slate-700 cursor-pointer flex-1 select-none";
+                    ? "line-through text-slate-400 italic flex-1 cursor-pointer select-none" 
+                    : "font-medium text-slate-700 flex-1 cursor-pointer select-none";
 
                 li.innerHTML = `
-                    <div class="flex items-center gap-3 flex-1">
-                        <input type="checkbox" ${completato ? 'checked' : ''} onchange="toggleStatoSpesa(${index})" class="w-4 h-4 text-indigo-600 rounded cursor-pointer">
-                        <span onclick="toggleStatoSpesa(${index})" class="${stileTesto}">${item.nome}</span>
-                    </div>
+                    <label class="flex items-center gap-3 flex-1 cursor-pointer py-1">
+                        <input type="checkbox" ${completato ? 'checked' : ''} onchange="toggleStatoSpesa(${index})" class="w-5 h-5 text-indigo-600 rounded cursor-pointer accent-indigo-600">
+                        <span class="${stileTesto}">${item.nome}</span>
+                    </label>
                     <button onclick="eliminaSpesa(${index})" class="text-slate-400 hover:text-red-600 transition px-2 py-1 ml-2">🗑️</button>
                 `;
                 ul.appendChild(li);
@@ -254,8 +276,8 @@
 
         function toggleStatoSpesa(index) {
             db.spesa[index].completato = !db.spesa[index].completato;
-            renderizzaSpesa();
             salvaDatiLocali();
+            renderizzaSpesa();
         }
 
         function aggiungiSpesa() {
@@ -269,9 +291,21 @@
             salvaDatiLocali();
         }
 
+        // ELIMINAZIONE CON VERIFICA UNICITÀ (CASE-INSENSITIVE)
         function eliminaSpesa(index) {
             const rimosso = db.spesa.splice(index, 1)[0];
-            db.cestino.push({ tipo: 'spesa', data: rimosso });
+            const testoNuovo = rimosso.nome.trim().toLowerCase();
+
+            // Verifica se esiste già la stessa voce nel cestino indipendentemente dalle maiuscole/minuscole
+            const giaPresente = db.cestino.some(item => 
+                item.tipo === 'spesa' && 
+                item.data.nome.trim().toLowerCase() === testoNuovo
+            );
+
+            if (!giaPresente) {
+                db.cestino.push({ tipo: 'spesa', data: rimosso });
+            }
+
             renderizzaSpesa();
             salvaDatiLocali();
         }
@@ -471,7 +505,17 @@ END:VCALENDAR`;
 
         function eliminaBuono(index) {
             const rimosso = db.buoni.splice(index, 1)[0];
-            db.cestino.push({ tipo: 'buono', data: rimosso });
+            const titoloNuovo = rimosso.titolo.trim().toLowerCase();
+
+            const giaPresente = db.cestino.some(item => 
+                item.tipo === 'buono' && 
+                item.data.titolo.trim().toLowerCase() === titoloNuovo
+            );
+
+            if (!giaPresente) {
+                db.cestino.push({ tipo: 'buono', data: rimosso });
+            }
+
             renderizzaBuoni();
             salvaDatiLocali();
         }
