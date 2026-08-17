@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Spesa Smart">
-    <link rel="apple-touch-icon" href="images/icon.png?v=6">
+    <link rel="apple-touch-icon" href="images/icon.png?v=7">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
@@ -424,6 +424,9 @@ END:VCALENDAR`;
                 container.innerHTML = '<div class="text-center text-slate-400 text-sm py-4">Nessun buono salvato.</div>';
                 return;
             }
+
+            // Ordina i buoni per data di scadenza crescente
+            db.buoni.sort((a, b) => new Date(a.scadenza) - new Date(b.scadenza));
 
             const oggi = new Date();
             oggi.setHours(0, 0, 0, 0);
