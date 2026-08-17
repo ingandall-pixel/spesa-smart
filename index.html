@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Spesa Smart">
-    <link rel="apple-touch-icon" href="images/icon.png?v=12">
+    <link rel="apple-touch-icon" href="images/icon.png?v=13">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
     <style>
@@ -99,7 +99,8 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1">2. Data di Scadenza</label>
-                    <input type="date" id="input-scadenza" onchange="validaStatoBuonoForm()" class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                    <!-- Campo dinamico: parte come text per mostrare il placeholder, poi diventa date al click -->
+                    <input type="text" id="input-scadenza" placeholder="Inseriscila manualmente" onfocus="attivaCalendario(this)" onchange="validaStatoBuonoForm()" class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1">3. Titolo del buono</label>
@@ -292,10 +293,20 @@
             renderizzaSpesa();
             salvaDatiLocali();
         }
+        function attivaCalendario(input) {
+            if (input.type === 'text') {
+                input.type = 'date';
+                if (typeof input.showPicker === 'function') {
+                    try { input.showPicker(); } catch(e) {}
+                }
+            }
+        }
         function validaStatoBuonoForm() {
-            const scadenzaVal = document.getElementById('input-scadenza').value;
+            const inputScadenza = document.getElementById('input-scadenza');
+            const scadenzaVal = inputScadenza.value;
             const selectTitolo = document.getElementById('select-titolo');
             const btnSalva = document.getElementById('btn-salva-buono');
+            
             selectTitolo.disabled = !scadenzaVal;
             if (scadenzaVal && selectTitolo.value) {
                 btnSalva.disabled = false;
@@ -345,8 +356,6 @@
             };
             reader.readAsDataURL(file);
         }
-
-        // OCR POTENZIATO PER INTERVALLI E MESI IN LETTERE + FALLBACK MANUALE
         function estraiDataDaTesto(testo) {
             const linee = testo.split('\n');
             let dateTrovate = [];
@@ -389,46 +398,40 @@
                 }
             });
 
+            const inputScadenza = document.getElementById('input-scadenza');
             if (dateTrovate.length > 0) {
                 const ultimaData = dateTrovate[dateTrovate.length - 1].data;
-                const inputScadenza = document.getElementById('input-scadenza');
+                inputScadenza.type = 'date';
                 inputScadenza.value = ultimaData;
-                inputScadenza.removeAttribute('data-placeholder-manuale');
                 inputScadenza.style.borderColor = '';
-                validaStatoBuonoForm();
+                inputScadenza.style.boxShadow = '';
             } else {
                 fallbackSelezioneManuale();
             }
+            validaStatoBuonoForm();
         }
 
         function fallbackSelezioneManuale() {
             const inputScadenza = document.getElementById('input-scadenza');
+            inputScadenza.type = 'text';
             inputScadenza.value = "";
-            // Imposta lo stile di avviso e il testo esplicito per l'utente
-            inputScadenza.setAttribute('data-placeholder-manuale', 'inseriscila manualmente');
+            inputScadenza.placeholder = "Inseriscila manualmente";
             inputScadenza.style.borderColor = '#dc2626';
             inputScadenza.style.boxShadow = '0 0 0 2px rgba(220, 38, 38, 0.2)';
-            
-            // Sfruttiamo un trucco per mostrare la scritta o forzare l'apertura del calendario al click
-            inputScadenza.onclick = function() {
-                if (typeof inputScadenza.showPicker === 'function') {
-                    try { inputScadenza.showPicker(); } catch(e) {}
-                }
-            };
-
             validaStatoBuonoForm();
         }
 
         function salvaBuono() {
-            const scadenza = document.getElementById('input-scadenza').value;
+            const inputScadenza = document.getElementById('input-scadenza');
+            if (inputScadenza.type === 'text') {
+                inputScadenza.type = 'date';
+            }
+            const scadenza = inputScadenza.value;
             const titolo = document.getElementById('select-titolo').value;
             if (!scadenza || !titolo || !tempFotoBase64) return;
             
-            // Ripristina stili del campo data in caso di salvataggio
-            const inputScadenza = document.getElementById('input-scadenza');
             inputScadenza.style.borderColor = '';
             inputScadenza.style.boxShadow = '';
-            inputScadenza.onclick = null;
 
             const nuovoBuono = {
                 id: Date.now(),
@@ -438,7 +441,9 @@
             };
             db.buoni.push(nuovoBuono);
             document.getElementById('input-foto').value = '';
-            document.getElementById('input-scadenza').value = '';
+            inputScadenza.type = 'text';
+            inputScadenza.value = '';
+            inputScadenza.placeholder = "Inseriscila manualmente";
             document.getElementById('select-titolo').value = '';
             tempFotoBase64 = '';
             validaStatoBuonoForm();
@@ -484,7 +489,7 @@ DTSTART:${dtStart}
 DTEND:${dtEnd}
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Promemoria 1 settimana prima
+DESCRIPTION:Promemoria 1 settimana قبل
 TRIGGER:-P1W
 END:VALARM
 END:VEVENT
