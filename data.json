@@ -1,16 +1,6 @@
 {
   "spesa": [
     {
-      "id": 1786964273050,
-      "nome": "La burra",
-      "completato": false
-    },
-    {
-      "id": 1786964288121,
-      "nome": "latte",
-      "completato": false
-    },
-    {
       "id": 1786966643605,
       "nome": "Frutti rossi per colazione",
       "completato": false
@@ -42,5 +32,24 @@
       "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1786966406283_3zb85o.jpg"
     }
   ],
-  "cestino": []
+  "cestino": [
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1786964273050,
+        "nome": "La burra",
+        "completato": false
+      },
+      "posizioneOriginale": 0
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1786964288121,
+        "nome": "latte",
+        "completato": false
+      },
+      "posizioneOriginale": 0
+    }
+  ]
 }
