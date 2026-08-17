@@ -81,7 +81,7 @@
             <button id="tab-buoni-btn" onclick="cambiaTab('buoni')" class="flex-1 py-2 rounded-lg text-slate-600 transition">🎟️ Buoni</button>
         </div>
 
-        <!-- SEZIONE SPESA (RIPRISTINATA ORIGINALE) -->
+        <!-- SEZIONE SPESA -->
         <section id="tab-spesa" class="space-y-4">
             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex gap-2">
                 <input type="text" id="input-spesa" placeholder="Cosa serve?" class="flex-1 px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm" onkeypress="if(event.key==='Enter') aggiungiSpesa()">
@@ -179,7 +179,6 @@
         let tempFotoBase64 = "";
         let modoSelezioneCestino = false;
 
-        // Inizializzazione da LocalStorage (senza richiesta token)
         document.addEventListener('DOMContentLoaded', () => {
             caricaDatiLocali();
         });
@@ -204,7 +203,6 @@
             localStorage.setItem('spesa_smart_db', JSON.stringify(db));
         }
 
-        // Gestione Tab
         function cambiaTab(tab) {
             const tabSpesaBtn = document.getElementById('tab-spesa-btn');
             const tabBuoniBtn = document.getElementById('tab-buoni-btn');
@@ -224,7 +222,6 @@
             }
         }
 
-        // GESTIONE SPESA (SEMPLIFICATA ORIGINALE)
         function renderizzaSpesa() {
             const ul = document.getElementById('lista-spesa');
             ul.innerHTML = '';
@@ -263,7 +260,6 @@
             salvaDatiLocali();
         }
 
-        // GESTIONE OCR E BUONI
         function validaStatoBuonoForm() {
             const scadenzaVal = document.getElementById('input-scadenza').value;
             const selectTitolo = document.getElementById('select-titolo');
@@ -462,7 +458,6 @@ END:VCALENDAR`;
             salvaDatiLocali();
         }
 
-        // GESTIONE CESTINO UNIFICATO
         function mostraModalCestino() {
             modoSelezioneCestino = false;
             document.getElementById('modal-cestino').classList.remove('hidden');
