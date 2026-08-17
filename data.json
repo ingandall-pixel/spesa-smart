@@ -1,6 +1,11 @@
 {
   "spesa": [
     {
+      "id": 1786980083572,
+      "nome": "Sale fino dispencer",
+      "completato": false
+    },
+    {
       "id": 1786979231588,
       "nome": "Cassetta ascigapiatti",
       "completato": false
@@ -29,11 +34,6 @@
       "id": 1786979212204,
       "nome": "Pepe da macinare",
       "completato": false
-    },
-    {
-      "id": 1786980083572,
-      "nome": "Sale fino dispencer",
-      "completato": true
     }
   ],
   "buoni": [
