@@ -1,6 +1,11 @@
 {
   "spesa": [
     {
+      "id": 1786979212204,
+      "nome": "Pepe da macinare",
+      "completato": false
+    },
+    {
       "id": 1786966678963,
       "nome": "Origano in gambi",
       "completato": false
@@ -23,12 +28,7 @@
     {
       "id": 1786970620258,
       "nome": "Caffè",
-      "completato": true
-    },
-    {
-      "id": 1786979212204,
-      "nome": "Pepe da macinare",
-      "completato": true
+      "completato": false
     }
   ],
   "buoni": [
