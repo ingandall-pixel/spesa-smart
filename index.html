@@ -99,8 +99,8 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1">2. Data di Scadenza</label>
-                    <!-- Avviso esplicito in caso di fallimento OCR -->
-                    <div id="avviso-manuale" class="hidden mb-1.5 p-2 bg-red-50 border border-red-300 rounded-lg text-xs font-semibold text-red-600 items-center gap-1.5 shadow-sm">
+                    <!-- Avviso esplicito in caso di fallimento OCR (gestito via style.display per sicurezza) -->
+                    <div id="avviso-manuale" style="display: none;" class="mb-1.5 p-2 bg-red-50 border border-red-300 rounded-lg text-xs font-semibold text-red-600 items-center gap-1.5 shadow-sm">
                         <span>⚠️</span> <span>OCR non riuscito: inseriscila manualmente</span>
                     </div>
                     <!-- Campo data nativo -->
@@ -308,9 +308,7 @@
             selectTitolo.disabled = !isValido;
             
             if (isValido) {
-                // Nasconde l'avviso e rimuove il bordo rosso se la data è compilata
-                avviso.classList.add('hidden');
-                avviso.classList.remove('flex');
+                avviso.style.display = 'none';
                 inputScadenza.classList.remove('border-red-500', 'bg-red-50');
                 inputScadenza.classList.add('border-slate-300');
             }
@@ -411,8 +409,7 @@
             if (dateTrovate.length > 0) {
                 const ultimaData = dateTrovate[dateTrovate.length - 1].data;
                 inputScadenza.value = ultimaData;
-                avviso.classList.add('hidden');
-                avviso.classList.remove('flex');
+                avviso.style.display = 'none';
                 inputScadenza.classList.remove('border-red-500', 'bg-red-50');
                 inputScadenza.classList.add('border-slate-300');
             } else {
@@ -425,9 +422,8 @@
             const inputScadenza = document.getElementById('input-scadenza');
             inputScadenza.value = "";
             const avviso = document.getElementById('avviso-manuale');
-            // Mostra correttamente l'avviso e illumina il campo data
-            avviso.classList.remove('hidden');
-            avviso.classList.add('flex');
+            // Mostra esplicitamente l'avviso via flex style e illumina il campo data
+            avviso.style.display = 'flex';
             inputScadenza.classList.remove('border-slate-300');
             inputScadenza.classList.add('border-red-500', 'bg-red-50');
             validaStatoBuonoForm();
@@ -449,8 +445,7 @@
             document.getElementById('input-foto').value = '';
             inputScadenza.value = '';
             const avviso = document.getElementById('avviso-manuale');
-            avviso.classList.add('hidden');
-            avviso.classList.remove('flex');
+            avviso.style.display = 'none';
             inputScadenza.classList.remove('border-red-500', 'bg-red-50');
             inputScadenza.classList.add('border-slate-300');
             document.getElementById('select-titolo').value = '';
