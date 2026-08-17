@@ -186,7 +186,7 @@
         };
         let tempFotoBase64 = "";
         let modoSelezioneCestino = false;
-        let eventoInCorso = null; // Memorizza temporaneamente il buono per il calendario
+        let eventoInCorso = null; 
         document.addEventListener('DOMContentLoaded', () => {
             caricaDatiLocali();
         });
@@ -211,7 +211,6 @@
         }
         function pulisciDuplicatiCestino() {
             if (!db.cestino || db.cestino.length === 0) return;
-            
             const cestinoUnico = [];
             db.cestino.forEach(item => {
                 const nomeItem = item.tipo === 'spesa' ? item.data.nome : item.data.titolo;
@@ -242,7 +241,6 @@
                 tabBuoniBtn.className = "flex-1 py-2 rounded-lg text-slate-600 transition";
             }
         }
-        // SPESA CON BARRATURA
         function renderizzaSpesa() {
             const ul = document.getElementById('lista-spesa');
             ul.innerHTML = '';
@@ -253,7 +251,6 @@
             db.spesa.forEach((item, index) => {
                 const li = document.createElement('li');
                 li.className = "py-2.5 flex justify-between items-center text-sm border-b border-slate-100 last:border-0";
-                
                 const completato = !!item.completato;
                 const stileTesto = completato 
                     ? "line-through text-slate-400 italic flex-1 cursor-pointer select-none" 
@@ -308,7 +305,6 @@
                 btnSalva.className = "w-full py-2 bg-slate-300 text-slate-500 font-semibold rounded-lg text-sm transition disabled:cursor-not-allowed";
             }
         }
-        // COMPRESSIONE FOTO PER EVITARE PUNTO DI DOMANDA BLU
         function gestisciFoto(input) {
             if (!input.files || !input.files[0]) return;
             const file = input.files[0];
@@ -340,6 +336,7 @@
                         estraiDataDaTesto(ret.data.text);
                     } catch (err) {
                         console.error("Errore OCR:", err);
+                        fallbackSelezioneManuale();
                     } finally {
                         document.getElementById('ocr-loading').classList.add('hidden');
                     }
@@ -348,34 +345,73 @@
             };
             reader.readAsDataURL(file);
         }
-        // ESTRAZIONE DATA POTENZIATA
+        // OCR POTENZIATO PER INTERVALLI E MESI IN LETTERE + FALLBACK MANUALE
         function estraiDataDaTesto(testo) {
             const linee = testo.split('\n');
             let dateTrovate = [];
-            const rxData = /(\d{1,2})[\/\-\.]\s*(\d{1,2})[\/\-\.]\s*(\d{2,4})/g;
+            
+            const mesiMap = {
+                'gennaio': '01', 'febbraio': '02', 'marzo': '03', 'aprile': '04', 
+                'maggio': '05', 'giugno': '06', 'luglio': '07', 'agosto': '08', 
+                'settembre': '09', 'ottobre': '10', 'novembre': '11', 'dicembre': '12'
+            };
+
+            const rxDataNumerica = /(\d{1,2})[\/\-\.]\s*(\d{1,2})[\/\-\.]\s*(\d{2,4})/g;
+            const rxDataLettere = new RegExp(`(\\d{1,2})\\s*(?:°)?\\s*(${Object.keys(mesiMap).join('|')})\\s*(?:del)?\\s*(\\d{2,4})?`, 'gi');
+
             linee.forEach(linea => {
                 const low = linea.toLowerCase().replace(/\s+/g, ' ');
                 let match;
-                const paroleChiave = ['offerta valida fino al', 'valida fino al', 'valido fino al', 'scadenza', 'scade il', 'fino al'];
-                const haParolaChiave = paroleChiave.some(p => low.includes(p));
-                while ((match = rxData.exec(linea)) !== null) {
+                
+                // Cerca date in formato numerico es. 30/08/2026
+                while ((match = rxDataNumerica.exec(linea)) !== null) {
                     let giorno = match[1].padStart(2, '0');
                     let mese = match[2].padStart(2, '0');
                     let anno = match[3];
                     if (anno.length === 2) anno = '20' + anno;
-                    const dataFormatted = `${anno}-${mese}-${giorno}`;
-                    if (haParolaChiave) {
-                        dateTrovate.unshift(dataFormatted);
-                    } else {
-                        dateTrovate.push(dataFormatted);
+                    dateTrovate.push({ data: `${anno}-${mese}-${giorno}`, index: rxDataNumerica.lastIndex });
+                }
+
+                // Cerca date con mesi in lettere es. "30 agosto 2026" o "30 agosto"
+                let matchLettere;
+                while ((matchLettere = rxDataLettere.exec(low)) !== null) {
+                    let giorno = matchLettere[1].padStart(2, '0');
+                    let meseStr = matchLettere[2].toLowerCase();
+                    let mese = mesiMap[meseStr];
+                    let anno = matchLettere[3];
+                    if (!anno) {
+                        anno = new Date().getFullYear().toString(); // Anno corrente di default se omesso
+                    } else if (anno.length === 2) {
+                        anno = '20' + anno;
+                    }
+                    if (mese) {
+                        dateTrovate.push({ data: `${anno}-${mese}-${giorno}`, index: rxDataLettere.lastIndex });
                     }
                 }
             });
+
             if (dateTrovate.length > 0) {
-                document.getElementById('input-scadenza').value = dateTrovate[0];
+                // Se c'è un intervallo (es. "dal 4 giugno al 30 agosto"), prendiamo l'ultima data rilevata nella frase/testo che corrisponde alla scadenza finale
+                const ultimaData = dateTrovate[dateTrovate.length - 1].data;
+                document.getElementById('input-scadenza').value = ultimaData;
+                validaStatoBuonoForm();
+            } else {
+                // FALLBACK: Se non trova alcuna data, attiva il selettore manuale con avviso
+                fallbackSelezioneManuale();
+            }
+        }
+
+        function fallbackSelezioneManuale() {
+            alert("⚠️ Data non rilevata automaticamente.\nSi aprirà il calendario per selezionare la scadenza manualmente.");
+            const inputScadenza = document.getElementById('input-scadenza');
+            inputScadenza.focus();
+            // Tenta di aprire direttamente il picker nativo se supportato dal browser mobile
+            if (typeof inputScadenza.showPicker === 'function') {
+                try { inputScadenza.showPicker(); } catch(e) {}
             }
             validaStatoBuonoForm();
         }
+
         function salvaBuono() {
             const scadenza = document.getElementById('input-scadenza').value;
             const titolo = document.getElementById('select-titolo').value;
@@ -394,7 +430,6 @@
             validaStatoBuonoForm();
             renderizzaBuoni();
             salvaDatiLocali();
-            // Apre il modal di scelta utente
             apriModalUtente(titolo, scadenza);
         }
         function apriModalUtente(titolo, scadenza) {
@@ -412,14 +447,12 @@
             const { titolo, scadenza } = eventoInCorso;
             chiudiModalUtente();
             if (utente === 'andrea') {
-                // Avviso per evitare la spunta blu iOS
                 alert("ℹ️ NOTA PER IPHONE:\n\nNella schermata che si aprirà, premi in basso su 'Aggiungi al calendario'.\n\nNON cliccare sulla spunta blu in alto a destra, altrimenti l'evento NON verrà salvato!");
                 generaEventoICS(titolo, scadenza);
             } else if (utente === 'valeria') {
                 apriGoogleCalendarWeb(titolo, scadenza);
             }
         }
-        // GENERAZIONE FILE ICS PER ANDREA (Impostato a 1 settimana prima nativa)
         function generaEventoICS(titolo, dataIso) {
             const dataPura = dataIso.replace(/-/g, '');
             const titoloEvento = `Scade buono - ${titolo}`;
@@ -450,7 +483,6 @@ END:VCALENDAR`;
             link.click();
             document.body.removeChild(link);
         }
-        // APERTURA GOOGLE CALENDAR WEB PER VALERIA
         function apriGoogleCalendarWeb(titolo, dataIso) {
             const dataPura = dataIso.replace(/-/g, '');
             const dtStart = `${dataPura}T083000`;
@@ -506,7 +538,6 @@ END:VCALENDAR`;
                 container.appendChild(card);
             });
         }
-        // GESTIONE MODAL ZOOM FOTO
         function apriModalFoto(src) {
             document.getElementById('img-modal-full').src = src;
             document.getElementById('modal-foto').classList.remove('hidden');
@@ -600,7 +631,7 @@ END:VCALENDAR`;
             const chks = Array.from(document.querySelectorAll('.chk-cestino:checked'));
             if (chks.length === 0) return;
             const indiciDaRipristinare = chks.map(c => parseInt(c.getAttribute('data-idx'))).sort((a, b) => b - a);
-            indiciDaRipristinare.externforEach = indiciDaRipristinare.forEach(idx => {
+            indiciDaRipristinare.forEach(idx => {
                 const elemento = db.cestino.splice(idx, 1)[0];
                 if (elemento.tipo === 'spesa') {
                     const pos = typeof elemento.posizioneOriginale === 'number' ? elemento.posizioneOriginale : db.spesa.length;
