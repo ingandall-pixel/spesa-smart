@@ -13,6 +13,12 @@
   ],
   "buoni": [
     {
+      "id": 1786966443358,
+      "titolo": "Altro",
+      "scadenza": "2026-09-09",
+      "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1786966441634_yom3lu.jpg"
+    },
+    {
       "id": 1786966253931,
       "titolo": "Altro",
       "scadenza": "2026-09-16",
