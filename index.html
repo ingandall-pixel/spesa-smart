@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Spesa Smart">
-    <link rel="apple-touch-icon" href="images/icon.png?v=7">
+    <link rel="apple-touch-icon" href="images/icon.png?v=8">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
@@ -222,7 +222,7 @@
             }
         }
 
-        // GESTIONE SPESA CON TOGGLE BARRA/GRIGIO STILE GOOGLE KEEP
+        // BARRATURA ED ELIMINAZIONE
         function renderizzaSpesa() {
             const ul = document.getElementById('lista-spesa');
             ul.innerHTML = '';
@@ -234,15 +234,18 @@
 
             db.spesa.forEach((item, index) => {
                 const li = document.createElement('li');
-                li.className = "py-2.5 flex justify-between items-center text-sm select-none cursor-pointer";
+                li.className = "py-2.5 flex justify-between items-center text-sm border-b border-slate-50 last:border-0";
                 
                 const completato = item.completato || false;
                 const stileTesto = completato 
-                    ? "line-through text-slate-400 italic flex-1" 
-                    : "font-medium text-slate-700 flex-1";
+                    ? "line-through text-slate-400 italic cursor-pointer flex-1 select-none" 
+                    : "font-medium text-slate-700 cursor-pointer flex-1 select-none";
 
                 li.innerHTML = `
-                    <span onclick="toggleStatoSpesa(${index})" class="${stileTesto}">${item.nome}</span>
+                    <div class="flex items-center gap-3 flex-1">
+                        <input type="checkbox" ${completato ? 'checked' : ''} onchange="toggleStatoSpesa(${index})" class="w-4 h-4 text-indigo-600 rounded cursor-pointer">
+                        <span onclick="toggleStatoSpesa(${index})" class="${stileTesto}">${item.nome}</span>
+                    </div>
                     <button onclick="eliminaSpesa(${index})" class="text-slate-400 hover:text-red-600 transition px-2 py-1 ml-2">🗑️</button>
                 `;
                 ul.appendChild(li);
@@ -425,7 +428,6 @@ END:VCALENDAR`;
                 return;
             }
 
-            // Ordina i buoni per data di scadenza crescente
             db.buoni.sort((a, b) => new Date(a.scadenza) - new Date(b.scadenza));
 
             const oggi = new Date();
