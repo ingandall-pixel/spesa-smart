@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Spesa Smart">
-    <link rel="apple-touch-icon" href="images/icon.png?v=15">
+    <link rel="apple-touch-icon" href="images/icon.png?v=16">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
     <style>
@@ -323,7 +323,7 @@
                 renderizzaBuoni();
             }
         }
-        async function salvaDatiRemoti() {
+        async function salvaDatiRemoti(tentativi = 2) {
             mostraNotificaSync("Salvataggio su GitHub...");
             try {
                 let sha = null;
@@ -339,7 +339,28 @@
                     branch: BRANCH
                 };
                 if (sha) body.sha = sha;
-                await githubApiRequest('data.json', 'PUT', body);
+
+                const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data.json`;
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                // Gestione automatica errore 409 (Conflict SHA)
+                if (response.status === 409 && tentativi > 1) {
+                    nascondiNotificaSync();
+                    return await salvaDatiRemoti(tentativi - 1);
+                }
+
+                if (!response.ok) {
+                    const errText = await response.text();
+                    throw new Error(`Errore GitHub API (${response.status}): ${errText}`);
+                }
             } catch (e) {
                 console.error("Errore salvataggio dati:", e);
                 alert("Errore GitHub: " + e.message);
@@ -436,16 +457,16 @@
                     ? "line-through text-slate-400 italic flex-1 cursor-pointer select-none" 
                     : "font-medium text-slate-700 flex-1 cursor-pointer select-none";
 
-                // Condizioni per abilitare le frecce di spostamento
+                // Condizioni per abilitare i pulsanti freccia (▲ e ▼)
                 const puoSalire = index > 0 && !completato && !db.spesa[index - 1].completato;
                 const puoScendere = index < db.spesa.length - 1 && !completato && !db.spesa[index + 1].completato;
 
-                const btnSu = `<button onclick="spostaSpesa(${index}, -1)" ${puoSalire ? '' : 'disabled'} class="text-slate-400 ${puoSalire ? 'hover:text-slate-700 cursor-pointer' : 'opacity-20 cursor-not-allowed'} p-0.5 text-xs font-bold leading-none" title="Sposta su">⬆️</button>`;
-                const btnGiu = `<button onclick="spostaSpesa(${index}, 1)" ${puoScendere ? '' : 'disabled'} class="text-slate-400 ${puoScendere ? 'hover:text-slate-700 cursor-pointer' : 'opacity-20 cursor-not-allowed'} p-0.5 text-xs font-bold leading-none" title="Sposta giù">⬇️</button>`;
+                const btnSu = `<button onclick="spostaSpesa(${index}, -1)" ${puoSalire ? '' : 'disabled'} class="px-1.5 py-0.5 text-xs font-bold rounded ${puoSalire ? 'bg-slate-200 hover:bg-slate-300 text-slate-700 cursor-pointer' : 'bg-slate-100 text-slate-300 cursor-not-allowed'}" title="Sposta su">▲</button>`;
+                const btnGiu = `<button onclick="spostaSpesa(${index}, 1)" ${puoScendere ? '' : 'disabled'} class="px-1.5 py-0.5 text-xs font-bold rounded ${puoScendere ? 'bg-slate-200 hover:bg-slate-300 text-slate-700 cursor-pointer' : 'bg-slate-100 text-slate-300 cursor-not-allowed'}" title="Sposta giù">▼</button>`;
 
                 li.innerHTML = `
-                    <div class="flex items-center gap-2 flex-1 min-w-0">
-                        <div class="flex flex-col shrink-0">
+                    <div class="flex items-center gap-2.5 flex-1 min-w-0">
+                        <div class="flex flex-col gap-0.5 shrink-0">
                             ${btnSu}
                             ${btnGiu}
                         </div>
