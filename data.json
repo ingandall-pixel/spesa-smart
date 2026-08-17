@@ -1,11 +1,6 @@
 {
   "spesa": [
     {
-      "id": 1786979231588,
-      "nome": "Cassetta ascigapiatti",
-      "completato": false
-    },
-    {
       "id": 1786979212204,
       "nome": "Pepe da macinare",
       "completato": false
@@ -29,6 +24,11 @@
       "id": 1786970620258,
       "nome": "Caffè",
       "completato": false
+    },
+    {
+      "id": 1786979231588,
+      "nome": "Cassetta ascigapiatti",
+      "completato": true
     }
   ],
   "buoni": [
