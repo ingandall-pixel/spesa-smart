@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Spesa Smart">
-    <link rel="apple-touch-icon" href="images/icon.png?v=5">
+    <link rel="apple-touch-icon" href="images/icon.png?v=6">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
@@ -222,6 +222,7 @@
             }
         }
 
+        // GESTIONE SPESA CON TOGGLE BARRA/GRIGIO STILE GOOGLE KEEP
         function renderizzaSpesa() {
             const ul = document.getElementById('lista-spesa');
             ul.innerHTML = '';
@@ -233,13 +234,25 @@
 
             db.spesa.forEach((item, index) => {
                 const li = document.createElement('li');
-                li.className = "py-2.5 flex justify-between items-center text-sm";
+                li.className = "py-2.5 flex justify-between items-center text-sm select-none cursor-pointer";
+                
+                const completato = item.completato || false;
+                const stileTesto = completato 
+                    ? "line-through text-slate-400 italic flex-1" 
+                    : "font-medium text-slate-700 flex-1";
+
                 li.innerHTML = `
-                    <span class="font-medium text-slate-700">${item.nome}</span>
-                    <button onclick="eliminaSpesa(${index})" class="text-slate-400 hover:text-red-600 transition px-2 py-1">🗑️</button>
+                    <span onclick="toggleStatoSpesa(${index})" class="${stileTesto}">${item.nome}</span>
+                    <button onclick="eliminaSpesa(${index})" class="text-slate-400 hover:text-red-600 transition px-2 py-1 ml-2">🗑️</button>
                 `;
                 ul.appendChild(li);
             });
+        }
+
+        function toggleStatoSpesa(index) {
+            db.spesa[index].completato = !db.spesa[index].completato;
+            renderizzaSpesa();
+            salvaDatiLocali();
         }
 
         function aggiungiSpesa() {
@@ -247,7 +260,7 @@
             const nome = input.value.trim();
             if (!nome) return;
 
-            db.spesa.push({ id: Date.now(), nome });
+            db.spesa.push({ id: Date.now(), nome: nome, completato: false });
             input.value = '';
             renderizzaSpesa();
             salvaDatiLocali();
