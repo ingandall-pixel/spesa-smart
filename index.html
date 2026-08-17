@@ -140,6 +140,14 @@
 
     </main>
 
+    <!-- Modal Ingrandimento Foto (Zoom) -->
+    <div id="modal-foto" class="fixed inset-0 bg-black/90 hidden z-50 flex items-center justify-center p-2">
+        <button onclick="chiudiModalFoto()" class="absolute top-4 right-4 bg-white/20 hover:bg-white/40 text-white rounded-full w-10 h-10 flex items-center justify-center text-2xl font-bold transition z-50">
+            ✕
+        </button>
+        <img id="img-modal-full" src="" class="max-w-full max-h-full object-contain rounded-lg">
+    </div>
+
     <!-- Modal Cestino -->
     <div id="modal-cestino" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[85vh] flex flex-col overflow-hidden">
@@ -334,7 +342,6 @@
             reader.onload = function (e) {
                 const img = new Image();
                 img.onload = async function() {
-                    // Ridimensiona immagine a max 800px per risparmiare memoria
                     const canvas = document.createElement('canvas');
                     let width = img.width;
                     let height = img.height;
@@ -373,12 +380,11 @@
             reader.readAsDataURL(file);
         }
 
-        // ESTRAZIONE DATA POTENZIATA (Supporta "offerta valida fino al", punti, barre e spazi)
+        // ESTRAZIONE DATA POTENZIATA
         function estraiDataDaTesto(testo) {
             const linee = testo.split('\n');
             let dateTrovate = [];
 
-            // Regex flessibile per date tipo 05/09/2026, 05.09.2026, 05 - 09 - 2026
             const rxData = /(\d{1,2})[\/\-\.]\s*(\d{1,2})[\/\-\.]\s*(\d{2,4})/g;
 
             linee.forEach(linea => {
@@ -397,7 +403,7 @@
                     const dataFormatted = `${anno}-${mese}-${giorno}`;
 
                     if (haParolaChiave) {
-                        dateTrovate.unshift(dataFormatted); // Priorità massima
+                        dateTrovate.unshift(dataFormatted);
                     } else {
                         dateTrovate.push(dataFormatted);
                     }
@@ -435,21 +441,18 @@
             renderizzaBuoni();
             salvaDatiLocali();
 
-            // Apri automaticamente il calendario senza chiedere compilazioni
             apriCalendarioDiretto(titolo, scadenza);
         }
 
-        // APERTURA DIRETTA CALENDARIO PRE-COMPILATO
+        // APERTURA DIRETTA CALENDARIO CON PROMEMORIA A 7 GIORNI
         function apriCalendarioDiretto(titolo, dataIso) {
             const dataPura = dataIso.replace(/-/g, '');
-            const dataInizio = `${dataPura}T080000Z`;
-            const dataFine = `${dataPura}T090000Z`;
-            const testoEvento = encodeURIComponent(`Scadenza buono - ${titolo}`);
-            const dettagli = encodeURIComponent(`Ricordati di usare il buono spesa ${titolo} entro oggi!`);
-
-            const urlGoogleCalendar = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${testoEvento}&dates=${dataInizio}/${dataFine}&details=${dettagli}`;
+            const testoEvento = encodeURIComponent(`🚨 SCADENZA BUONO: ${titolo}`);
+            const dettagli = encodeURIComponent(`Ricordati di utilizzare il buono spesa "${titolo}" prima della scadenza!`);
             
-            window.open(urlGoogleCalendar, '_blank');
+            const urlGoogleCalendar = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${testoEvento}&dates=${dataPura}/${dataPura}&details=${dettagli}&add=7d`;
+            
+            window.open(urlGoogleCalendar, '_blank', 'noopener,noreferrer');
         }
 
         function renderizzaBuoni() {
@@ -473,7 +476,7 @@
                 const diffGiorni = Math.ceil((dataScad - oggi) / (1000 * 60 * 60 * 24));
 
                 let cardClass = "bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden relative flex flex-col";
-                let imgClass = "w-full h-48 object-cover";
+                let imgClass = "w-full h-48 object-cover cursor-pointer";
                 let mostraTimbroScaduto = false;
 
                 if (diffGiorni < 0) {
@@ -486,9 +489,9 @@
                 const card = document.createElement('div');
                 card.className = cardClass;
                 card.innerHTML = `
-                    <div class="relative">
+                    <div class="relative cursor-pointer" onclick="apriModalFoto('${buono.foto}')">
                         <img src="${buono.foto}" class="${imgClass}">
-                        ${mostraTimbroScaduto ? '<div class="absolute inset-0 flex items-center justify-center"><div class="military-stamp">SCADUTO</div></div>' : ''}
+                        ${mostraTimbroScaduto ? '<div class="absolute inset-0 flex items-center justify-center pointer-events-none"><div class="military-stamp">SCADUTO</div></div>' : ''}
                     </div>
                     <div class="p-3 flex justify-between items-center bg-white">
                         <div>
@@ -505,6 +508,17 @@
                 `;
                 container.appendChild(card);
             });
+        }
+
+        // GESTIONE MODAL ZOOM FOTO
+        function apriModalFoto(src) {
+            document.getElementById('img-modal-full').src = src;
+            document.getElementById('modal-foto').classList.remove('hidden');
+        }
+
+        function chiudiModalFoto() {
+            document.getElementById('modal-foto').classList.add('hidden');
+            document.getElementById('img-modal-full').src = '';
         }
 
         function eliminaBuono(index) {
