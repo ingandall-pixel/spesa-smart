@@ -60,11 +60,17 @@
     <header class="bg-indigo-600 text-white shadow-md sticky top-0 z-10">
         <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
             <h1 class="text-xl font-bold tracking-wide">Spesa-Smart 🛒</h1>
-            <button onclick="mostraModalCestino()" class="text-sm bg-indigo-700 hover:bg-indigo-800 px-3 py-1.5 rounded-lg flex items-center gap-1 transition">
-                🗑️ Cestino
-            </button>
+            <div class="flex items-center gap-1.5">
+                <button onclick="apriModalConfig()" class="text-xs bg-indigo-700 hover:bg-indigo-800 px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition">
+                    ⚙️ Config
+                </button>
+                <button onclick="mostraModalCestino()" class="text-xs bg-indigo-700 hover:bg-indigo-800 px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition">
+                    🗑️ Cestino
+                </button>
+            </div>
         </div>
     </header>
+
     <!-- Main Container -->
     <main class="max-w-md mx-auto p-4 space-y-4">
         <!-- Navigation Tabs -->
@@ -72,6 +78,7 @@
             <button id="tab-spesa-btn" onclick="cambiaTab('spesa')" class="flex-1 py-2 rounded-lg bg-white shadow-sm text-indigo-600 transition">📝 Spesa</button>
             <button id="tab-buoni-btn" onclick="cambiaTab('buoni')" class="flex-1 py-2 rounded-lg text-slate-600 transition">🎟️ Buoni</button>
         </div>
+
         <!-- SEZIONE SPESA -->
         <section id="tab-spesa" class="space-y-4">
             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex gap-2">
@@ -80,10 +87,11 @@
             </div>
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
                 <ul id="lista-spesa" class="divide-y divide-slate-100">
-                    <li class="py-3 text-center text-slate-400 text-sm">Nessun articolo presente.</li>
+                    <li class="py-3 text-center text-slate-400 text-sm">In attesa di configurazione...</li>
                 </ul>
             </div>
         </section>
+
         <!-- SEZIONE BUONI -->
         <section id="tab-buoni" class="space-y-4 hidden">
             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-3">
@@ -99,11 +107,9 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1">2. Data di Scadenza</label>
-                    <!-- Avviso esplicito in caso di fallimento OCR (gestito via style.display per sicurezza) -->
                     <div id="avviso-manuale" style="display: none;" class="mb-1.5 p-2 bg-red-50 border border-red-300 rounded-lg text-xs font-semibold text-red-600 items-center gap-1.5 shadow-sm">
                         <span>⚠️</span> <span>OCR non riuscito: inseriscila manualmente</span>
                     </div>
-                    <!-- Campo data nativo -->
                     <input type="date" id="input-scadenza" onchange="validaStatoBuonoForm()" class="w-full px-3 py-2 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm bg-white">
                 </div>
                 <div>
@@ -123,10 +129,42 @@
                 </button>
             </div>
             <div id="lista-buoni" class="space-y-4">
-                <div class="text-center text-slate-400 text-sm py-4">Nessun buono salvato.</div>
+                <div class="text-center text-slate-400 text-sm py-4">In attesa di configurazione...</div>
             </div>
         </section>
     </main>
+
+    <!-- Indicatore Sincronizzazione GitHub -->
+    <div id="sync-indicator" style="display: none;" class="fixed bottom-4 right-4 bg-slate-900 text-white text-xs px-3 py-1.5 rounded-full shadow-lg z-50 flex items-center gap-2">
+        <span class="animate-spin">🔄</span> <span id="sync-text">Sincronizzazione...</span>
+    </div>
+
+    <!-- Modal Configurazione Credenziali GitHub -->
+    <div id="modal-config" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5 space-y-4">
+            <h3 class="text-lg font-bold text-slate-800 text-center">⚙️ Configurazione GitHub</h3>
+            <p class="text-xs text-slate-500 text-center">Inserisci i dati del tuo repository per collegare l'app e salvare dati e immagini.</p>
+            <div class="space-y-3 pt-1">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">GitHub Personal Token</label>
+                    <input type="password" id="conf-token" placeholder="ghp_xxxxxxxxxxxx" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Proprietario Repository (User)</label>
+                    <input type="text" id="conf-owner" placeholder="es. ingandall" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Nome Repository</label>
+                    <input type="text" id="conf-repo" placeholder="es. spesa-smart" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button onclick="salvaConfigurazione()" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm transition">Salva e Connetti</button>
+                <button onclick="chiudiModalConfig()" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-xl text-sm transition">Annulla</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Ingrandimento Foto (Zoom) -->
     <div id="modal-foto" class="fixed inset-0 bg-black/90 hidden z-50 flex items-center justify-center p-2">
         <button onclick="chiudiModalFoto()" class="absolute top-4 right-4 bg-white/20 hover:bg-white/40 text-white rounded-full w-10 h-10 flex items-center justify-center text-2xl font-bold transition z-50">
@@ -134,12 +172,12 @@
         </button>
         <img id="img-modal-full" src="" class="max-w-full max-h-full object-contain rounded-lg">
     </div>
-    <!-- Modal Selezione Utente Calendario (Andrea vs Valeria) -->
+
+    <!-- Modal Selezione Utente Calendario -->
     <div id="modal-utente-cal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5 space-y-4 text-center">
             <h3 class="text-lg font-bold text-slate-800">📅 Aggiungi al Calendario</h3>
             <p class="text-xs text-slate-500">Seleziona chi sta aggiungendo il promemoria:</p>
-            
             <div class="space-y-2 pt-2">
                 <button onclick="selezionaUtenteCalendario('andrea')" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm transition flex items-center justify-center gap-2">
                     👤 Sono Andrea (iPhone / iOS)
@@ -151,6 +189,7 @@
             <button onclick="chiudiModalUtente()" class="text-xs text-slate-400 hover:text-slate-600 font-medium pt-2">Annulla</button>
         </div>
     </div>
+
     <!-- Modal Cestino -->
     <div id="modal-cestino" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[85vh] flex flex-col overflow-hidden">
@@ -158,7 +197,6 @@
                 <h3 class="font-bold text-slate-800">🗑️ Cestino</h3>
                 <button onclick="chiudiModalCestino()" class="text-slate-400 hover:text-slate-600 text-lg font-bold">&times;</button>
             </div>
-            
             <div class="p-4 overflow-y-auto flex-1 divide-y divide-slate-100" id="contenuto-cestino">
                 <p class="text-center text-slate-400 text-sm py-4">Il cestino è vuoto.</p>
             </div>
@@ -182,8 +220,14 @@
             </div>
         </div>
     </div>
-    <!-- Script App -->
+
+    <!-- Script App & GitHub API Integration -->
     <script>
+        let GITHUB_TOKEN = "";
+        let REPO_OWNER = "";
+        let REPO_NAME = "";
+        const BRANCH = "main";
+
         let db = {
             spesa: [],
             buoni: [],
@@ -192,28 +236,191 @@
         let tempFotoBase64 = "";
         let modoSelezioneCestino = false;
         let eventoInCorso = null; 
+
         document.addEventListener('DOMContentLoaded', () => {
-            caricaDatiLocali();
+            caricaConfigurazioni();
         });
-        function caricaDatiLocali() {
-            const salvati = localStorage.getItem('spesa_smart_db');
-            if (salvati) {
-                try {
-                    db = JSON.parse(salvati);
-                } catch(e) {
-                    console.error("Errore lettura local data");
-                }
+
+        function caricaConfigurazioni() {
+            GITHUB_TOKEN = localStorage.getItem('gh_token') || "";
+            REPO_OWNER = localStorage.getItem('gh_owner') || "ingandall";
+            REPO_NAME = localStorage.getItem('gh_repo') || "";
+
+            if (!GITHUB_TOKEN || !REPO_NAME) {
+                apriModalConfig();
+            } else {
+                caricaDatiRemoti();
             }
-            if(!db.spesa) db.spesa = [];
-            if(!db.buoni) db.buoni = [];
-            if(!db.cestino) db.cestino = [];
-            pulisciDuplicatiCestino();
-            renderizzaSpesa();
-            renderizzaBuoni();
         }
-        function salvaDatiLocali() {
-            localStorage.setItem('spesa_smart_db', JSON.stringify(db));
+
+        function apriModalConfig() {
+            document.getElementById('conf-token').value = GITHUB_TOKEN;
+            document.getElementById('conf-owner').value = REPO_OWNER;
+            document.getElementById('conf-repo').value = REPO_NAME;
+            document.getElementById('modal-config').classList.remove('hidden');
+            document.getElementById('modal-config').classList.add('flex');
         }
+
+        function chiudiModalConfig() {
+            if (!GITHUB_TOKEN || !REPO_NAME) {
+                alert("È necessario configurare le credenziali per utilizzare l'applicazione.");
+                return;
+            }
+            document.getElementById('modal-config').classList.add('hidden');
+            document.getElementById('modal-config').classList.remove('flex');
+        }
+
+        function salvaConfigurazione() {
+            const token = document.getElementById('conf-token').value.trim();
+            const owner = document.getElementById('conf-owner').value.trim();
+            const repo = document.getElementById('conf-repo').value.trim();
+
+            if (!token || !owner || !repo) {
+                alert("Tutti i campi sono obbligatori!");
+                return;
+            }
+
+            localStorage.setItem('gh_token', token);
+            localStorage.setItem('gh_owner', owner);
+            localStorage.setItem('gh_repo', repo);
+
+            GITHUB_TOKEN = token;
+            REPO_OWNER = owner;
+            REPO_NAME = repo;
+
+            document.getElementById('modal-config').classList.add('hidden');
+            document.getElementById('modal-config').classList.remove('flex');
+
+            caricaDatiRemoti();
+        }
+
+        function mostraNotificaSync(testo) {
+            const ind = document.getElementById('sync-indicator');
+            document.getElementById('sync-text').innerText = testo;
+            ind.style.display = 'flex';
+        }
+
+        function nascondiNotificaSync() {
+            document.getElementById('sync-indicator').style.display = 'none';
+        }
+
+        async function githubApiRequest(endpoint, method = 'GET', body = null) {
+            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${endpoint}`;
+            const headers = {
+                'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                'Accept': 'application/vnd.github+json',
+                'Content-Type': 'application/json'
+            };
+            const options = { method, headers };
+            if (body) options.body = JSON.stringify(body);
+            
+            const response = await fetch(url, options);
+            if (response.status === 404 && method === 'GET') {
+                return null;
+            }
+            if (!response.ok) {
+                const errText = await response.text();
+                throw new Error(`Errore GitHub API (${response.status}): ${errText}`);
+            }
+            return response.json();
+        }
+
+        async function caricaDatiRemoti() {
+            mostraNotificaSync("Caricamento da GitHub...");
+            try {
+                const data = await githubApiRequest('data.json', 'GET');
+                if (data && data.content) {
+                    const jsonString = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
+                    db = JSON.parse(jsonString);
+                } else {
+                    db = { spesa: [], buoni: [], cestino: [] };
+                }
+            } catch (e) {
+                console.error("Errore caricamento dati:", e);
+                alert("Impossibile connettersi a GitHub. Verifica il Token e il nome del repository dal pulsante Config.");
+                db = { spesa: [], buoni: [], cestino: [] };
+                apriModalConfig();
+            } finally {
+                nascondiNotificaSync();
+                pulisciDuplicatiCestino();
+                renderizzaSpesa();
+                renderizzaBuoni();
+            }
+        }
+
+        async function salvaDatiRemoti() {
+            mostraNotificaSync("Salvataggio su GitHub...");
+            try {
+                let sha = null;
+                const existing = await githubApiRequest('data.json', 'GET');
+                if (existing && existing.sha) {
+                    sha = existing.sha;
+                }
+
+                const jsonString = JSON.stringify(db, null, 2);
+                const contentBase64 = btoa(unescape(encodeURIComponent(jsonString)));
+
+                const body = {
+                    message: "Aggiornamento dati Spesa Smart",
+                    content: contentBase64,
+                    branch: BRANCH
+                };
+                if (sha) body.sha = sha;
+
+                await githubApiRequest('data.json', 'PUT', body);
+            } catch (e) {
+                console.error("Errore salvataggio dati:", e);
+                alert("Errore di sincronizzazione con GitHub.");
+            } finally {
+                nascondiNotificaSync();
+            }
+        }
+
+        async function caricaImmagineSuGitHub(base64DataUrl) {
+            mostraNotificaSync("Caricamento foto in images/...");
+            try {
+                const base64Content = base64DataUrl.split(',')[1];
+                const filename = `buono_${Date.now()}.jpg`;
+                const path = `images/${filename}`;
+
+                const body = {
+                    message: `Aggiunta foto buono ${filename}`,
+                    content: base64Content,
+                    branch: BRANCH
+                };
+
+                await githubApiRequest(path, 'PUT', body);
+                return `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/images/${filename}`;
+            } catch (e) {
+                console.error("Errore caricamento immagine:", e);
+                alert("Errore durante il caricamento dell'immagine su GitHub.");
+                throw e;
+            } finally {
+                nascondiNotificaSync();
+            }
+        }
+
+        async function eliminaImmagineDaGitHub(urlFoto) {
+            if (!urlFoto || !urlFoto.includes('images/')) return;
+            try {
+                const parts = urlFoto.split('/');
+                const filename = parts[parts.length - 1];
+                const path = `images/${filename}`;
+
+                const fileInfo = await githubApiRequest(path, 'GET');
+                if (fileInfo && fileInfo.sha) {
+                    const body = {
+                        message: `Eliminazione foto ${filename} dal cestino`,
+                        sha: fileInfo.sha,
+                        branch: BRANCH
+                    };
+                    await githubApiRequest(path, 'DELETE', body);
+                }
+            } catch (e) {
+                console.error("Errore eliminazione immagine da GitHub:", e);
+            }
+        }
+
         function pulisciDuplicatiCestino() {
             if (!db.cestino || db.cestino.length === 0) return;
             const cestinoUnico = [];
@@ -229,6 +436,7 @@
             });
             db.cestino = cestinoUnico;
         }
+
         function cambiaTab(tab) {
             const tabSpesaBtn = document.getElementById('tab-spesa-btn');
             const tabBuoniBtn = document.getElementById('tab-buoni-btn');
@@ -246,6 +454,7 @@
                 tabBuoniBtn.className = "flex-1 py-2 rounded-lg text-slate-600 transition";
             }
         }
+
         function renderizzaSpesa() {
             const ul = document.getElementById('lista-spesa');
             ul.innerHTML = '';
@@ -270,11 +479,13 @@
                 ul.appendChild(li);
             });
         }
+
         function toggleStatoSpesa(index) {
             db.spesa[index].completato = !db.spesa[index].completato;
-            salvaDatiLocali();
             renderizzaSpesa();
+            salvaDatiRemoti();
         }
+
         function aggiungiSpesa() {
             const input = document.getElementById('input-spesa');
             const nome = input.value.trim();
@@ -282,8 +493,9 @@
             db.spesa.push({ id: Date.now(), nome: nome, completato: false });
             input.value = '';
             renderizzaSpesa();
-            salvaDatiLocali();
+            salvaDatiRemoti();
         }
+
         function eliminaSpesa(index) {
             const rimosso = db.spesa.splice(index, 1)[0];
             const testoNuovo = rimosso.nome.trim().toLowerCase();
@@ -295,8 +507,9 @@
                 db.cestino.push({ tipo: 'spesa', data: rimosso, posizioneOriginale: index });
             }
             renderizzaSpesa();
-            salvaDatiLocali();
+            salvaDatiRemoti();
         }
+
         function validaStatoBuonoForm() {
             const inputScadenza = document.getElementById('input-scadenza');
             const scadenzaVal = inputScadenza.value;
@@ -321,6 +534,7 @@
                 btnSalva.className = "w-full py-2 bg-slate-300 text-slate-500 font-semibold rounded-lg text-sm transition disabled:cursor-not-allowed";
             }
         }
+
         function gestisciFoto(input) {
             if (!input.files || !input.files[0]) return;
             const file = input.files[0];
@@ -361,6 +575,7 @@
             };
             reader.readAsDataURL(file);
         }
+
         function estraiDataDaTesto(testo) {
             const linee = testo.split('\n');
             let dateTrovate = [];
@@ -422,26 +637,28 @@
             const inputScadenza = document.getElementById('input-scadenza');
             inputScadenza.value = "";
             const avviso = document.getElementById('avviso-manuale');
-            // Mostra esplicitamente l'avviso via flex style e illumina il campo data
             avviso.style.display = 'flex';
             inputScadenza.classList.remove('border-slate-300');
             inputScadenza.classList.add('border-red-500', 'bg-red-50');
             validaStatoBuonoForm();
         }
 
-        function salvaBuono() {
+        async function salvaBuono() {
             const inputScadenza = document.getElementById('input-scadenza');
             const scadenza = inputScadenza.value;
             const titolo = document.getElementById('select-titolo').value;
             if (!scadenza || !titolo || !tempFotoBase64) return;
 
+            const urlFotoGitHub = await caricaImmagineSuGitHub(tempFotoBase64);
+
             const nuovoBuono = {
                 id: Date.now(),
                 titolo: titolo,
                 scadenza: scadenza,
-                foto: tempFotoBase64
+                foto: urlFotoGitHub
             };
             db.buoni.push(nuovoBuono);
+            
             document.getElementById('input-foto').value = '';
             inputScadenza.value = '';
             const avviso = document.getElementById('avviso-manuale');
@@ -450,21 +667,25 @@
             inputScadenza.classList.add('border-slate-300');
             document.getElementById('select-titolo').value = '';
             tempFotoBase64 = '';
+            
             validaStatoBuonoForm();
             renderizzaBuoni();
-            salvaDatiLocali();
+            await salvaDatiRemoti();
             apriModalUtente(titolo, scadenza);
         }
+
         function apriModalUtente(titolo, scadenza) {
             eventoInCorso = { titolo: titolo, scadenza: scadenza };
             document.getElementById('modal-utente-cal').classList.remove('hidden');
             document.getElementById('modal-utente-cal').classList.add('flex');
         }
+
         function chiudiModalUtente() {
             document.getElementById('modal-utente-cal').classList.add('hidden');
             document.getElementById('modal-utente-cal').classList.remove('flex');
             eventoInCorso = null;
         }
+
         function selezionaUtenteCalendario(utente) {
             if (!eventoInCorso) return;
             const { titolo, scadenza } = eventoInCorso;
@@ -476,6 +697,7 @@
                 apriGoogleCalendarWeb(titolo, scadenza);
             }
         }
+
         function generaEventoICS(titolo, dataIso) {
             const dataPura = dataIso.replace(/-/g, '');
             const titoloEvento = `Scade buono - ${titolo}`;
@@ -506,6 +728,7 @@ END:VCALENDAR`;
             link.click();
             document.body.removeChild(link);
         }
+
         function apriGoogleCalendarWeb(titolo, dataIso) {
             const dataPura = dataIso.replace(/-/g, '');
             const dtStart = `${dataPura}T083000`;
@@ -515,6 +738,7 @@ END:VCALENDAR`;
             const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${titoloEvento}&dates=${dtStart}/${dtEnd}&details=${noteEvento}`;
             window.open(googleUrl, '_blank');
         }
+
         function renderizzaBuoni() {
             const container = document.getElementById('lista-buoni');
             container.innerHTML = '';
@@ -561,14 +785,17 @@ END:VCALENDAR`;
                 container.appendChild(card);
             });
         }
+
         function apriModalFoto(src) {
             document.getElementById('img-modal-full').src = src;
             document.getElementById('modal-foto').classList.remove('hidden');
         }
+
         function chiudiModalFoto() {
             document.getElementById('modal-foto').classList.add('hidden');
             document.getElementById('img-modal-full').src = '';
         }
+
         function eliminaBuono(index) {
             const rimosso = db.buoni.splice(index, 1)[0];
             const titoloNuovo = rimosso.titolo.trim().toLowerCase();
@@ -580,27 +807,32 @@ END:VCALENDAR`;
                 db.cestino.push({ tipo: 'buono', data: rimosso, posizioneOriginale: index });
             }
             renderizzaBuoni();
-            salvaDatiLocali();
+            salvaDatiRemoti();
         }
+
         function mostraModalCestino() {
             modoSelezioneCestino = false;
             document.getElementById('modal-cestino').classList.remove('hidden');
             document.getElementById('modal-cestino').classList.add('flex');
             renderizzaCestino();
         }
+
         function chiudiModalCestino() {
             document.getElementById('modal-cestino').classList.add('hidden');
             document.getElementById('modal-cestino').classList.remove('flex');
         }
+
         function attivaSelezioneCestino() {
             modoSelezioneCestino = true;
             renderizzaCestino();
         }
+
         function selezionaTuttoCestino() {
             const chks = document.querySelectorAll('.chk-cestino');
             chks.forEach(c => c.checked = true);
             aggiornaStatoPulsantiAzioneCestino();
         }
+
         function aggiornaStatoPulsantiAzioneCestino() {
             const chks = document.querySelectorAll('.chk-cestino:checked');
             const btnCancella = document.getElementById('btn-modal-cancella');
@@ -609,6 +841,7 @@ END:VCALENDAR`;
             btnCancella.disabled = !haSelezionati;
             btnRipristina.disabled = !haSelezionati;
         }
+
         function renderizzaCestino() {
             const container = document.getElementById('contenuto-cestino');
             const btnSel = document.getElementById('btn-modal-sel');
@@ -650,6 +883,7 @@ END:VCALENDAR`;
                 container.appendChild(row);
             });
         }
+
         function ripristinaElementiCestino() {
             const chks = Array.from(document.querySelectorAll('.chk-cestino:checked'));
             if (chks.length === 0) return;
@@ -668,18 +902,25 @@ END:VCALENDAR`;
             renderizzaSpesa();
             renderizzaBuoni();
             renderizzaCestino();
-            salvaDatiLocali();
+            salvaDatiRemoti();
         }
-        function confermaCancellazioneCestino() {
-            if (confirm("Sei sicuro di voler cancellare definitivamente gli elementi selezionati?")) {
+
+        async function confermaCancellazioneCestino() {
+            if (confirm("Sei sicuro di voler cancellare definitivamente gli elementi selezionati? (Le foto associate verranno eliminate anche dalla cartella images/)")) {
                 const chks = Array.from(document.querySelectorAll('.chk-cestino:checked'));
                 const indiciDaRimuovere = chks.map(c => parseInt(c.getAttribute('data-idx'))).sort((a, b) => b - a);
-                indiciDaRimuovere.forEach(idx => {
+                
+                for (let idx of indiciDaRimuovere) {
+                    const elemento = db.cestino[idx];
+                    if (elemento.tipo === 'buono' && elemento.data && elemento.data.foto) {
+                        await eliminaImmagineDaGitHub(elemento.data.foto);
+                    }
                     db.cestino.splice(idx, 1);
-                });
+                }
+
                 modoSelezioneCestino = false;
                 renderizzaCestino();
-                salvaDatiLocali();
+                await salvaDatiRemoti();
             }
         }
     </script>
