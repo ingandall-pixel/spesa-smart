@@ -1,21 +1,6 @@
 {
   "spesa": [
     {
-      "id": 1786966643605,
-      "nome": "Frutti rossi per colazione",
-      "completato": false
-    },
-    {
-      "id": 1786979212204,
-      "nome": "Pepe da macinare",
-      "completato": false
-    },
-    {
-      "id": 1786970620258,
-      "nome": "Caffè",
-      "completato": false
-    },
-    {
       "id": 1786966678963,
       "nome": "Origano in gambi",
       "completato": false
@@ -29,6 +14,21 @@
       "id": 1786979231588,
       "nome": "Cassetta ascigapiatti",
       "completato": false
+    },
+    {
+      "id": 1786966643605,
+      "nome": "Frutti rossi per colazione",
+      "completato": true
+    },
+    {
+      "id": 1786970620258,
+      "nome": "Caffè",
+      "completato": true
+    },
+    {
+      "id": 1786979212204,
+      "nome": "Pepe da macinare",
+      "completato": true
     }
   ],
   "buoni": [
