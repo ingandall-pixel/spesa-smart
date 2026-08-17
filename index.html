@@ -11,7 +11,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Spesa Smart">
-    <link rel="apple-touch-icon" href="images/icon.png?v=16">
+    <!-- Cache buster sull'icona per forzare l'aggiornamento -->
+    <link rel="apple-touch-icon" href="images/icon.png?v=18">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
     <style>
@@ -40,26 +41,18 @@
             border-width: 3px !important;
         }
         @keyframes pulse-border {
-            0% {
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.8);
-                border-color: rgba(239, 68, 68, 1);
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
-                border-color: rgba(239, 68, 68, 1);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
-                border-color: rgba(239, 68, 68, 1);
-            }
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.8); border-color: rgba(239, 68, 68, 1); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); border-color: rgba(239, 68, 68, 1); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); border-color: rgba(239, 68, 68, 1); }
         }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen text-slate-800">
+<body class="bg-slate-100 min-h-screen text-slate-800 pb-20">
     <!-- Header -->
     <header class="bg-indigo-600 text-white shadow-md sticky top-0 z-10">
         <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
-            <h1 class="text-xl font-bold tracking-wide">Spesa-Smart 🛒</h1>
+            <!-- Etichetta v6 per verifica cache -->
+            <h1 class="text-xl font-bold tracking-wide">Spesa-Smart 🛒 <span class="text-xs opacity-60 font-normal">v6</span></h1>
             <div class="flex items-center gap-1.5">
                 <button onclick="apriModalConfig()" class="text-xs bg-indigo-700 hover:bg-indigo-800 px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition">
                     ⚙️ Config
@@ -70,6 +63,7 @@
             </div>
         </div>
     </header>
+
     <!-- Main Container -->
     <main class="max-w-md mx-auto p-4 space-y-4">
         <!-- Navigation Tabs -->
@@ -77,18 +71,23 @@
             <button id="tab-spesa-btn" onclick="cambiaTab('spesa')" class="flex-1 py-2 rounded-lg bg-white shadow-sm text-indigo-600 transition">📝 Spesa</button>
             <button id="tab-buoni-btn" onclick="cambiaTab('buoni')" class="flex-1 py-2 rounded-lg text-slate-600 transition">🎟️ Buoni</button>
         </div>
+
         <!-- SEZIONE SPESA -->
         <section id="tab-spesa" class="space-y-4">
             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex gap-2">
                 <input type="text" id="input-spesa" placeholder="Cosa serve?" class="flex-1 px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm" onkeypress="if(event.key==='Enter') aggiungiSpesa()">
                 <button onclick="aggiungiSpesa()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium text-sm transition">Aggiungi</button>
             </div>
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+            
+            <p class="text-xs text-slate-500 text-center font-medium px-2">Tocca la casella per selezionare e spostare, tocca il testo per barrare.</p>
+            
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-2 sm:p-4">
                 <ul id="lista-spesa" class="divide-y divide-slate-100">
                     <li class="py-3 text-center text-slate-400 text-sm">In attesa di configurazione...</li>
                 </ul>
             </div>
         </section>
+
         <!-- SEZIONE BUONI -->
         <section id="tab-buoni" class="space-y-4 hidden">
             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-3">
@@ -130,15 +129,36 @@
             </div>
         </section>
     </main>
-    <!-- Indicatore Sincronizzazione GitHub -->
-    <div id="sync-indicator" style="display: none;" class="fixed bottom-4 right-4 bg-slate-900 text-white text-xs px-3 py-1.5 rounded-full shadow-lg z-50 flex items-center gap-2">
-        <span class="animate-spin">🔄</span> <span id="sync-text">Sincronizzazione...</span>
+
+    <!-- ACTION BAR FLUTTUANTE PER SPOSTAMENTO MULTIPLO (Visibile solo quando si seleziona) -->
+    <div id="spesa-action-bar" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white rounded-full shadow-[0_10px_40px_rgba(0,0,0,0.5)] px-4 py-2.5 flex gap-3 items-center z-40 transition-all duration-300 translate-y-32 opacity-0 pointer-events-none w-max">
+        <button onclick="spostaSelezionatiSu()" class="p-2.5 bg-slate-600 hover:bg-slate-500 rounded-full transition active:scale-95" title="Sposta Sù">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18"></path></svg>
+        </button>
+        <button onclick="spostaSelezionatiGiu()" class="p-2.5 bg-slate-600 hover:bg-slate-500 rounded-full transition active:scale-95" title="Sposta Giù">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3"></path></svg>
+        </button>
+        
+        <div class="w-px h-8 bg-slate-500 mx-1"></div>
+        
+        <button onclick="azioneSelezionatiCompletati()" class="p-2.5 bg-emerald-600 hover:bg-emerald-500 rounded-full transition active:scale-95" title="Segna come fatto">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path></svg>
+        </button>
+        <button onclick="azioneSelezionatiElimina()" class="p-2.5 bg-red-600 hover:bg-red-500 rounded-full transition active:scale-95" title="Elimina selezionati">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"></path></svg>
+        </button>
     </div>
+
+    <!-- Indicatore Sincronizzazione spostato in alto a destra per non coprire il menu -->
+    <div id="sync-indicator" style="display: none;" class="fixed top-16 right-4 bg-slate-900 text-white text-xs px-3 py-1.5 rounded-full shadow-lg z-50 flex items-center gap-2">
+        <span class="animate-spin">🔄</span> <span id="sync-text">Sync...</span>
+    </div>
+
     <!-- Modal Configurazione Credenziali GitHub -->
     <div id="modal-config" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5 space-y-4">
             <h3 class="text-lg font-bold text-slate-800 text-center">⚙️ Configurazione GitHub</h3>
-            <p class="text-xs text-slate-500 text-center">Inserisci i dati del tuo repository per collegare l'app e salvare dati e immagini.</p>
+            <p class="text-xs text-slate-500 text-center">Inserisci i dati del tuo repository per collegare l'app.</p>
             <div class="space-y-3 pt-1">
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1">GitHub Personal Token</label>
@@ -161,9 +181,7 @@
     </div>
     <!-- Modal Ingrandimento Foto (Zoom) -->
     <div id="modal-foto" class="fixed inset-0 bg-black/90 hidden z-50 flex items-center justify-center p-2">
-        <button onclick="chiudiModalFoto()" class="absolute top-4 right-4 bg-white/20 hover:bg-white/40 text-white rounded-full w-10 h-10 flex items-center justify-center text-2xl font-bold transition z-50">
-            ✕
-        </button>
+        <button onclick="chiudiModalFoto()" class="absolute top-4 right-4 bg-white/20 hover:bg-white/40 text-white rounded-full w-10 h-10 flex items-center justify-center text-2xl font-bold transition z-50">✕</button>
         <img id="img-modal-full" src="" class="max-w-full max-h-full object-contain rounded-lg">
     </div>
     <!-- Modal Selezione Utente Calendario -->
@@ -172,12 +190,8 @@
             <h3 class="text-lg font-bold text-slate-800">📅 Aggiungi al Calendario</h3>
             <p class="text-xs text-slate-500">Seleziona chi sta aggiungendo il promemoria:</p>
             <div class="space-y-2 pt-2">
-                <button onclick="selezionaUtenteCalendario('andrea')" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm transition flex items-center justify-center gap-2">
-                    👤 Sono Andrea (iPhone / iOS)
-                </button>
-                <button onclick="selezionaUtenteCalendario('valeria')" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-sm transition flex items-center justify-center gap-2">
-                    👩‍🦰 Sono Valeria (Google Calendar)
-                </button>
+                <button onclick="selezionaUtenteCalendario('andrea')" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm transition flex items-center justify-center gap-2">👤 Sono Andrea (iPhone / iOS)</button>
+                <button onclick="selezionaUtenteCalendario('valeria')" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-sm transition flex items-center justify-center gap-2">👩‍🦰 Sono Valeria (Google Calendar)</button>
             </div>
             <button onclick="chiudiModalUtente()" class="text-xs text-slate-400 hover:text-slate-600 font-medium pt-2">Annulla</button>
         </div>
@@ -194,52 +208,43 @@
             </div>
             <div class="p-3 border-t border-slate-100 bg-slate-50 flex items-center justify-between gap-2">
                 <div class="flex gap-2">
-                    <button id="btn-modal-sel" onclick="attivaSelezioneCestino()" class="px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50">
-                        Seleziona
-                    </button>
-                    <button id="btn-modal-sel-tutto" onclick="selezionaTuttoCestino()" class="hidden px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50">
-                        Seleziona tutto
-                    </button>
+                    <button id="btn-modal-sel" onclick="attivaSelezioneCestino()" class="px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50">Seleziona</button>
+                    <button id="btn-modal-sel-tutto" onclick="selezionaTuttoCestino()" class="hidden px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50">Seleziona tutto</button>
                 </div>
                 <div class="flex gap-2">
-                    <button id="btn-modal-ripristina" onclick="ripristinaElementiCestino()" disabled class="px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-indigo-700 transition">
-                        ↩️ Ripristina
-                    </button>
-                    <button id="btn-modal-cancella" onclick="confermaCancellazioneCestino()" disabled class="px-3 py-1.5 bg-red-600 text-white rounded-lg text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-red-700 transition">
-                        Cancella
-                    </button>
+                    <button id="btn-modal-ripristina" onclick="ripristinaElementiCestino()" disabled class="px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-indigo-700 transition">↩️ Ripristina</button>
+                    <button id="btn-modal-cancella" onclick="confermaCancellazioneCestino()" disabled class="px-3 py-1.5 bg-red-600 text-white rounded-lg text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-red-700 transition">Cancella</button>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Script App & GitHub API Integration -->
+
     <script>
         let GITHUB_TOKEN = "";
         let REPO_OWNER = "";
         let REPO_NAME = "";
         const BRANCH = "main";
-        let db = {
-            spesa: [],
-            buoni: [],
-            cestino: []
-        };
+        let db = { spesa: [], buoni: [], cestino: [] };
+        
         let tempFotoBase64 = "";
         let modoSelezioneCestino = false;
         let eventoInCorso = null; 
+        
+        // --- NUOVA GESTIONE SELEZIONE ---
+        let selezioniSpesa = []; 
 
         document.addEventListener('DOMContentLoaded', () => {
             caricaConfigurazioni();
         });
+
         function caricaConfigurazioni() {
             GITHUB_TOKEN = localStorage.getItem('gh_token') || "";
             REPO_OWNER = localStorage.getItem('gh_owner') || "ingandall";
             REPO_NAME = localStorage.getItem('gh_repo') || "";
-            if (!GITHUB_TOKEN || !REPO_NAME) {
-                apriModalConfig();
-            } else {
-                caricaDatiRemoti();
-            }
+            if (!GITHUB_TOKEN || !REPO_NAME) apriModalConfig();
+            else caricaDatiRemoti();
         }
+
         function apriModalConfig() {
             document.getElementById('conf-token').value = GITHUB_TOKEN;
             document.getElementById('conf-owner').value = REPO_OWNER;
@@ -247,552 +252,363 @@
             document.getElementById('modal-config').classList.remove('hidden');
             document.getElementById('modal-config').classList.add('flex');
         }
+
         function chiudiModalConfig() {
-            if (!GITHUB_TOKEN || !REPO_NAME) {
-                alert("È necessario configurare le credenziali per utilizzare l'applicazione.");
-                return;
-            }
+            if (!GITHUB_TOKEN || !REPO_NAME) { alert("Configura le credenziali per usare l'app."); return; }
             document.getElementById('modal-config').classList.add('hidden');
             document.getElementById('modal-config').classList.remove('flex');
         }
+
         function salvaConfigurazione() {
             const token = document.getElementById('conf-token').value.trim();
             const owner = document.getElementById('conf-owner').value.trim();
             const repo = document.getElementById('conf-repo').value.trim();
-            if (!token || !owner || !repo) {
-                alert("Tutti i campi sono obbligatori!");
-                return;
-            }
-            localStorage.setItem('gh_token', token);
-            localStorage.setItem('gh_owner', owner);
-            localStorage.setItem('gh_repo', repo);
-            GITHUB_TOKEN = token;
-            REPO_OWNER = owner;
-            REPO_NAME = repo;
-            document.getElementById('modal-config').classList.add('hidden');
-            document.getElementById('modal-config').classList.remove('flex');
-            caricaDatiRemoti();
+            if (!token || !owner || !repo) { alert("Tutti i campi sono obbligatori!"); return; }
+            localStorage.setItem('gh_token', token); localStorage.setItem('gh_owner', owner); localStorage.setItem('gh_repo', repo);
+            GITHUB_TOKEN = token; REPO_OWNER = owner; REPO_NAME = repo;
+            chiudiModalConfig(); caricaDatiRemoti();
         }
+
         function mostraNotificaSync(testo) {
             const ind = document.getElementById('sync-indicator');
             document.getElementById('sync-text').innerText = testo;
             ind.style.display = 'flex';
         }
-        function nascondiNotificaSync() {
-            document.getElementById('sync-indicator').style.display = 'none';
-        }
+        function nascondiNotificaSync() { document.getElementById('sync-indicator').style.display = 'none'; }
+
         async function githubApiRequest(endpoint, method = 'GET', body = null) {
-            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${endpoint}`;
-            const headers = {
-                'Authorization': `Bearer ${GITHUB_TOKEN}`,
-                'Accept': 'application/vnd.github+json',
-                'Content-Type': 'application/json'
-            };
+            const t = Date.now();
+            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${endpoint}?ref=${BRANCH}&t=${t}`;
+            const headers = { 'Authorization': `Bearer ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' };
             const options = { method, headers };
             if (body) options.body = JSON.stringify(body);
             
             const response = await fetch(url, options);
-            if (response.status === 404 && method === 'GET') {
-                return null;
-            }
-            if (!response.ok) {
-                const errText = await response.text();
-                throw new Error(`Errore GitHub API (${response.status}): ${errText}`);
-            }
+            if (response.status === 404 && method === 'GET') return null;
+            if (!response.ok) { const errText = await response.text(); throw new Error(`Errore (${response.status}): ${errText}`); }
             return response.json();
         }
+
         async function caricaDatiRemoti() {
-            mostraNotificaSync("Caricamento da GitHub...");
+            mostraNotificaSync("Caricamento...");
             try {
                 const data = await githubApiRequest('data.json', 'GET');
                 if (data && data.content) {
                     const jsonString = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
                     db = JSON.parse(jsonString);
-                } else {
-                    db = { spesa: [], buoni: [], cestino: [] };
-                }
+                } else { db = { spesa: [], buoni: [], cestino: [] }; }
             } catch (e) {
-                console.error("Errore caricamento dati:", e);
-                alert("Errore Caricamento: " + e.message);
-                db = { spesa: [], buoni: [], cestino: [] };
-                apriModalConfig();
+                console.error(e); db = { spesa: [], buoni: [], cestino: [] };
             } finally {
-                nascondiNotificaSync();
-                pulisciDuplicatiCestino();
-                renderizzaSpesa();
-                renderizzaBuoni();
+                nascondiNotificaSync(); renderizzaSpesa(); renderizzaBuoni();
             }
         }
-        async function salvaDatiRemoti(tentativi = 2) {
-            mostraNotificaSync("Salvataggio su GitHub...");
+
+        async function salvaDatiRemoti(tentativi = 3) {
+            mostraNotificaSync("Salvataggio...");
             try {
+                const urlGet = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data.json?ref=${BRANCH}&t=${Date.now()}`;
+                const responseGet = await fetch(urlGet, { headers: { 'Authorization': `Bearer ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github+json' }});
+                
                 let sha = null;
-                const existing = await githubApiRequest('data.json', 'GET');
-                if (existing && existing.sha) {
-                    sha = existing.sha;
-                }
+                if (responseGet.ok) { const data = await responseGet.json(); sha = data.sha; }
+
                 const jsonString = JSON.stringify(db, null, 2);
                 const contentBase64 = btoa(unescape(encodeURIComponent(jsonString)));
-                const body = {
-                    message: "Aggiornamento dati Spesa Smart",
-                    content: contentBase64,
-                    branch: BRANCH
-                };
+                const body = { message: "Aggiornamento dati", content: contentBase64, branch: BRANCH };
                 if (sha) body.sha = sha;
 
-                const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data.json`;
-                const response = await fetch(url, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `Bearer ${GITHUB_TOKEN}`,
-                        'Accept': 'application/vnd.github+json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(body)
-                });
+                const urlPut = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data.json`;
+                const responsePut = await fetch(urlPut, { method: 'PUT', headers: { 'Authorization': `Bearer ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
 
-                // Gestione automatica errore 409 (Conflict SHA)
-                if (response.status === 409 && tentativi > 1) {
-                    nascondiNotificaSync();
-                    return await salvaDatiRemoti(tentativi - 1);
+                if (responsePut.status === 409 && tentativi > 1) {
+                    await new Promise(res => setTimeout(res, 800)); return await salvaDatiRemoti(tentativi - 1);
                 }
-
-                if (!response.ok) {
-                    const errText = await response.text();
-                    throw new Error(`Errore GitHub API (${response.status}): ${errText}`);
-                }
-            } catch (e) {
-                console.error("Errore salvataggio dati:", e);
-                alert("Errore GitHub: " + e.message);
-            } finally {
-                nascondiNotificaSync();
-            }
+                if (!responsePut.ok) throw new Error(`Status ${responsePut.status}`);
+            } catch (e) { console.error("Errore salvataggio:", e); } finally { nascondiNotificaSync(); }
         }
+
         async function caricaImmagineSuGitHub(base64DataUrl) {
-            mostraNotificaSync("Caricamento foto in images/...");
+            mostraNotificaSync("Caricamento foto...");
             try {
                 const base64Content = base64DataUrl.split(',')[1];
-                const randomString = Math.random().toString(36).substring(2, 8);
-                const filename = `buono_${Date.now()}_${randomString}.jpg`;
+                const filename = `buono_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.jpg`;
                 const path = `images/${filename}`;
-                const body = {
-                    message: `Aggiunta foto buono ${filename}`,
-                    content: base64Content,
-                    branch: BRANCH
-                };
-                await githubApiRequest(path, 'PUT', body);
+                await githubApiRequest(path, 'PUT', { message: `Aggiunta foto ${filename}`, content: base64Content, branch: BRANCH });
                 return `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/images/${filename}`;
-            } catch (e) {
-                console.error("Errore caricamento immagine:", e);
-                alert("Errore Immagine: " + e.message);
-                throw e;
-            } finally {
-                nascondiNotificaSync();
-            }
+            } catch (e) { alert("Errore caricamento immagine."); throw e; } finally { nascondiNotificaSync(); }
         }
+
         async function eliminaImmagineDaGitHub(urlFoto) {
             if (!urlFoto || !urlFoto.includes('images/')) return;
             try {
-                const parts = urlFoto.split('/');
-                const filename = parts[parts.length - 1];
-                const path = `images/${filename}`;
-                const fileInfo = await githubApiRequest(path, 'GET');
-                if (fileInfo && fileInfo.sha) {
-                    const body = {
-                        message: `Eliminazione foto ${filename} dal cestino`,
-                        sha: fileInfo.sha,
-                        branch: BRANCH
-                    };
-                    await githubApiRequest(path, 'DELETE', body);
-                }
-            } catch (e) {
-                console.error("Errore eliminazione immagine da GitHub:", e);
-            }
+                const filename = urlFoto.split('/').pop();
+                const fileInfo = await githubApiRequest(`images/${filename}`, 'GET');
+                if (fileInfo && fileInfo.sha) await githubApiRequest(`images/${filename}`, 'DELETE', { message: `Eliminazione foto`, sha: fileInfo.sha, branch: BRANCH });
+            } catch (e) {}
         }
-        function pulisciDuplicatiCestino() {
-            if (!db.cestino || db.cestino.length === 0) return;
-            const cestinoUnico = [];
-            db.cestino.forEach(item => {
-                const nomeItem = item.tipo === 'spesa' ? item.data.nome : item.data.titolo;
-                const giaPresente = cestinoUnico.some(c => {
-                    const nomeEsistente = c.tipo === 'spesa' ? c.data.nome : c.data.titolo;
-                    return c.tipo === item.tipo && nomeEsistente.trim().toLowerCase() === nomeItem.trim().toLowerCase();
-                });
-                if (!giaPresente) {
-                    cestinoUnico.push(item);
-                }
-            });
-            db.cestino = cestinoUnico;
-        }
+
         function cambiaTab(tab) {
-            const tabSpesaBtn = document.getElementById('tab-spesa-btn');
-            const tabBuoniBtn = document.getElementById('tab-buoni-btn');
-            const secSpesa = document.getElementById('tab-spesa');
-            const secBuoni = document.getElementById('tab-buoni');
+            selezioniSpesa = []; aggiornaVisibilitaBarraSpesa(); // Pulisce la selezione quando si cambia tab
+            
+            const tabSpesaBtn = document.getElementById('tab-spesa-btn'); const tabBuoniBtn = document.getElementById('tab-buoni-btn');
+            const secSpesa = document.getElementById('tab-spesa'); const secBuoni = document.getElementById('tab-buoni');
             if (tab === 'spesa') {
-                secSpesa.classList.remove('hidden');
-                secBuoni.classList.add('hidden');
-                tabSpesaBtn.className = "flex-1 py-2 rounded-lg bg-white shadow-sm text-indigo-600 transition";
-                tabBuoniBtn.className = "flex-1 py-2 rounded-lg text-slate-600 transition";
+                secSpesa.classList.remove('hidden'); secBuoni.classList.add('hidden');
+                tabSpesaBtn.className = "flex-1 py-2 rounded-lg bg-white shadow-sm text-indigo-600 transition"; tabBuoniBtn.className = "flex-1 py-2 rounded-lg text-slate-600 transition";
             } else {
-                secSpesa.classList.add('hidden');
-                secBuoni.classList.remove('hidden');
-                tabBuoniBtn.className = "flex-1 py-2 rounded-lg bg-white shadow-sm text-indigo-600 transition";
-                tabBuoniBtn.className = "flex-1 py-2 rounded-lg text-slate-600 transition";
+                secSpesa.classList.add('hidden'); secBuoni.classList.remove('hidden');
+                tabBuoniBtn.className = "flex-1 py-2 rounded-lg bg-white shadow-sm text-indigo-600 transition"; tabSpesaBtn.className = "flex-1 py-2 rounded-lg text-slate-600 transition";
             }
         }
+
+        // ==========================================
+        // NUOVA LOGICA MULTI-SELEZIONE LISTA SPESA
+        // ==========================================
+
+        function aggiornaVisibilitaBarraSpesa() {
+            const actionBar = document.getElementById('spesa-action-bar');
+            if (selezioniSpesa.length > 0) {
+                actionBar.classList.remove('translate-y-32', 'opacity-0', 'pointer-events-none');
+                actionBar.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
+            } else {
+                actionBar.classList.add('translate-y-32', 'opacity-0', 'pointer-events-none');
+                actionBar.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+            }
+        }
+
+        function toggleSelezioneSpesa(index) {
+            const pos = selezioniSpesa.indexOf(index);
+            if (pos > -1) selezioniSpesa.splice(pos, 1);
+            else selezioniSpesa.push(index);
+            
+            renderizzaSpesa(); // Ri-renderizza per mostrare la casella spuntata
+        }
+
+        // Muove tutta la selezione verso l'alto
+        function spostaSelezionatiSu() {
+            if (selezioniSpesa.length === 0) return;
+            selezioniSpesa.sort((a, b) => a - b); // Ordine crescente per spostare su
+            if (selezioniSpesa[0] === 0) return; // Se il primo elemento è già in cima, fermati
+            
+            for (let i = 0; i < selezioniSpesa.length; i++) {
+                const idx = selezioniSpesa[i];
+                // Scambio con quello sopra
+                const temp = db.spesa[idx - 1];
+                db.spesa[idx - 1] = db.spesa[idx];
+                db.spesa[idx] = temp;
+                selezioniSpesa[i] = idx - 1; // Aggiorna l'indice selezionato
+            }
+            renderizzaSpesa(); salvaDatiRemoti();
+        }
+
+        // Muove tutta la selezione verso il basso
+        function spostaSelezionatiGiu() {
+            if (selezioniSpesa.length === 0) return;
+            selezioniSpesa.sort((a, b) => b - a); // Ordine decrescente per spostare giù
+            if (selezioniSpesa[0] === db.spesa.length - 1) return; // Se l'ultimo è già in fondo, fermati
+
+            for (let i = 0; i < selezioniSpesa.length; i++) {
+                const idx = selezioniSpesa[i];
+                // Scambio con quello sotto
+                const temp = db.spesa[idx + 1];
+                db.spesa[idx + 1] = db.spesa[idx];
+                db.spesa[idx] = temp;
+                selezioniSpesa[i] = idx + 1; // Aggiorna l'indice selezionato
+            }
+            renderizzaSpesa(); salvaDatiRemoti();
+        }
+
+        // Completa o annulla la selezione in blocco
+        function azioneSelezionatiCompletati() {
+            if (selezioniSpesa.length === 0) return;
+            
+            // Seleziona gli elementi e inverti lo stato "completato"
+            const allCompleted = selezioniSpesa.every(i => db.spesa[i].completato);
+            const newState = !allCompleted;
+
+            let itemsToMove = selezioniSpesa.map(i => db.spesa[i]);
+            itemsToMove.forEach(item => item.completato = newState);
+
+            // Rimuovili partendo dall'ultimo indice per non sballare le posizioni
+            selezioniSpesa.sort((a, b) => b - a).forEach(idx => { db.spesa.splice(idx, 1); });
+
+            // Reinseriscili: se completati, vanno in fondo. Se da fare, vanno in cima.
+            if (newState) db.spesa.push(...itemsToMove);
+            else db.spesa.unshift(...itemsToMove);
+
+            selezioniSpesa = []; // Deseleziona tutto alla fine
+            renderizzaSpesa(); salvaDatiRemoti();
+        }
+
+        // Cestina selezione in blocco
+        function azioneSelezionatiElimina() {
+            if (selezioniSpesa.length === 0) return;
+            if (confirm("Vuoi eliminare gli elementi selezionati?")) {
+                selezioniSpesa.sort((a, b) => b - a).forEach(idx => {
+                    const rimosso = db.spesa.splice(idx, 1)[0];
+                    db.cestino.push({ tipo: 'spesa', data: rimosso, posizioneOriginale: idx });
+                });
+                selezioniSpesa = [];
+                renderizzaSpesa(); salvaDatiRemoti();
+            }
+        }
+
+        // Tocco singolo sul testo per completare
+        async function toggleStatoSpesa(index) {
+            selezioniSpesa = []; // Pulisci la selezione se si tocca un testo manualmente
+            
+            const item = db.spesa.splice(index, 1)[0];
+            item.completato = !item.completato;
+            
+            if (item.completato) db.spesa.push(item);
+            else {
+                const pIdx = db.spesa.findIndex(el => el.completato);
+                if (pIdx !== -1) db.spesa.splice(pIdx, 0, item); else db.spesa.unshift(item);
+            }
+            renderizzaSpesa(); await salvaDatiRemoti();
+        }
+
         function renderizzaSpesa() {
+            aggiornaVisibilitaBarraSpesa();
+            
             const ul = document.getElementById('lista-spesa');
             ul.innerHTML = '';
             if (!db.spesa || db.spesa.length === 0) {
-                ul.innerHTML = '<li class="py-3 text-center text-slate-400 text-sm">Nessun articolo presente.</li>';
-                return;
+                ul.innerHTML = '<li class="py-3 text-center text-slate-400 text-sm">Nessun articolo presente.</li>'; return;
             }
+
             db.spesa.forEach((item, index) => {
                 const li = document.createElement('li');
-                li.className = "py-2.5 flex justify-between items-center text-sm border-b border-slate-100 last:border-0 bg-white";
+                const isSelected = selezioniSpesa.includes(index);
                 const completato = !!item.completato;
 
+                li.className = `py-1.5 px-2 flex justify-between items-center text-sm border-b border-slate-100 last:border-0 rounded-lg transition-colors ${isSelected ? 'bg-indigo-50' : 'bg-white'}`;
+                
                 const stileTesto = completato 
                     ? "line-through text-slate-400 italic flex-1 cursor-pointer select-none" 
                     : "font-medium text-slate-700 flex-1 cursor-pointer select-none";
 
-                // Condizioni per abilitare i pulsanti freccia (▲ e ▼)
-                const puoSalire = index > 0 && !completato && !db.spesa[index - 1].completato;
-                const puoScendere = index < db.spesa.length - 1 && !completato && !db.spesa[index + 1].completato;
-
-                const btnSu = `<button onclick="spostaSpesa(${index}, -1)" ${puoSalire ? '' : 'disabled'} class="px-1.5 py-0.5 text-xs font-bold rounded ${puoSalire ? 'bg-slate-200 hover:bg-slate-300 text-slate-700 cursor-pointer' : 'bg-slate-100 text-slate-300 cursor-not-allowed'}" title="Sposta su">▲</button>`;
-                const btnGiu = `<button onclick="spostaSpesa(${index}, 1)" ${puoScendere ? '' : 'disabled'} class="px-1.5 py-0.5 text-xs font-bold rounded ${puoScendere ? 'bg-slate-200 hover:bg-slate-300 text-slate-700 cursor-pointer' : 'bg-slate-100 text-slate-300 cursor-not-allowed'}" title="Sposta giù">▼</button>`;
-
+                // Casella per SELEZIONARE e Testo per COMPLETARE
                 li.innerHTML = `
-                    <div class="flex items-center gap-2.5 flex-1 min-w-0">
-                        <div class="flex flex-col gap-0.5 shrink-0">
-                            ${btnSu}
-                            ${btnGiu}
-                        </div>
-                        <label class="flex items-center gap-2 flex-1 cursor-pointer py-1 min-w-0">
-                            <input type="checkbox" ${completato ? 'checked' : ''} onchange="toggleStatoSpesa(${index})" class="w-5 h-5 text-indigo-600 rounded cursor-pointer accent-indigo-600 shrink-0">
-                            <span class="${stileTesto} truncate">${item.nome}</span>
-                        </label>
+                    <div class="flex items-center gap-3.5 flex-1 min-w-0 h-full">
+                        <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="toggleSelezioneSpesa(${index})" class="w-6 h-6 rounded-md border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer accent-indigo-600 shrink-0">
+                        <span onclick="toggleStatoSpesa(${index})" class="${stileTesto} truncate text-[1.05rem] py-2">${item.nome}</span>
                     </div>
-                    <button onclick="eliminaSpesa(${index})" class="text-slate-400 hover:text-red-600 transition px-2 py-1 ml-2 shrink-0">🗑️</button>
+                    <button onclick="eliminaSpesa(${index})" class="text-slate-300 hover:text-red-500 transition p-2 ml-1 shrink-0 text-xl">🗑️</button>
                 `;
                 ul.appendChild(li);
             });
         }
 
-        async function spostaSpesa(index, direzione) {
-            const nuovoIndice = index + direzione;
-            if (nuovoIndice < 0 || nuovoIndice >= db.spesa.length) return;
-            if (db.spesa[nuovoIndice].completato) return;
-
-            const elemento = db.spesa.splice(index, 1)[0];
-            db.spesa.splice(nuovoIndice, 0, elemento);
-
-            renderizzaSpesa();
-            await salvaDatiRemoti();
-        }
-
-        async function toggleStatoSpesa(index) {
-            const item = db.spesa.splice(index, 1)[0];
-            item.completato = !item.completato;
-            
-            if (item.completato) {
-                db.spesa.push(item);
-            } else {
-                const primoCompletatoIdx = db.spesa.findIndex(el => el.completato);
-                if (primoCompletatoIdx !== -1) {
-                    db.spesa.splice(primoCompletatoIdx, 0, item);
-                } else {
-                    db.spesa.unshift(item);
-                }
-            }
-            
-            renderizzaSpesa();
-            await salvaDatiRemoti();
-        }
         async function aggiungiSpesa() {
+            selezioniSpesa = []; // Reset selezione
             const input = document.getElementById('input-spesa');
             const nome = input.value.trim();
             if (!nome) return;
             
             const nuovoElemento = { id: Date.now(), nome: nome, completato: false };
-            const primoCompletatoIdx = db.spesa.findIndex(el => el.completato);
-            if (primoCompletatoIdx !== -1) {
-                db.spesa.splice(primoCompletatoIdx, 0, nuovoElemento);
-            } else {
-                db.spesa.push(nuovoElemento);
-            }
+            const pIdx = db.spesa.findIndex(el => el.completato);
+            if (pIdx !== -1) db.spesa.splice(pIdx, 0, nuovoElemento); else db.spesa.push(nuovoElemento);
 
-            input.value = '';
-            renderizzaSpesa();
-            await salvaDatiRemoti();
+            input.value = ''; renderizzaSpesa(); await salvaDatiRemoti();
         }
+
         async function eliminaSpesa(index) {
+            selezioniSpesa = []; // Reset selezione
             const rimosso = db.spesa.splice(index, 1)[0];
-            const testoNuovo = rimosso.nome.trim().toLowerCase();
-            const giaPresente = db.cestino.some(item => 
-                item.tipo === 'spesa' && 
-                item.data.nome.trim().toLowerCase() === testoNuovo
-            );
-            if (!giaPresente) {
-                db.cestino.push({ tipo: 'spesa', data: rimosso, posizioneOriginale: index });
-            }
-            renderizzaSpesa();
-            await salvaDatiRemoti();
+            db.cestino.push({ tipo: 'spesa', data: rimosso, posizioneOriginale: index });
+            renderizzaSpesa(); await salvaDatiRemoti();
         }
+
+        // ==========================================
+        // FUNZIONI BUONI & CALENDARIO
+        // ==========================================
+
         function validaStatoBuonoForm() {
-            const inputScadenza = document.getElementById('input-scadenza');
-            const scadenzaVal = inputScadenza.value;
+            const isValido = document.getElementById('input-scadenza').value !== "";
             const selectTitolo = document.getElementById('select-titolo');
             const btnSalva = document.getElementById('btn-salva-buono');
-            const avviso = document.getElementById('avviso-manuale');
             
-            const isValido = scadenzaVal !== "";
             selectTitolo.disabled = !isValido;
-            
-            if (isValido) {
-                avviso.style.display = 'none';
-                inputScadenza.classList.remove('border-red-500', 'bg-red-50');
-                inputScadenza.classList.add('border-slate-300');
-            }
-            if (isValido && selectTitolo.value) {
-                btnSalva.disabled = false;
-                btnSalva.className = "w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg text-sm transition cursor-pointer";
-            } else {
-                btnSalva.disabled = true;
-                btnSalva.className = "w-full py-2 bg-slate-300 text-slate-500 font-semibold rounded-lg text-sm transition disabled:cursor-not-allowed";
-            }
+            if (isValido) { document.getElementById('avviso-manuale').style.display = 'none'; document.getElementById('input-scadenza').classList.replace('border-red-500', 'border-slate-300'); document.getElementById('input-scadenza').classList.remove('bg-red-50'); }
+            if (isValido && selectTitolo.value) { btnSalva.disabled = false; btnSalva.className = "w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg text-sm transition cursor-pointer"; } 
+            else { btnSalva.disabled = true; btnSalva.className = "w-full py-2 bg-slate-300 text-slate-500 font-semibold rounded-lg text-sm transition disabled:cursor-not-allowed"; }
         }
+
         function gestisciFoto(input) {
             if (!input.files || !input.files[0]) return;
-            const file = input.files[0];
-            const reader = new FileReader();
             document.getElementById('ocr-loading').classList.remove('hidden');
+            const reader = new FileReader();
             reader.onload = function (e) {
                 const img = new Image();
                 img.onload = async function() {
-                    const canvas = document.createElement('canvas');
-                    let width = img.width;
-                    let height = img.height;
-                    const maxDim = 800;
-                    if (width > height && width > maxDim) {
-                        height *= maxDim / width;
-                        width = maxDim;
-                    } else if (height > maxDim) {
-                        width *= maxDim / height;
-                        height = maxDim;
-                    }
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
+                    const canvas = document.createElement('canvas'); let w = img.width, h = img.height; const max = 800;
+                    if (w > h && w > max) { h *= max / w; w = max; } else if (h > max) { w *= max / h; h = max; }
+                    canvas.width = w; canvas.height = h; canvas.getContext('2d').drawImage(img, 0, 0, w, h);
                     tempFotoBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    
                     try {
                         const worker = await Tesseract.createWorker('ita');
-                        const ret = await worker.recognize(tempFotoBase64);
-                        await worker.terminate();
+                        const ret = await worker.recognize(tempFotoBase64); await worker.terminate();
                         estraiDataDaTesto(ret.data.text);
-                    } catch (err) {
-                        console.error("Errore OCR:", err);
-                        fallbackSelezioneManuale();
-                    } finally {
-                        document.getElementById('ocr-loading').classList.add('hidden');
-                    }
+                    } catch (err) { fallbackSelezioneManuale(); } finally { document.getElementById('ocr-loading').classList.add('hidden'); }
                 };
                 img.src = e.target.result;
             };
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(input.files[0]);
         }
+
         function estraiDataDaTesto(testo) {
-            const linee = testo.split('\n');
-            let dateTrovate = [];
+            const linee = testo.split('\n'); let dateTrovate = [];
+            const mesiMap = { 'gennaio': '01', 'febbraio': '02', 'marzo': '03', 'aprile': '04', 'maggio': '05', 'giugno': '06', 'luglio': '07', 'agosto': '08', 'settembre': '09', 'ottobre': '10', 'novembre': '11', 'dicembre': '12' };
+            const rxNum = /(\d{1,2})[\/\-\.]\s*(\d{1,2})[\/\-\.]\s*(\d{2,4})/g;
+            const rxLett = new RegExp(`(\\d{1,2})\\s*(?:°)?\\s*(${Object.keys(mesiMap).join('|')})\\s*(?:del)?\\s*(\\d{2,4})?`, 'gi');
             
-            const mesiMap = {
-                'gennaio': '01', 'febbraio': '02', 'marzo': '03', 'aprile': '04', 
-                'maggio': '05', 'giugno': '06', 'luglio': '07', 'agosto': '08', 
-                'settembre': '09', 'ottobre': '10', 'novembre': '11', 'dicembre': '12'
-            };
-            const rxDataNumerica = /(\d{1,2})[\/\-\.]\s*(\d{1,2})[\/\-\.]\s*(\d{2,4})/g;
-            const rxDataLettere = new RegExp(`(\\d{1,2})\\s*(?:°)?\\s*(${Object.keys(mesiMap).join('|')})\\s*(?:del)?\\s*(\\d{2,4})?`, 'gi');
             linee.forEach(linea => {
-                const low = linea.toLowerCase().replace(/\s+/g, ' ');
-                let match;
-                
-                while ((match = rxDataNumerica.exec(linea)) !== null) {
-                    let giorno = match[1].padStart(2, '0');
-                    let mese = match[2].padStart(2, '0');
-                    let anno = match[3];
-                    if (anno.length === 2) anno = '20' + anno;
-                    dateTrovate.push({ data: `${anno}-${mese}-${giorno}` });
-                }
-                let matchLettere;
-                while ((matchLettere = rxDataLettere.exec(low)) !== null) {
-                    let giorno = matchLettere[1].padStart(2, '0');
-                    let meseStr = matchLettere[2].toLowerCase();
-                    let mese = mesiMap[meseStr];
-                    let anno = matchLettere[3];
-                    if (!anno) {
-                        anno = new Date().getFullYear().toString();
-                    } else if (anno.length === 2) {
-                        anno = '20' + anno;
-                    }
-                    if (mese) {
-                        dateTrovate.push({ data: `${anno}-${mese}-${giorno}` });
-                    }
-                }
+                const low = linea.toLowerCase().replace(/\s+/g, ' '); let match;
+                while ((match = rxNum.exec(linea)) !== null) { let a = match[3]; if(a.length===2) a='20'+a; dateTrovate.push({ data: `${a}-${match[2].padStart(2, '0')}-${match[1].padStart(2, '0')}` }); }
+                while ((match = rxLett.exec(low)) !== null) { let a = match[3] || new Date().getFullYear().toString(); if(a.length===2) a='20'+a; dateTrovate.push({ data: `${a}-${mesiMap[match[2].toLowerCase()]}-${match[1].padStart(2, '0')}` }); }
             });
-            const inputScadenza = document.getElementById('input-scadenza');
-            const avviso = document.getElementById('avviso-manuale');
-            if (dateTrovate.length > 0) {
-                const ultimaData = dateTrovate[dateTrovate.length - 1].data;
-                inputScadenza.value = ultimaData;
-                avviso.style.display = 'none';
-                inputScadenza.classList.remove('border-red-500', 'bg-red-50');
-                inputScadenza.classList.add('border-slate-300');
-            } else {
-                fallbackSelezioneManuale();
-            }
-            validaStatoBuonoForm();
+
+            if (dateTrovate.length > 0) { document.getElementById('input-scadenza').value = dateTrovate[dateTrovate.length - 1].data; validaStatoBuonoForm(); } 
+            else { fallbackSelezioneManuale(); }
         }
+
         function fallbackSelezioneManuale() {
-            const inputScadenza = document.getElementById('input-scadenza');
-            inputScadenza.value = "";
-            const avviso = document.getElementById('avviso-manuale');
-            avviso.style.display = 'flex';
-            inputScadenza.classList.remove('border-slate-300');
-            inputScadenza.classList.add('border-red-500', 'bg-red-50');
-            validaStatoBuonoForm();
+            document.getElementById('input-scadenza').value = ""; document.getElementById('avviso-manuale').style.display = 'flex';
+            document.getElementById('input-scadenza').classList.replace('border-slate-300', 'border-red-500'); document.getElementById('input-scadenza').classList.add('bg-red-50'); validaStatoBuonoForm();
         }
+
         async function salvaBuono() {
-            const inputScadenza = document.getElementById('input-scadenza');
-            const scadenza = inputScadenza.value;
-            const titolo = document.getElementById('select-titolo').value;
+            const scadenza = document.getElementById('input-scadenza').value; const titolo = document.getElementById('select-titolo').value;
             if (!scadenza || !titolo || !tempFotoBase64) return;
+            const urlFotoGitHub = await caricaImmagineSuGitHub(tempFotoBase64); if (!urlFotoGitHub) return;
             
-            const urlFotoGitHub = await caricaImmagineSuGitHub(tempFotoBase64);
-            if (!urlFotoGitHub) return;
+            db.buoni.push({ id: Date.now(), titolo: titolo, scadenza: scadenza, foto: urlFotoGitHub });
+            document.getElementById('input-foto').value = ''; document.getElementById('input-scadenza').value = ''; document.getElementById('select-titolo').value = ''; tempFotoBase64 = '';
             
-            const nuovoBuono = {
-                id: Date.now(),
-                titolo: titolo,
-                scadenza: scadenza,
-                foto: urlFotoGitHub
-            };
-            db.buoni.push(nuovoBuono);
-            
-            document.getElementById('input-foto').value = '';
-            inputScadenza.value = '';
-            const avviso = document.getElementById('avviso-manuale');
-            avviso.style.display = 'none';
-            inputScadenza.classList.remove('border-red-500', 'bg-red-50');
-            inputScadenza.classList.add('border-slate-300');
-            document.getElementById('select-titolo').value = '';
-            tempFotoBase64 = '';
-            
-            validaStatoBuonoForm();
-            renderizzaBuoni();
-            await salvaDatiRemoti();
-            apriModalUtente(titolo, scadenza);
+            validaStatoBuonoForm(); renderizzaBuoni(); await salvaDatiRemoti(); apriModalUtente(titolo, scadenza);
         }
-        function apriModalUtente(titolo, scadenza) {
-            eventoInCorso = { titolo: titolo, scadenza: scadenza };
-            document.getElementById('modal-utente-cal').classList.remove('hidden');
-            document.getElementById('modal-utente-cal').classList.add('flex');
-        }
-        function chiudiModalUtente() {
-            document.getElementById('modal-utente-cal').classList.add('hidden');
-            document.getElementById('modal-utente-cal').classList.remove('flex');
-            eventoInCorso = null;
-        }
-        function selezionaUtenteCalendario(utente) {
-            if (!eventoInCorso) return;
-            const { titolo, scadenza } = eventoInCorso;
-            chiudiModalUtente();
-            if (utente === 'andrea') {
-                alert("ℹ️ NOTA PER IPHONE:\n\nNella schermata che si aprirà, premi in basso su 'Aggiungi al calendario'.\n\nNON cliccare sulla spunta blu in alto a destra, altrimenti l'evento NON verrà salvato!");
-                generaEventoICS(titolo, scadenza);
-            } else if (utente === 'valeria') {
-                apriGoogleCalendarWeb(titolo, scadenza);
-            }
-        }
-        function generaEventoICS(titolo, dataIso) {
-            const dataScadObj = new Date(dataIso);
-            const oggiObj = new Date();
-            oggiObj.setHours(0, 0, 0, 0);
-            dataScadObj.setHours(0, 0, 0, 0);
 
-            const diffGiorni = Math.ceil((dataScadObj - oggiObj) / (1000 * 60 * 60 * 24));
-            const giorniAnticipo = diffGiorni > 7 ? 7 : (diffGiorni > 0 ? diffGiorni : 0);
-            const triggerString = giorniAnticipo > 0 ? `-P${giorniAnticipo}D` : `PT0S`;
-
-            const dataPura = dataIso.replace(/-/g, '');
-            const titoloEvento = `Scade buono - ${titolo}`;
-            const noteEvento = `Scadenza buono spesa: ${titolo}`;
-            const dtStart = `${dataPura}T083000`;
-            const dtEnd = `${dataPura}T090000`;
-            const icsContent = 
-`BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//SpesaSmart//IT
-BEGIN:VEVENT
-SUMMARY:${titoloEvento}
-DESCRIPTION:${noteEvento}
-DTSTART:${dtStart}
-DTEND:${dtEnd}
-BEGIN:VALARM
-ACTION:DISPLAY
-DESCRIPTION:Promemoria scadenza buono (${giorniAnticipo} giorni prima)
-TRIGGER:${triggerString}
-END:VALARM
-END:VEVENT
-END:VCALENDAR`;
-            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.setAttribute('download', `scadenza-${titolo}.ics`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-        function apriGoogleCalendarWeb(titolo, dataIso) {
-            const dataPura = dataIso.replace(/-/g, '');
-            const dtStart = `${dataPura}T083000`;
-            const dtEnd = `${dataPura}T090000`;
-            const titoloEvento = encodeURIComponent(`Scade buono - ${titolo}`);
-            const noteEvento = encodeURIComponent(`Scadenza buono spesa: ${titolo}`);
-            const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${titoloEvento}&dates=${dtStart}/${dtEnd}&details=${noteEvento}`;
-            window.open(googleUrl, '_blank');
-        }
         function renderizzaBuoni() {
-            const container = document.getElementById('lista-buoni');
-            container.innerHTML = '';
-            if (db.buoni.length === 0) {
-                container.innerHTML = '<div class="text-center text-slate-400 text-sm py-4">Nessun buono salvato.</div>';
-                return;
-            }
+            const container = document.getElementById('lista-buoni'); container.innerHTML = '';
+            if (db.buoni.length === 0) { container.innerHTML = '<div class="text-center text-slate-400 text-sm py-4">Nessun buono salvato.</div>'; return; }
             db.buoni.sort((a, b) => new Date(a.scadenza) - new Date(b.scadenza));
-            const oggi = new Date();
-            oggi.setHours(0, 0, 0, 0);
+            const oggi = new Date(); oggi.setHours(0,0,0,0);
+            
             db.buoni.forEach((buono, index) => {
-                const dataScad = new Date(buono.scadenza);
-                dataScad.setHours(0, 0, 0, 0);
-                const diffGiorni = Math.ceil((dataScad - oggi) / (1000 * 60 * 60 * 24));
+                const dataScad = new Date(buono.scadenza); dataScad.setHours(0,0,0,0);
+                const diffGiorni = Math.ceil((dataScad - oggi) / 86400000);
                 let cardClass = "bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden relative flex flex-col";
                 let imgClass = "w-full h-48 object-cover cursor-pointer";
-                let mostraTimbroScaduto = false;
-                if (diffGiorni < 0) {
-                    imgClass += " grayscale-img";
-                    mostraTimbroScaduto = true;
-                } else if (diffGiorni <= 7) {
-                    cardClass += " pulsing-border";
-                }
-                const card = document.createElement('div');
-                card.className = cardClass;
+                if (diffGiorni < 0) imgClass += " grayscale-img"; else if (diffGiorni <= 7) cardClass += " pulsing-border";
+
+                const card = document.createElement('div'); card.className = cardClass;
                 card.innerHTML = `
                     <div class="relative cursor-pointer" onclick="apriModalFoto('${buono.foto}')">
                         <img src="${buono.foto}" class="${imgClass}">
-                        ${mostraTimbroScaduto ? '<div class="absolute inset-0 flex items-center justify-center pointer-events-none"><div class="military-stamp">SCADUTO</div></div>' : ''}
+                        ${diffGiorni < 0 ? '<div class="absolute inset-0 flex items-center justify-center pointer-events-none"><div class="military-stamp">SCADUTO</div></div>' : ''}
                     </div>
                     <div class="p-3 flex justify-between items-center bg-white">
                         <div>
@@ -800,140 +616,87 @@ END:VCALENDAR`;
                             <p class="text-xs text-slate-500">Scadenza: ${buono.scadenza.split('-').reverse().join('/')}</p>
                         </div>
                         <div class="flex items-center gap-1">
-                            <button onclick="apriModalUtente('${buono.titolo}', '${buono.scadenza}')" title="Aggiungi al calendario" class="text-xs bg-indigo-50 text-indigo-600 hover:bg-indigo-100 font-semibold px-2.5 py-1.5 rounded-lg transition">
-                                📅
-                            </button>
-                            <button onclick="eliminaBuono(${index})" class="text-slate-400 hover:text-red-600 transition px-2 py-1">🗑️</button>
+                            <button onclick="apriModalUtente('${buono.titolo}', '${buono.scadenza}')" class="text-xs bg-indigo-50 text-indigo-600 hover:bg-indigo-100 font-semibold px-2.5 py-1.5 rounded-lg transition">📅</button>
+                            <button onclick="eliminaBuono(${index})" class="text-slate-400 hover:text-red-600 transition px-2 py-1 text-lg">🗑️</button>
                         </div>
                     </div>
-                `;
-                container.appendChild(card);
+                `; container.appendChild(card);
             });
         }
-        function apriModalFoto(src) {
-            document.getElementById('img-modal-full').src = src;
-            document.getElementById('modal-foto').classList.remove('hidden');
-        }
-        function chiudiModalFoto() {
-            document.getElementById('modal-foto').classList.add('hidden');
-            document.getElementById('img-modal-full').src = '';
-        }
+
         async function eliminaBuono(index) {
             const rimosso = db.buoni.splice(index, 1)[0];
-            const titoloNuovo = rimosso.titolo.trim().toLowerCase();
-            const giaPresente = db.cestino.some(item => 
-                item.tipo === 'buono' && 
-                item.data.titolo.trim().toLowerCase() === titoloNuovo
-            );
-            if (!giaPresente) {
-                db.cestino.push({ tipo: 'buono', data: rimosso, posizioneOriginale: index });
-            }
-            renderizzaBuoni();
-            await salvaDatiRemoti();
+            db.cestino.push({ tipo: 'buono', data: rimosso, posizioneOriginale: index });
+            renderizzaBuoni(); await salvaDatiRemoti();
         }
-        function mostraModalCestino() {
-            modoSelezioneCestino = false;
-            document.getElementById('modal-cestino').classList.remove('hidden');
-            document.getElementById('modal-cestino').classList.add('flex');
-            renderizzaCestino();
+
+        function apriModalUtente(titolo, scadenza) { eventoInCorso = { titolo, scadenza }; document.getElementById('modal-utente-cal').classList.replace('hidden', 'flex'); }
+        function chiudiModalUtente() { document.getElementById('modal-utente-cal').classList.replace('flex', 'hidden'); eventoInCorso = null; }
+        function apriModalFoto(src) { document.getElementById('img-modal-full').src = src; document.getElementById('modal-foto').classList.remove('hidden'); }
+        function chiudiModalFoto() { document.getElementById('modal-foto').classList.add('hidden'); document.getElementById('img-modal-full').src = ''; }
+        function mostraModalCestino() { modoSelezioneCestino = false; document.getElementById('modal-cestino').classList.replace('hidden', 'flex'); renderizzaCestino(); }
+        function chiudiModalCestino() { document.getElementById('modal-cestino').classList.replace('flex', 'hidden'); }
+        function attivaSelezioneCestino() { modoSelezioneCestino = true; renderizzaCestino(); }
+        
+        function selezionaUtenteCalendario(utente) {
+            if (!eventoInCorso) return; const { titolo, scadenza } = eventoInCorso; chiudiModalUtente();
+            if (utente === 'andrea') { alert("ℹ️ NOTA:\nPremi su 'Aggiungi al calendario' in basso. NON cliccare sulla spunta blu in alto a destra!"); generaEventoICS(titolo, scadenza); } 
+            else { apriGoogleCalendarWeb(titolo, scadenza); }
         }
-        function chiudiModalCestino() {
-            document.getElementById('modal-cestino').classList.add('hidden');
-            document.getElementById('modal-cestino').classList.remove('flex');
+
+        function generaEventoICS(titolo, dataIso) {
+            const d = dataIso.replace(/-/g, '');
+            const icsContent = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//SpesaSmart//IT\nBEGIN:VEVENT\nSUMMARY:Scade buono - ${titolo}\nDTSTART:${d}T083000\nDTEND:${d}T090000\nBEGIN:VALARM\nACTION:DISPLAY\nDESCRIPTION:Promemoria scadenza\nTRIGGER:-P2D\nEND:VALARM\nEND:VEVENT\nEND:VCALENDAR`;
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const link = document.createElement('a'); link.href = window.URL.createObjectURL(blob); link.setAttribute('download', `scadenza-${titolo}.ics`);
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
         }
-        function attivaSelezioneCestino() {
-            modoSelezioneCestino = true;
-            renderizzaCestino();
+
+        function apriGoogleCalendarWeb(titolo, dataIso) {
+            const d = dataIso.replace(/-/g, '');
+            window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Scade buono - '+titolo)}&dates=${d}T083000/${d}T090000`, '_blank');
         }
-        function selezionaTuttoCestino() {
-            const chks = document.querySelectorAll('.chk-cestino');
-            chks.forEach(c => c.checked = true);
-            aggiornaStatoPulsantiAzioneCestino();
-        }
-        function aggiornaStatoPulsantiAzioneCestino() {
-            const chks = document.querySelectorAll('.chk-cestino:checked');
-            const btnCancella = document.getElementById('btn-modal-cancella');
-            const btnRipristina = document.getElementById('btn-modal-ripristina');
-            const haSelezionati = chks.length > 0;
-            btnCancella.disabled = !haSelezionati;
-            btnRipristina.disabled = !haSelezionati;
-        }
+
         function renderizzaCestino() {
-            const container = document.getElementById('contenuto-cestino');
-            const btnSel = document.getElementById('btn-modal-sel');
-            const btnSelTutto = document.getElementById('btn-modal-sel-tutto');
-            const btnCancella = document.getElementById('btn-modal-cancella');
-            const btnRipristina = document.getElementById('btn-modal-ripristina');
-            container.innerHTML = '';
-            btnCancella.disabled = true;
-            btnRipristina.disabled = true;
-            if (modoSelezioneCestino) {
-                btnSel.classList.add('hidden');
-                btnSelTutto.classList.remove('hidden');
-            } else {
-                btnSel.classList.remove('hidden');
-                btnSelTutto.classList.add('hidden');
-            }
-            if (!db.cestino || db.cestino.length === 0) {
-                container.innerHTML = '<p class="text-center text-slate-400 text-sm py-4">Il cestino è vuoto.</p>';
-                btnSel.disabled = true;
-                return;
-            }
+            const container = document.getElementById('contenuto-cestino'); const btnSel = document.getElementById('btn-modal-sel');
+            const btnSelTutto = document.getElementById('btn-modal-sel-tutto'); const btnCancella = document.getElementById('btn-modal-cancella'); const btnRipristina = document.getElementById('btn-modal-ripristina');
+            
+            container.innerHTML = ''; btnCancella.disabled = true; btnRipristina.disabled = true;
+            if (modoSelezioneCestino) { btnSel.classList.add('hidden'); btnSelTutto.classList.remove('hidden'); } else { btnSel.classList.remove('hidden'); btnSelTutto.classList.add('hidden'); }
+            
+            if (db.cestino.length === 0) { container.innerHTML = '<p class="text-center text-slate-400 text-sm py-4">Il cestino è vuoto.</p>'; btnSel.disabled = true; return; }
+            
             btnSel.disabled = false;
             db.cestino.forEach((item, idx) => {
-                const row = document.createElement('div');
-                row.className = "py-2.5 flex items-center justify-between text-sm gap-2";
-                let infoText = "";
-                if (item.tipo === 'spesa') {
-                    const barrato = item.data.completato ? ' <span class="text-xs text-slate-400 italic">(barrato)</span>' : '';
-                    infoText = `📝 <strong>${item.data.nome}</strong> ${barrato}`;
-                } else {
-                    infoText = `🎟️ <strong>${item.data.titolo}</strong> (Buono)`;
-                }
-                row.innerHTML = `
-                    <div class="flex items-center gap-2">
-                        ${modoSelezioneCestino ? `<input type="checkbox" data-idx="${idx}" class="chk-cestino w-4 h-4 text-indigo-600 rounded" onchange="aggiornaStatoPulsantiAzioneCestino()">` : ''}
-                        <span>${infoText}</span>
-                    </div>
-                `;
+                const row = document.createElement('div'); row.className = "py-2.5 flex items-center justify-between text-sm gap-2";
+                row.innerHTML = `<div class="flex items-center gap-2">${modoSelezioneCestino ? `<input type="checkbox" data-idx="${idx}" class="chk-cestino w-5 h-5 text-indigo-600 rounded" onchange="aggiornaStatoPulsantiAzioneCestino()">` : ''} <span>${item.tipo === 'spesa' ? `📝 <strong>${item.data.nome}</strong>` : `🎟️ <strong>${item.data.titolo}</strong>`}</span></div>`;
                 container.appendChild(row);
             });
         }
-        async function ripristinaElementiCestino() {
-            const chks = Array.from(document.querySelectorAll('.chk-cestino:checked'));
-            if (chks.length === 0) return;
-            const indiciDaRipristinare = chks.map(c => parseInt(c.getAttribute('data-idx'))).sort((a, b) => b - a);
-            indiciDaRipristinare.forEach(idx => {
-                const elemento = db.cestino.splice(idx, 1)[0];
-                if (elemento.tipo === 'spesa') {
-                    const pos = typeof elemento.posizioneOriginale === 'number' ? elemento.posizioneOriginale : db.spesa.length;
-                    db.spesa.splice(pos, 0, elemento.data);
-                } else if (elemento.tipo === 'buono') {
-                    const pos = typeof elemento.posizioneOriginale === 'number' ? elemento.posizioneOriginale : db.buoni.length;
-                    db.buoni.splice(pos, 0, elemento.data);
-                }
-            });
-            modoSelezioneCestino = false;
-            renderizzaSpesa();
-            renderizzaBuoni();
-            renderizzaCestino();
-            await salvaDatiRemoti();
+
+        function selezionaTuttoCestino() { document.querySelectorAll('.chk-cestino').forEach(c => c.checked = true); aggiornaStatoPulsantiAzioneCestino(); }
+        function aggiornaStatoPulsantiAzioneCestino() {
+            const len = document.querySelectorAll('.chk-cestino:checked').length;
+            document.getElementById('btn-modal-cancella').disabled = len === 0; document.getElementById('btn-modal-ripristina').disabled = len === 0;
         }
+
+        async function ripristinaElementiCestino() {
+            Array.from(document.querySelectorAll('.chk-cestino:checked')).map(c => parseInt(c.getAttribute('data-idx'))).sort((a,b)=>b-a).forEach(idx => {
+                const e = db.cestino.splice(idx, 1)[0];
+                const pos = typeof e.posizioneOriginale === 'number' ? e.posizioneOriginale : (e.tipo === 'spesa' ? db.spesa.length : db.buoni.length);
+                if (e.tipo === 'spesa') db.spesa.splice(pos, 0, e.data); else db.buoni.splice(pos, 0, e.data);
+            });
+            modoSelezioneCestino = false; renderizzaSpesa(); renderizzaBuoni(); renderizzaCestino(); await salvaDatiRemoti();
+        }
+
         async function confermaCancellazioneCestino() {
-            if (confirm("Sei sicuro di voler cancellare definitivamente gli elementi selezionati? (Le foto associate verranno eliminate anche dalla cartella images/)")) {
-                const chks = Array.from(document.querySelectorAll('.chk-cestino:checked'));
-                const indiciDaRimuovere = chks.map(c => parseInt(c.getAttribute('data-idx'))).sort((a, b) => b - a);
-                
-                for (let idx of indiciDaRimuovere) {
-                    const elemento = db.cestino[idx];
-                    if (elemento.tipo === 'buono' && elemento.data && elemento.data.foto) {
-                        await eliminaImmagineDaGitHub(elemento.data.foto);
-                    }
+            if (confirm("Vuoi cancellare definitivamente gli elementi selezionati?")) {
+                const indici = Array.from(document.querySelectorAll('.chk-cestino:checked')).map(c => parseInt(c.getAttribute('data-idx'))).sort((a,b)=>b-a);
+                for (let idx of indici) {
+                    if (db.cestino[idx].tipo === 'buono' && db.cestino[idx].data.foto) await eliminaImmagineDaGitHub(db.cestino[idx].data.foto);
                     db.cestino.splice(idx, 1);
                 }
-                modoSelezioneCestino = false;
-                renderizzaCestino();
-                await salvaDatiRemoti();
+                modoSelezioneCestino = false; renderizzaCestino(); await salvaDatiRemoti();
             }
         }
     </script>
