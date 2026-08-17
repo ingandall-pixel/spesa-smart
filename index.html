@@ -345,6 +345,7 @@
             };
             reader.readAsDataURL(file);
         }
+
         // OCR POTENZIATO PER INTERVALLI E MESI IN LETTERE + FALLBACK MANUALE
         function estraiDataDaTesto(testo) {
             const linee = testo.split('\n');
@@ -363,16 +364,14 @@
                 const low = linea.toLowerCase().replace(/\s+/g, ' ');
                 let match;
                 
-                // Cerca date in formato numerico es. 30/08/2026
                 while ((match = rxDataNumerica.exec(linea)) !== null) {
                     let giorno = match[1].padStart(2, '0');
                     let mese = match[2].padStart(2, '0');
                     let anno = match[3];
                     if (anno.length === 2) anno = '20' + anno;
-                    dateTrovate.push({ data: `${anno}-${mese}-${giorno}`, index: rxDataNumerica.lastIndex });
+                    dateTrovate.push({ data: `${anno}-${mese}-${giorno}` });
                 }
 
-                // Cerca date con mesi in lettere es. "30 agosto 2026" o "30 agosto"
                 let matchLettere;
                 while ((matchLettere = rxDataLettere.exec(low)) !== null) {
                     let giorno = matchLettere[1].padStart(2, '0');
@@ -380,35 +379,43 @@
                     let mese = mesiMap[meseStr];
                     let anno = matchLettere[3];
                     if (!anno) {
-                        anno = new Date().getFullYear().toString(); // Anno corrente di default se omesso
+                        anno = new Date().getFullYear().toString();
                     } else if (anno.length === 2) {
                         anno = '20' + anno;
                     }
                     if (mese) {
-                        dateTrovate.push({ data: `${anno}-${mese}-${giorno}`, index: rxDataLettere.lastIndex });
+                        dateTrovate.push({ data: `${anno}-${mese}-${giorno}` });
                     }
                 }
             });
 
             if (dateTrovate.length > 0) {
-                // Se c'è un intervallo (es. "dal 4 giugno al 30 agosto"), prendiamo l'ultima data rilevata nella frase/testo che corrisponde alla scadenza finale
                 const ultimaData = dateTrovate[dateTrovate.length - 1].data;
-                document.getElementById('input-scadenza').value = ultimaData;
+                const inputScadenza = document.getElementById('input-scadenza');
+                inputScadenza.value = ultimaData;
+                inputScadenza.removeAttribute('data-placeholder-manuale');
+                inputScadenza.style.borderColor = '';
                 validaStatoBuonoForm();
             } else {
-                // FALLBACK: Se non trova alcuna data, attiva il selettore manuale con avviso
                 fallbackSelezioneManuale();
             }
         }
 
         function fallbackSelezioneManuale() {
-            alert("⚠️ Data non rilevata automaticamente.\nSi aprirà il calendario per selezionare la scadenza manualmente.");
             const inputScadenza = document.getElementById('input-scadenza');
-            inputScadenza.focus();
-            // Tenta di aprire direttamente il picker nativo se supportato dal browser mobile
-            if (typeof inputScadenza.showPicker === 'function') {
-                try { inputScadenza.showPicker(); } catch(e) {}
-            }
+            inputScadenza.value = "";
+            // Imposta lo stile di avviso e il testo esplicito per l'utente
+            inputScadenza.setAttribute('data-placeholder-manuale', 'inseriscila manualmente');
+            inputScadenza.style.borderColor = '#dc2626';
+            inputScadenza.style.boxShadow = '0 0 0 2px rgba(220, 38, 38, 0.2)';
+            
+            // Sfruttiamo un trucco per mostrare la scritta o forzare l'apertura del calendario al click
+            inputScadenza.onclick = function() {
+                if (typeof inputScadenza.showPicker === 'function') {
+                    try { inputScadenza.showPicker(); } catch(e) {}
+                }
+            };
+
             validaStatoBuonoForm();
         }
 
@@ -416,6 +423,13 @@
             const scadenza = document.getElementById('input-scadenza').value;
             const titolo = document.getElementById('select-titolo').value;
             if (!scadenza || !titolo || !tempFotoBase64) return;
+            
+            // Ripristina stili del campo data in caso di salvataggio
+            const inputScadenza = document.getElementById('input-scadenza');
+            inputScadenza.style.borderColor = '';
+            inputScadenza.style.boxShadow = '';
+            inputScadenza.onclick = null;
+
             const nuovoBuono = {
                 id: Date.now(),
                 titolo: titolo,
