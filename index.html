@@ -436,18 +436,15 @@
                     ? "line-through text-slate-400 italic flex-1 cursor-pointer select-none" 
                     : "font-medium text-slate-700 flex-1 cursor-pointer select-none";
 
-                // Pulsante sposta su (se non è il primo e non è completato)
-                const btnSu = (index > 0 && !completato && !db.spesa[index - 1].completato)
-                    ? `<button onclick="spostaSpesa(${index}, -1)" class="text-slate-400 hover:text-slate-700 p-1 text-xs font-bold" title="Sposta su">⬆️</button>`
-                    : `<span class="w-5 inline-block"></span>`;
+                // Condizioni per abilitare le frecce di spostamento
+                const puoSalire = index > 0 && !completato && !db.spesa[index - 1].completato;
+                const puoScendere = index < db.spesa.length - 1 && !completato && !db.spesa[index + 1].completato;
 
-                // Pulsante sposta giù (se non è l'ultimo della sua categoria e non è completato)
-                const btnGiu = (index < db.spesa.length - 1 && !completato && !db.spesa[index + 1].completato)
-                    ? `<button onclick="spostaSpesa(${index}, 1)" class="text-slate-400 hover:text-slate-700 p-1 text-xs font-bold" title="Sposta giù">⬇️</button>`
-                    : `<span class="w-5 inline-block"></span>`;
+                const btnSu = `<button onclick="spostaSpesa(${index}, -1)" ${puoSalire ? '' : 'disabled'} class="text-slate-400 ${puoSalire ? 'hover:text-slate-700 cursor-pointer' : 'opacity-20 cursor-not-allowed'} p-0.5 text-xs font-bold leading-none" title="Sposta su">⬆️</button>`;
+                const btnGiu = `<button onclick="spostaSpesa(${index}, 1)" ${puoScendere ? '' : 'disabled'} class="text-slate-400 ${puoScendere ? 'hover:text-slate-700 cursor-pointer' : 'opacity-20 cursor-not-allowed'} p-0.5 text-xs font-bold leading-none" title="Sposta giù">⬇️</button>`;
 
                 li.innerHTML = `
-                    <div class="flex items-center gap-1.5 flex-1 min-w-0">
+                    <div class="flex items-center gap-2 flex-1 min-w-0">
                         <div class="flex flex-col shrink-0">
                             ${btnSu}
                             ${btnGiu}
