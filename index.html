@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Spesa Smart">
-    <link rel="apple-touch-icon" href="images/icon.png?v=14">
+    <link rel="apple-touch-icon" href="images/icon.png?v=15">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
     <style>
@@ -99,8 +99,12 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1">2. Data di Scadenza</label>
-                    <!-- Campo dinamico: parte come text per mostrare l'avviso esplicito -->
-                    <input type="text" id="input-scadenza" value="Inseriscila manualmente" readonly onclick="attivaCalendario(this)" onchange="validaStatoBuonoForm()" class="w-full px-3 py-2 border border-red-500 text-red-600 font-medium bg-red-50 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm cursor-pointer shadow-sm">
+                    <!-- Avviso esplicito in caso di fallimento OCR -->
+                    <div id="avviso-manuale" class="hidden mb-1.5 p-2 bg-red-50 border border-red-300 rounded-lg text-xs font-semibold text-red-600 flex items-center gap-1.5 shadow-sm">
+                        <span>⚠️</span> <span>Inseriscila manualmente</span>
+                    </div>
+                    <!-- Campo data nativo -->
+                    <input type="date" id="input-scadenza" onchange="validaStatoBuonoForm()" class="w-full px-3 py-2 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm bg-white">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1">3. Titolo del buono</label>
@@ -190,17 +194,7 @@
         let eventoInCorso = null; 
         document.addEventListener('DOMContentLoaded', () => {
             caricaDatiLocali();
-            impostaStatoInizialeData();
         });
-        function impostaStatoInizialeData() {
-            const inputScadenza = document.getElementById('input-scadenza');
-            if (!inputScadenza.value || inputScadenza.type === 'text') {
-                inputScadenza.type = 'text';
-                inputScadenza.value = "Inseriscila manualmente";
-                inputScadenza.readOnly = true;
-                inputScadenza.className = "w-full px-3 py-2 border border-red-500 text-red-600 font-medium bg-red-50 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm cursor-pointer shadow-sm";
-            }
-        }
         function caricaDatiLocali() {
             const salvati = localStorage.getItem('spesa_smart_db');
             if (salvati) {
@@ -303,24 +297,22 @@
             renderizzaSpesa();
             salvaDatiLocali();
         }
-        function attivaCalendario(input) {
-            input.type = 'date';
-            input.value = '';
-            input.readOnly = false;
-            input.className = "w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm bg-white text-slate-800";
-            if (typeof input.showPicker === 'function') {
-                try { input.showPicker(); } catch(e) {}
-            }
-        }
         function validaStatoBuonoForm() {
             const inputScadenza = document.getElementById('input-scadenza');
             const scadenzaVal = inputScadenza.value;
             const selectTitolo = document.getElementById('select-titolo');
             const btnSalva = document.getElementById('btn-salva-buono');
             
-            const isValido = inputScadenza.type === 'date' && scadenzaVal !== "";
+            const isValido = scadenzaVal !== "";
             selectTitolo.disabled = !isValido;
             
+            if (isValido) {
+                // Se l'utente ha inserito/selezionato una data, rimuoviamo l'avviso manuale e il bordo rosso
+                document.getElementById('avviso-manuale').classList.add('hidden');
+                inputScadenza.classList.remove('border-red-500', 'bg-red-50');
+                inputScadenza.classList.add('border-slate-300');
+            }
+
             if (isValido && selectTitolo.value) {
                 btnSalva.disabled = false;
                 btnSalva.className = "w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg text-sm transition cursor-pointer";
@@ -414,10 +406,10 @@
             const inputScadenza = document.getElementById('input-scadenza');
             if (dateTrovate.length > 0) {
                 const ultimaData = dateTrovate[dateTrovate.length - 1].data;
-                inputScadenza.type = 'date';
                 inputScadenza.value = ultimaData;
-                inputScadenza.readOnly = false;
-                inputScadenza.className = "w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm bg-white text-slate-800";
+                document.getElementById('avviso-manuale').classList.add('hidden');
+                inputScadenza.classList.remove('border-red-500', 'bg-red-50');
+                inputScadenza.classList.add('border-slate-300');
             } else {
                 fallbackSelezioneManuale();
             }
@@ -426,10 +418,11 @@
 
         function fallbackSelezioneManuale() {
             const inputScadenza = document.getElementById('input-scadenza');
-            inputScadenza.type = 'text';
-            inputScadenza.value = "Inseriscila manualmente";
-            inputScadenza.readOnly = true;
-            inputScadenza.className = "w-full px-3 py-2 border border-red-500 text-red-600 font-medium bg-red-50 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm cursor-pointer shadow-sm";
+            inputScadenza.value = "";
+            // Mostra l'avviso e illumina il campo data
+            document.getElementById('avviso-manuale').classList.remove('hidden');
+            inputScadenza.classList.remove('border-slate-300');
+            inputScadenza.classList.add('border-red-500', 'bg-red-50');
             validaStatoBuonoForm();
         }
 
@@ -437,7 +430,7 @@
             const inputScadenza = document.getElementById('input-scadenza');
             const scadenza = inputScadenza.value;
             const titolo = document.getElementById('select-titolo').value;
-            if (inputScadenza.type !== 'date' || !scadenza || !titolo || !tempFotoBase64) return;
+            if (!scadenza || !titolo || !tempFotoBase64) return;
 
             const nuovoBuono = {
                 id: Date.now(),
@@ -447,7 +440,10 @@
             };
             db.buoni.push(nuovoBuono);
             document.getElementById('input-foto').value = '';
-            impostaStatoInizialeData();
+            inputScadenza.value = '';
+            document.getElementById('avviso-manuale').classList.add('hidden');
+            inputScadenza.classList.remove('border-red-500', 'bg-red-50');
+            inputScadenza.classList.add('border-slate-300');
             document.getElementById('select-titolo').value = '';
             tempFotoBase64 = '';
             validaStatoBuonoForm();
