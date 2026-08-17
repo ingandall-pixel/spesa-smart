@@ -1,26 +1,16 @@
 {
   "spesa": [
     {
-      "id": 1786964263852,
-      "nome": "Latte",
+      "id": 1786964273050,
+      "nome": "La burra",
       "completato": false
     },
     {
-      "id": 1786964273050,
-      "nome": "La burra",
+      "id": 1786964288121,
+      "nome": "latte",
       "completato": false
     }
   ],
   "buoni": [],
-  "cestino": [
-    {
-      "tipo": "spesa",
-      "data": {
-        "id": 1786964288121,
-        "nome": "latte",
-        "completato": false
-      },
-      "posizioneOriginale": 2
-    }
-  ]
+  "cestino": []
 }
