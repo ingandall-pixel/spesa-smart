@@ -1,6 +1,11 @@
 {
   "spesa": [
     {
+      "id": 1786997939217,
+      "nome": "Coton fioc",
+      "completato": false
+    },
+    {
       "id": 1786979212204,
       "nome": "Pepe da macinare",
       "completato": false
@@ -29,11 +34,6 @@
       "id": 1786970620258,
       "nome": "Caffè",
       "completato": false
-    },
-    {
-      "id": 1786997939217,
-      "nome": "Coton fioc",
-      "completato": true
     }
   ],
   "buoni": [
