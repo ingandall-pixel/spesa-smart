@@ -16,6 +16,11 @@
       "completato": false
     },
     {
+      "id": 1786997939217,
+      "nome": "Coton fioc",
+      "completato": false
+    },
+    {
       "id": 1786979231588,
       "nome": "Cassetta ascigapiatti",
       "completato": false
@@ -28,11 +33,6 @@
     {
       "id": 1786970620258,
       "nome": "Caffè",
-      "completato": false
-    },
-    {
-      "id": 1786997939217,
-      "nome": "Coton fioc",
       "completato": false
     }
   ],
