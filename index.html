@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Spesa Smart">
-    <link rel="apple-touch-icon" href="images/icon.png?v=10">
+    <link rel="apple-touch-icon" href="images/icon.png?v=11">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
@@ -107,7 +107,7 @@
                 </div>
 
                 <div id="ocr-loading" class="hidden text-center py-2 text-xs font-medium text-indigo-600">
-                    🔄 Lettura data in corso...
+                    🔄 Lettura data e ottimizzazione foto...
                 </div>
 
                 <div>
@@ -196,9 +196,7 @@
             if(!db.buoni) db.buoni = [];
             if(!db.cestino) db.cestino = [];
 
-            // Pulizia automatica iniziale di eventuali duplicati storici nel cestino
             pulisciDuplicatiCestino();
-
             renderizzaSpesa();
             renderizzaBuoni();
         }
@@ -244,7 +242,7 @@
             }
         }
 
-        // BARRATURA ED ELIMINAZIONE SPESA
+        // SPESA CON BARRATURA
         function renderizzaSpesa() {
             const ul = document.getElementById('lista-spesa');
             ul.innerHTML = '';
@@ -291,12 +289,10 @@
             salvaDatiLocali();
         }
 
-        // ELIMINAZIONE CON VERIFICA UNICITÀ (CASE-INSENSITIVE)
         function eliminaSpesa(index) {
             const rimosso = db.spesa.splice(index, 1)[0];
             const testoNuovo = rimosso.nome.trim().toLowerCase();
 
-            // Verifica se esiste già la stessa voce nel cestino indipendentemente dalle maiuscole/minuscole
             const giaPresente = db.cestino.some(item => 
                 item.tipo === 'spesa' && 
                 item.data.nome.trim().toLowerCase() === testoNuovo
@@ -326,6 +322,7 @@
             }
         }
 
+        // COMPRESSIONE FOTO PER EVITARE PUNTO DI DOMANDA BLU
         function gestisciFoto(input) {
             if (!input.files || !input.files[0]) return;
 
@@ -334,58 +331,81 @@
 
             document.getElementById('ocr-loading').classList.remove('hidden');
 
-            reader.onload = async function (e) {
-                tempFotoBase64 = e.target.result;
+            reader.onload = function (e) {
+                const img = new Image();
+                img.onload = async function() {
+                    // Ridimensiona immagine a max 800px per risparmiare memoria
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    const maxDim = 800;
 
-                try {
-                    const worker = await Tesseract.createWorker('ita');
-                    const ret = await worker.recognize(tempFotoBase64);
-                    await worker.terminate();
+                    if (width > height && width > maxDim) {
+                        height *= maxDim / width;
+                        width = maxDim;
+                    } else if (height > maxDim) {
+                        width *= maxDim / height;
+                        height = maxDim;
+                    }
 
-                    estraiDataDaTesto(ret.data.text);
-                } catch (err) {
-                    console.error("Errore OCR:", err);
-                } finally {
-                    document.getElementById('ocr-loading').classList.add('hidden');
-                }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    tempFotoBase64 = canvas.toDataURL('image/jpeg', 0.7);
+
+                    try {
+                        const worker = await Tesseract.createWorker('ita');
+                        const ret = await worker.recognize(tempFotoBase64);
+                        await worker.terminate();
+
+                        estraiDataDaTesto(ret.data.text);
+                    } catch (err) {
+                        console.error("Errore OCR:", err);
+                    } finally {
+                        document.getElementById('ocr-loading').classList.add('hidden');
+                    }
+                };
+                img.src = e.target.result;
             };
 
             reader.readAsDataURL(file);
         }
 
+        // ESTRAZIONE DATA POTENZIATA (Supporta "offerta valida fino al", punti, barre e spazi)
         function estraiDataDaTesto(testo) {
             const linee = testo.split('\n');
             let dateTrovate = [];
-            const rxData = /(\d{2})[\/\-](\d{2})[\/\-](\d{4})/g;
+
+            // Regex flessibile per date tipo 05/09/2026, 05.09.2026, 05 - 09 - 2026
+            const rxData = /(\d{1,2})[\/\-\.]\s*(\d{1,2})[\/\-\.]\s*(\d{2,4})/g;
 
             linee.forEach(linea => {
-                const low = linea.toLowerCase();
+                const low = linea.toLowerCase().replace(/\s+/g, ' ');
                 let match;
 
-                if (low.includes('offerta valida fino al') || low.includes('valida fino al') || low.includes('scadenza')) {
-                    while ((match = rxData.exec(linea)) !== null) {
-                        dateTrovate.push(`${match[3]}-${match[2]}-${match[1]}`);
-                    }
-                }
+                const paroleChiave = ['offerta valida fino al', 'valida fino al', 'valido fino al', 'scadenza', 'scade il', 'fino al'];
+                const haParolaChiave = paroleChiave.some(p => low.includes(p));
 
-                if (low.includes('dal') && low.includes('al')) {
-                    while ((match = rxData.exec(linea)) !== null) {
-                        dateTrovate.push(`${match[3]}-${match[2]}-${match[1]}`);
-                    }
-                }
+                while ((match = rxData.exec(linea)) !== null) {
+                    let giorno = match[1].padStart(2, '0');
+                    let mese = match[2].padStart(2, '0');
+                    let anno = match[3];
+                    if (anno.length === 2) anno = '20' + anno;
 
-                if (dateTrovate.length === 0) {
-                    while ((match = rxData.exec(linea)) !== null) {
-                        dateTrovate.push(`${match[3]}-${match[2]}-${match[1]}`);
+                    const dataFormatted = `${anno}-${mese}-${giorno}`;
+
+                    if (haParolaChiave) {
+                        dateTrovate.unshift(dataFormatted); // Priorità massima
+                    } else {
+                        dateTrovate.push(dataFormatted);
                     }
                 }
             });
 
             if (dateTrovate.length > 0) {
-                dateTrovate.sort((a, b) => new Date(a) - new Date(b));
-                const dataPiuLontana = dateTrovate[dateTrovate.length - 1];
-
-                document.getElementById('input-scadenza').value = dataPiuLontana;
+                document.getElementById('input-scadenza').value = dateTrovate[0];
             }
 
             validaStatoBuonoForm();
@@ -415,42 +435,21 @@
             renderizzaBuoni();
             salvaDatiLocali();
 
-            if (confirm("Vuoi aggiungere la scadenza al tuo calendario?")) {
-                generaIcs(titolo, scadenza);
-            }
+            // Apri automaticamente il calendario senza chiedere compilazioni
+            apriCalendarioDiretto(titolo, scadenza);
         }
 
-        function generaIcs(titolo, dataIso) {
-            const dataFormatted = dataIso.replace(/-/g, '');
-            const icsData = 
-`BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//SpesaSmart//IT
-BEGIN:VEVENT
-SUMMARY:Scade buono - ${titolo}
-DTSTART:${dataFormatted}T080000
-DTEND:${dataFormatted}T083000
-DESCRIPTION:Scadenza buono spesa: ${titolo}
-BEGIN:VALARM
-TRIGGER:-P7D
-ACTION:DISPLAY
-DESCRIPTION:Reminder 7 giorni prima
-END:VALARM
-BEGIN:VALARM
-TRIGGER:-PT15M
-ACTION:DISPLAY
-DESCRIPTION:Reminder 15 minuti prima
-END:VALARM
-END:VEVENT
-END:VCALENDAR`;
+        // APERTURA DIRETTA CALENDARIO PRE-COMPILATO
+        function apriCalendarioDiretto(titolo, dataIso) {
+            const dataPura = dataIso.replace(/-/g, '');
+            const dataInizio = `${dataPura}T080000Z`;
+            const dataFine = `${dataPura}T090000Z`;
+            const testoEvento = encodeURIComponent(`Scadenza buono - ${titolo}`);
+            const dettagli = encodeURIComponent(`Ricordati di usare il buono spesa ${titolo} entro oggi!`);
 
-            const blob = new Blob([icsData], { type: 'text/calendar;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.setAttribute('download', `scadenza_${titolo}_${dataFormatted}.ics`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            const urlGoogleCalendar = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${testoEvento}&dates=${dataInizio}/${dataFine}&details=${dettagli}`;
+            
+            window.open(urlGoogleCalendar, '_blank');
         }
 
         function renderizzaBuoni() {
@@ -496,7 +495,12 @@ END:VCALENDAR`;
                             <h4 class="font-bold text-slate-800 text-base">${buono.titolo}</h4>
                             <p class="text-xs text-slate-500">Scadenza: ${buono.scadenza.split('-').reverse().join('/')}</p>
                         </div>
-                        <button onclick="eliminaBuono(${index})" class="text-slate-400 hover:text-red-600 transition px-2 py-1">🗑️</button>
+                        <div class="flex items-center gap-1">
+                            <button onclick="apriCalendarioDiretto('${buono.titolo}', '${buono.scadenza}')" title="Aggiungi al calendario" class="text-xs bg-indigo-50 text-indigo-600 hover:bg-indigo-100 font-semibold px-2.5 py-1.5 rounded-lg transition">
+                                📅
+                            </button>
+                            <button onclick="eliminaBuono(${index})" class="text-slate-400 hover:text-red-600 transition px-2 py-1">🗑️</button>
+                        </div>
                     </div>
                 `;
                 container.appendChild(card);
