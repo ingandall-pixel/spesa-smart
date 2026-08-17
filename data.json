@@ -23,6 +23,12 @@
       "titolo": "Altro",
       "scadenza": "2026-09-19",
       "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1786966308729_qf5mjq.jpg"
+    },
+    {
+      "id": 1786966408032,
+      "titolo": "Casa",
+      "scadenza": "2026-10-23",
+      "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1786966406283_3zb85o.jpg"
     }
   ],
   "cestino": []
