@@ -12,16 +12,5 @@
     }
   ],
   "buoni": [],
-  "cestino": [
-    {
-      "tipo": "buono",
-      "data": {
-        "id": 1786964359017,
-        "titolo": "Altro",
-        "scadenza": "2026-08-30",
-        "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1786964356971.jpg"
-      },
-      "posizioneOriginale": 0
-    }
-  ]
+  "cestino": []
 }
