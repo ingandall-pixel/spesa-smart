@@ -312,7 +312,7 @@
                 }
             } catch (e) {
                 console.error("Errore caricamento dati:", e);
-                alert("Impossibile connettersi a GitHub. Verifica il Token e il nome del repository dal pulsante Config.");
+                alert("Errore Caricamento: " + e.message);
                 db = { spesa: [], buoni: [], cestino: [] };
                 apriModalConfig();
             } finally {
@@ -341,7 +341,7 @@
                 await githubApiRequest('data.json', 'PUT', body);
             } catch (e) {
                 console.error("Errore salvataggio dati:", e);
-                alert("Errore di sincronizzazione con GitHub.");
+                alert("Errore GitHub: " + e.message);
             } finally {
                 nascondiNotificaSync();
             }
@@ -362,7 +362,7 @@
                 return `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/images/${filename}`;
             } catch (e) {
                 console.error("Errore caricamento immagine:", e);
-                alert("Errore durante il caricamento dell'immagine su GitHub. Verifica che la cartella 'images' esista o che il token abbia i permessi di scrittura.");
+                alert("Errore Immagine: " + e.message);
                 throw e;
             } finally {
                 nascondiNotificaSync();
