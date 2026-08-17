@@ -53,6 +53,9 @@
                 border-color: rgba(239, 68, 68, 1);
             }
         }
+        .dragging {
+            opacity: 0.4;
+        }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800">
@@ -226,6 +229,8 @@
         let tempFotoBase64 = "";
         let modoSelezioneCestino = false;
         let eventoInCorso = null; 
+        let draggedIndex = null;
+
         document.addEventListener('DOMContentLoaded', () => {
             caricaConfigurazioni();
         });
@@ -422,29 +427,88 @@
         function renderizzaSpesa() {
             const ul = document.getElementById('lista-spesa');
             ul.innerHTML = '';
-            if (db.spesa.length === 0) {
+            if (!db.spesa || db.spesa.length === 0) {
                 ul.innerHTML = '<li class="py-3 text-center text-slate-400 text-sm">Nessun articolo presente.</li>';
                 return;
             }
             db.spesa.forEach((item, index) => {
                 const li = document.createElement('li');
-                li.className = "py-2.5 flex justify-between items-center text-sm border-b border-slate-100 last:border-0";
+                li.className = "py-2.5 flex justify-between items-center text-sm border-b border-slate-100 last:border-0 bg-white";
                 const completato = !!item.completato;
+                
+                if (!completato) {
+                    li.setAttribute('draggable', 'true');
+                    li.dataset.index = index;
+                    li.addEventListener('dragstart', handleDragStart);
+                    li.addEventListener('dragover', handleDragOver);
+                    li.addEventListener('drop', handleDrop);
+                    li.addEventListener('dragend', handleDragEnd);
+                }
+
                 const stileTesto = completato 
                     ? "line-through text-slate-400 italic flex-1 cursor-pointer select-none" 
                     : "font-medium text-slate-700 flex-1 cursor-pointer select-none";
+
+                const handleOrdinamento = !completato 
+                    ? `<span class="cursor-grab active:cursor-grabbing text-slate-300 hover:text-slate-500 px-1.5 select-none text-base" title="Trascina per riordinare">☰</span>` 
+                    : `<span class="w-4 inline-block"></span>`;
+
                 li.innerHTML = `
-                    <label class="flex items-center gap-3 flex-1 cursor-pointer py-1">
-                        <input type="checkbox" ${completato ? 'checked' : ''} onchange="toggleStatoSpesa(${index})" class="w-5 h-5 text-indigo-600 rounded cursor-pointer accent-indigo-600">
-                        <span class="${stileTesto}">${item.nome}</span>
-                    </label>
-                    <button onclick="eliminaSpesa(${index})" class="text-slate-400 hover:text-red-600 transition px-2 py-1 ml-2">🗑️</button>
+                    <div class="flex items-center gap-2 flex-1 min-w-0">
+                        ${handleOrdinamento}
+                        <label class="flex items-center gap-2 flex-1 cursor-pointer py-1 min-w-0">
+                            <input type="checkbox" ${completato ? 'checked' : ''} onchange="toggleStatoSpesa(${index})" class="w-5 h-5 text-indigo-600 rounded cursor-pointer accent-indigo-600 shrink-0">
+                            <span class="${stileTesto} truncate">${item.nome}</span>
+                        </label>
+                    </div>
+                    <button onclick="eliminaSpesa(${index})" class="text-slate-400 hover:text-red-600 transition px-2 py-1 ml-2 shrink-0">🗑️</button>
                 `;
                 ul.appendChild(li);
             });
         }
+        function handleDragStart(e) {
+            draggedIndex = parseInt(this.dataset.index);
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+        async function handleDrop(e) {
+            e.preventDefault();
+            const targetIndex = parseInt(this.dataset.index);
+            if (isNaN(draggedIndex) || isNaN(targetIndex) || draggedIndex === targetIndex) return;
+            
+            // Non permettere di spostare sopra elementi completati se si trovano in fondo, o gestiamo l'array
+            if (db.spesa[targetIndex].completato) return;
+
+            const itemSpostato = db.spesa.splice(draggedIndex, 1)[0];
+            db.spesa.splice(targetIndex, 0, itemSpostato);
+            
+            renderizzaSpesa();
+            await salvaDatiRemoti();
+        }
+        function handleDragEnd() {
+            this.classList.remove('dragging');
+            draggedIndex = null;
+        }
         async function toggleStatoSpesa(index) {
-            db.spesa[index].completato = !db.spesa[index].completato;
+            const item = db.spesa.splice(index, 1)[0];
+            item.completato = !item.completato;
+            
+            if (item.completato) {
+                db.spesa.push(item); // Sposta in fondo se barrato
+            } else {
+                // Se viene sbarrato (rimesso attivo), lo inseriamo prima del primo elemento già completato o in cima agli attivi
+                const primoCompletatoIdx = db.spesa.findIndex(el => el.completato);
+                if (primoCompletatoIdx !== -1) {
+                    db.spesa.splice(primoCompletatoIdx, 0, item);
+                } else {
+                    db.spesa.unshift(item);
+                }
+            }
+            
             renderizzaSpesa();
             await salvaDatiRemoti();
         }
@@ -452,7 +516,16 @@
             const input = document.getElementById('input-spesa');
             const nome = input.value.trim();
             if (!nome) return;
-            db.spesa.push({ id: Date.now(), nome: nome, completato: false });
+            
+            const nuovoElemento = { id: Date.now(), nome: nome, completato: false };
+            // Inserisce in cima alla lista degli elementi attivi (prima dei completati)
+            const primoCompletatoIdx = db.spesa.findIndex(el => el.completato);
+            if (primoCompletatoIdx !== -1) {
+                db.spesa.splice(primoCompletatoIdx, 0, nuovoElemento);
+            } else {
+                db.spesa.push(nuovoElemento);
+            }
+
             input.value = '';
             renderizzaSpesa();
             await salvaDatiRemoti();
@@ -646,6 +719,15 @@
             }
         }
         function generaEventoICS(titolo, dataIso) {
+            const dataScadObj = new Date(dataIso);
+            const oggiObj = new Date();
+            oggiObj.setHours(0, 0, 0, 0);
+            dataScadObj.setHours(0, 0, 0, 0);
+
+            const diffGiorni = Math.ceil((dataScadObj - oggiObj) / (1000 * 60 * 60 * 24));
+            const giorniAnticipo = diffGiorni > 7 ? 7 : (diffGiorni > 0 ? diffGiorni : 0);
+            const triggerString = giorniAnticipo > 0 ? `-P${giorniAnticipo}D` : `PT0S`;
+
             const dataPura = dataIso.replace(/-/g, '');
             const titoloEvento = `Scade buono - ${titolo}`;
             const noteEvento = `Scadenza buono spesa: ${titolo}`;
@@ -662,8 +744,8 @@ DTSTART:${dtStart}
 DTEND:${dtEnd}
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Promemoria 1 settimana prima
-TRIGGER:-P1W
+DESCRIPTION:Promemoria scadenza buono (${giorniAnticipo} giorni prima)
+TRIGGER:${triggerString}
 END:VALARM
 END:VEVENT
 END:VCALENDAR`;
