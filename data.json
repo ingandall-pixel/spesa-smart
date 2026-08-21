@@ -26,11 +26,6 @@
       "completato": false
     },
     {
-      "id": 1787210004536,
-      "nome": "Spugne bianche",
-      "completato": false
-    },
-    {
       "id": 1787251921634,
       "nome": "BBQ",
       "completato": false
@@ -78,6 +73,11 @@
     {
       "id": 1786970620258,
       "nome": "Caffè",
+      "completato": true
+    },
+    {
+      "id": 1787210004536,
+      "nome": "Spugne bianche",
       "completato": true
     }
   ],
