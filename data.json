@@ -1,11 +1,6 @@
 {
   "spesa": [
     {
-      "id": 1786997939217,
-      "nome": "Coton fioc",
-      "completato": false
-    },
-    {
       "id": 1786979212204,
       "nome": "Pepe da macinare",
       "completato": false
@@ -79,6 +74,11 @@
       "id": 1787333736890,
       "nome": "Pila Swatch",
       "completato": false
+    },
+    {
+      "id": 1786997939217,
+      "nome": "Coton fioc",
+      "completato": true
     }
   ],
   "buoni": [
