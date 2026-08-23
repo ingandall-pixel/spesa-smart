@@ -51,11 +51,6 @@
       "completato": false
     },
     {
-      "id": 1787333736890,
-      "nome": "Pila Swatch",
-      "completato": false
-    },
-    {
       "id": 1786997939217,
       "nome": "Coton fioc",
       "completato": true
@@ -78,6 +73,11 @@
     {
       "id": 1787315312504,
       "nome": "Sgrassatore",
+      "completato": true
+    },
+    {
+      "id": 1787333736890,
+      "nome": "Pila Swatch",
       "completato": true
     }
   ],
