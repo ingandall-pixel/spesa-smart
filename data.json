@@ -71,11 +71,6 @@
       "completato": false
     },
     {
-      "id": 1787851873014,
-      "nome": "Limoni",
-      "completato": false
-    },
-    {
       "id": 1786970620258,
       "nome": "Caffè",
       "completato": true
@@ -174,6 +169,15 @@
         "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1786995564170_x5d49y.jpg"
       },
       "posizioneOriginale": 0
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1787851873014,
+        "nome": "Limoni",
+        "completato": false
+      },
+      "posizioneOriginale": 14
     }
   ]
 }
