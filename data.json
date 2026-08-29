@@ -61,11 +61,6 @@
       "completato": true
     },
     {
-      "id": 1787210004536,
-      "nome": "Spugne bianche",
-      "completato": true
-    },
-    {
       "id": 1787315312504,
       "nome": "Sgrassatore",
       "completato": true
@@ -191,6 +186,15 @@
         "completato": true
       },
       "posizioneOriginale": 13
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1787210004536,
+        "nome": "Spugne bianche",
+        "completato": true
+      },
+      "posizioneOriginale": 12
     }
   ]
 }
