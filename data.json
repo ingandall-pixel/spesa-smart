@@ -46,11 +46,6 @@
       "completato": false
     },
     {
-      "id": 1788002372521,
-      "nome": "Ketchup",
-      "completato": false
-    },
-    {
       "id": 1786970620258,
       "nome": "Caffè",
       "completato": true
@@ -83,6 +78,11 @@
     {
       "id": 1787251921634,
       "nome": "BBQ",
+      "completato": true
+    },
+    {
+      "id": 1788002372521,
+      "nome": "Ketchup",
       "completato": true
     }
   ],
