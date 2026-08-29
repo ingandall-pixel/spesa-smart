@@ -76,11 +76,6 @@
       "completato": true
     },
     {
-      "id": 1787333736890,
-      "nome": "Pila Swatch",
-      "completato": true
-    },
-    {
       "id": 1787333716375,
       "nome": "Aglio",
       "completato": true
@@ -183,6 +178,15 @@
         "completato": false
       },
       "posizioneOriginale": 14
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1787333736890,
+        "nome": "Pila Swatch",
+        "completato": true
+      },
+      "posizioneOriginale": 15
     }
   ]
 }
