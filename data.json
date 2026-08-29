@@ -66,11 +66,6 @@
       "completato": true
     },
     {
-      "id": 1787315298380,
-      "nome": "Cornice A4 legno",
-      "completato": true
-    },
-    {
       "id": 1787315312504,
       "nome": "Sgrassatore",
       "completato": true
@@ -187,6 +182,15 @@
         "completato": true
       },
       "posizioneOriginale": 15
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1787315298380,
+        "nome": "Cornice A4 legno",
+        "completato": true
+      },
+      "posizioneOriginale": 13
     }
   ]
 }
