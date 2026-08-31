@@ -16,11 +16,6 @@
       "completato": false
     },
     {
-      "id": 1786966643605,
-      "nome": "Frutti rossi per colazione",
-      "completato": false
-    },
-    {
       "id": 1787315307937,
       "nome": "Cornice per erbario A3",
       "completato": false
@@ -83,6 +78,11 @@
     {
       "id": 1787697580264,
       "nome": "Ghiaccioli",
+      "completato": true
+    },
+    {
+      "id": 1786966643605,
+      "nome": "Frutti rossi per colazione",
       "completato": true
     }
   ],
