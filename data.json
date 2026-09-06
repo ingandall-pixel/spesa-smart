@@ -117,6 +117,12 @@
       "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1786966308729_qf5mjq.jpg"
     },
     {
+      "id": 1788690934447,
+      "titolo": "Alimentari",
+      "scadenza": "2026-09-30",
+      "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1788690932939_miqzhj.jpg"
+    },
+    {
       "id": 1786966408032,
       "titolo": "Casa",
       "scadenza": "2026-10-23",
