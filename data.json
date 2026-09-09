@@ -1,11 +1,6 @@
 {
   "spesa": [
     {
-      "id": 1786979212204,
-      "nome": "Pepe da macinare",
-      "completato": false
-    },
-    {
       "id": 1786966666249,
       "nome": "Acido salicilico",
       "completato": false
@@ -88,6 +83,11 @@
     {
       "id": 1786966643605,
       "nome": "Frutti rossi per colazione",
+      "completato": true
+    },
+    {
+      "id": 1786979212204,
+      "nome": "Pepe da macinare",
       "completato": true
     }
   ],
