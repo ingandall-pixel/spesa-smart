@@ -51,11 +51,6 @@
       "completato": false
     },
     {
-      "id": 1788970703627,
-      "nome": "Formaggio brie",
-      "completato": false
-    },
-    {
       "id": 1788970711346,
       "nome": "Patatine",
       "completato": false
@@ -148,6 +143,11 @@
     {
       "id": 1788970707155,
       "nome": "Pane",
+      "completato": true
+    },
+    {
+      "id": 1788970703627,
+      "nome": "Formaggio brie",
       "completato": true
     }
   ],
