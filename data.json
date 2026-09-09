@@ -56,16 +56,6 @@
       "completato": false
     },
     {
-      "id": 1788970707155,
-      "nome": "Pane",
-      "completato": false
-    },
-    {
-      "id": 1788970709492,
-      "nome": "Snack",
-      "completato": false
-    },
-    {
       "id": 1788970711346,
       "nome": "Patatine",
       "completato": false
@@ -148,6 +138,16 @@
     {
       "id": 1788970612342,
       "nome": "Porri",
+      "completato": true
+    },
+    {
+      "id": 1788970709492,
+      "nome": "Snack",
+      "completato": true
+    },
+    {
+      "id": 1788970707155,
+      "nome": "Pane",
       "completato": true
     }
   ],
