@@ -26,11 +26,6 @@
       "completato": false
     },
     {
-      "id": 1788970612342,
-      "nome": "Porri",
-      "completato": false
-    },
-    {
       "id": 1788970618184,
       "nome": "Carne Myra",
       "completato": false
@@ -148,6 +143,11 @@
     {
       "id": 1788970610556,
       "nome": "Insalata",
+      "completato": true
+    },
+    {
+      "id": 1788970612342,
+      "nome": "Porri",
       "completato": true
     }
   ],
