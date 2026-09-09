@@ -26,16 +26,6 @@
       "completato": false
     },
     {
-      "id": 1788970607211,
-      "nome": "Pomodori",
-      "completato": false
-    },
-    {
-      "id": 1788970610556,
-      "nome": "Insalata",
-      "completato": false
-    },
-    {
       "id": 1788970612342,
       "nome": "Porri",
       "completato": false
@@ -148,6 +138,16 @@
     {
       "id": 1786979212204,
       "nome": "Pepe da macinare",
+      "completato": true
+    },
+    {
+      "id": 1788970607211,
+      "nome": "Pomodori",
+      "completato": true
+    },
+    {
+      "id": 1788970610556,
+      "nome": "Insalata",
       "completato": true
     }
   ],
