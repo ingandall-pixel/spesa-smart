@@ -183,12 +183,6 @@
       "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1789198875405_mgp0im.jpg"
     },
     {
-      "id": 1787697739028,
-      "titolo": "Casa",
-      "scadenza": "2026-11-13",
-      "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1787697737320_3gdzyu.jpg"
-    },
-    {
       "id": 1787737857284,
       "titolo": "Casa",
       "scadenza": "2026-11-13",
@@ -314,6 +308,16 @@
         "titolo": "Casa",
         "scadenza": "2026-10-23",
         "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1786966406283_3zb85o.jpg"
+      },
+      "posizioneOriginale": 5
+    },
+    {
+      "tipo": "buono",
+      "data": {
+        "id": 1787697739028,
+        "titolo": "Casa",
+        "scadenza": "2026-11-13",
+        "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1787697737320_3gdzyu.jpg"
       },
       "posizioneOriginale": 5
     }
