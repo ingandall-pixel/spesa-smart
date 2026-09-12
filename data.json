@@ -177,12 +177,6 @@
       "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1786966308729_qf5mjq.jpg"
     },
     {
-      "id": 1788690934447,
-      "titolo": "Alimentari",
-      "scadenza": "2026-09-30",
-      "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1788690932939_miqzhj.jpg"
-    },
-    {
       "id": 1789198876855,
       "titolo": "Alimentari",
       "scadenza": "2026-09-30",
@@ -308,6 +302,16 @@
         "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1789198521947_htedsg.jpg"
       },
       "posizioneOriginale": 0
+    },
+    {
+      "tipo": "buono",
+      "data": {
+        "id": 1788690934447,
+        "titolo": "Alimentari",
+        "scadenza": "2026-09-30",
+        "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1788690932939_miqzhj.jpg"
+      },
+      "posizioneOriginale": 4
     }
   ]
 }
