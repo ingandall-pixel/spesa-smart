@@ -159,12 +159,6 @@
       "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1786966250497_fi55gq.jpg"
     },
     {
-      "id": 1788690983089,
-      "titolo": "Carne",
-      "scadenza": "2026-09-17",
-      "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1788690981507_qephgr.jpg"
-    },
-    {
       "id": 1789198834974,
       "titolo": "Carne",
       "scadenza": "2026-09-17",
@@ -324,6 +318,16 @@
         "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1787737854915_jtcxjh.jpg"
       },
       "posizioneOriginale": 5
+    },
+    {
+      "tipo": "buono",
+      "data": {
+        "id": 1788690983089,
+        "titolo": "Carne",
+        "scadenza": "2026-09-17",
+        "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1788690981507_qephgr.jpg"
+      },
+      "posizioneOriginale": 1
     }
   ]
 }
