@@ -21,21 +21,6 @@
       "completato": false
     },
     {
-      "id": 1788970636974,
-      "nome": "Birre",
-      "completato": false
-    },
-    {
-      "id": 1788970640136,
-      "nome": "Vino",
-      "completato": false
-    },
-    {
-      "id": 1788970711346,
-      "nome": "Patatine",
-      "completato": false
-    },
-    {
       "id": 1786970620258,
       "nome": "Caffè",
       "completato": true
@@ -148,6 +133,21 @@
     {
       "id": 1788970632022,
       "nome": "Acqua",
+      "completato": true
+    },
+    {
+      "id": 1788970636974,
+      "nome": "Birre",
+      "completato": true
+    },
+    {
+      "id": 1788970640136,
+      "nome": "Vino",
+      "completato": true
+    },
+    {
+      "id": 1788970711346,
+      "nome": "Patatine",
       "completato": true
     }
   ],
