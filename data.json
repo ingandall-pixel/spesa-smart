@@ -11,11 +11,6 @@
       "completato": false
     },
     {
-      "id": 1788551897972,
-      "nome": "Crema piedi profumata",
-      "completato": false
-    },
-    {
       "id": 1788970618184,
       "nome": "Carne Myra",
       "completato": false
@@ -148,6 +143,11 @@
     {
       "id": 1787475263142,
       "nome": "Mascara",
+      "completato": true
+    },
+    {
+      "id": 1788551897972,
+      "nome": "Crema piedi profumata",
       "completato": true
     }
   ],
