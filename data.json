@@ -36,11 +36,6 @@
       "completato": false
     },
     {
-      "id": 1786966678963,
-      "nome": "Origano in gambi",
-      "completato": false
-    },
-    {
       "id": 1786970620258,
       "nome": "Caffè",
       "completato": true
@@ -163,6 +158,11 @@
     {
       "id": 1788970711346,
       "nome": "Patatine",
+      "completato": true
+    },
+    {
+      "id": 1786966678963,
+      "nome": "Origano in gambi",
       "completato": true
     }
   ],
