@@ -46,16 +46,6 @@
       "completato": false
     },
     {
-      "id": 1788970612342,
-      "nome": "Porri",
-      "completato": false
-    },
-    {
-      "id": 1788970703627,
-      "nome": "Formaggio brie",
-      "completato": false
-    },
-    {
       "id": 1788970640136,
       "nome": "Vino",
       "completato": false
@@ -213,6 +203,16 @@
     {
       "id": 1789893431958,
       "nome": "Pane confezionato",
+      "completato": true
+    },
+    {
+      "id": 1788970612342,
+      "nome": "Porri",
+      "completato": true
+    },
+    {
+      "id": 1788970703627,
+      "nome": "Formaggio brie",
       "completato": true
     }
   ],
