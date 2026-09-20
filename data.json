@@ -71,6 +71,11 @@
       "completato": false
     },
     {
+      "id": 1787697588173,
+      "nome": "Carta igienica",
+      "completato": false
+    },
+    {
       "id": 1786970620258,
       "nome": "Caffè",
       "completato": true
@@ -98,11 +103,6 @@
     {
       "id": 1788002372521,
       "nome": "Ketchup",
-      "completato": true
-    },
-    {
-      "id": 1787697588173,
-      "nome": "Carta igienica",
       "completato": true
     },
     {
