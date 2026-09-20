@@ -1,11 +1,6 @@
 {
   "spesa": [
     {
-      "id": 1787315307937,
-      "nome": "Cornice per erbario A3",
-      "completato": false
-    },
-    {
       "id": 1786997939217,
       "nome": "Coton fioc",
       "completato": false
@@ -343,6 +338,15 @@
         "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1788690981507_qephgr.jpg"
       },
       "posizioneOriginale": 1
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1787315307937,
+        "nome": "Cornice per erbario A3",
+        "completato": false
+      },
+      "posizioneOriginale": 0
     }
   ]
 }
