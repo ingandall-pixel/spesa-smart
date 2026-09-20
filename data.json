@@ -21,11 +21,6 @@
       "completato": false
     },
     {
-      "id": 1789405999575,
-      "nome": "Pranzi pronti (?)",
-      "completato": false
-    },
-    {
       "id": 1789893287468,
       "nome": "Cornice 47x67",
       "completato": false
@@ -213,6 +208,11 @@
     {
       "id": 1789406249303,
       "nome": "Sacchi per pulire stufa",
+      "completato": true
+    },
+    {
+      "id": 1789405999575,
+      "nome": "Pranzi pronti (?)",
       "completato": true
     }
   ],
