@@ -101,11 +101,6 @@
       "completato": false
     },
     {
-      "id": 1789895058037,
-      "nome": "Deodorante",
-      "completato": false
-    },
-    {
       "id": 1789895064083,
       "nome": "Regalo Roberta",
       "completato": false
@@ -213,6 +208,11 @@
     {
       "id": 1786966678963,
       "nome": "Origano in gambi",
+      "completato": true
+    },
+    {
+      "id": 1789895058037,
+      "nome": "Deodorante",
       "completato": true
     }
   ],
