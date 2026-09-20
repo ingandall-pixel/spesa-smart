@@ -16,11 +16,6 @@
       "completato": false
     },
     {
-      "id": 1789893380992,
-      "nome": "Biorepair",
-      "completato": false
-    },
-    {
       "id": 1787697588173,
       "nome": "Carta igienica",
       "completato": false
@@ -213,6 +208,11 @@
     {
       "id": 1789893356417,
       "nome": "Barrette snack",
+      "completato": true
+    },
+    {
+      "id": 1789893380992,
+      "nome": "Biorepair",
       "completato": true
     }
   ],
