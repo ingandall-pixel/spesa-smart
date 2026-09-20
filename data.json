@@ -6,11 +6,6 @@
       "completato": false
     },
     {
-      "id": 1788970629009,
-      "nome": "Carne rossa/bianca",
-      "completato": false
-    },
-    {
       "id": 1789405991409,
       "nome": "Verdure da congelare",
       "completato": false
@@ -213,6 +208,11 @@
     {
       "id": 1786997939217,
       "nome": "Coton fioc",
+      "completato": true
+    },
+    {
+      "id": 1788970629009,
+      "nome": "Carne rossa/bianca",
       "completato": true
     }
   ],
