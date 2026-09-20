@@ -31,11 +31,6 @@
       "completato": false
     },
     {
-      "id": 1789893361436,
-      "nome": "Frullati snack",
-      "completato": false
-    },
-    {
       "id": 1789893380992,
       "nome": "Biorepair",
       "completato": false
@@ -213,6 +208,11 @@
     {
       "id": 1789893346795,
       "nome": "Pomodori",
+      "completato": true
+    },
+    {
+      "id": 1789893361436,
+      "nome": "Frullati snack",
       "completato": true
     }
   ],
