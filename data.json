@@ -16,11 +16,6 @@
       "completato": false
     },
     {
-      "id": 1789893356417,
-      "nome": "Barrette snack",
-      "completato": false
-    },
-    {
       "id": 1789893380992,
       "nome": "Biorepair",
       "completato": false
@@ -213,6 +208,11 @@
     {
       "id": 1788970629009,
       "nome": "Carne rossa/bianca",
+      "completato": true
+    },
+    {
+      "id": 1789893356417,
+      "nome": "Barrette snack",
       "completato": true
     }
   ],
