@@ -21,16 +21,6 @@
       "completato": false
     },
     {
-      "id": 1789893287468,
-      "nome": "Cornice 47x67",
-      "completato": false
-    },
-    {
-      "id": 1789893343077,
-      "nome": "Piadine",
-      "completato": false
-    },
-    {
       "id": 1789893346795,
       "nome": "Pomodori",
       "completato": false
@@ -213,6 +203,16 @@
     {
       "id": 1789405999575,
       "nome": "Pranzi pronti (?)",
+      "completato": true
+    },
+    {
+      "id": 1789893287468,
+      "nome": "Cornice 47x67",
+      "completato": true
+    },
+    {
+      "id": 1789893343077,
+      "nome": "Piadine",
       "completato": true
     }
   ],
