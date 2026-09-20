@@ -91,6 +91,11 @@
       "completato": false
     },
     {
+      "id": 1788970703627,
+      "nome": "Formaggio brie",
+      "completato": false
+    },
+    {
       "id": 1786970620258,
       "nome": "Caffè",
       "completato": true
@@ -158,11 +163,6 @@
     {
       "id": 1788970707155,
       "nome": "Pane",
-      "completato": true
-    },
-    {
-      "id": 1788970703627,
-      "nome": "Formaggio brie",
       "completato": true
     },
     {
