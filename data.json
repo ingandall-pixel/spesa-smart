@@ -218,6 +218,12 @@
   ],
   "buoni": [
     {
+      "id": 1789901369993,
+      "titolo": "Ortofrutta",
+      "scadenza": "2026-09-28",
+      "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1789901368353_r0fjdn.jpg"
+    },
+    {
       "id": 1789198876855,
       "titolo": "Alimentari",
       "scadenza": "2026-09-30",
