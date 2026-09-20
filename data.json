@@ -16,16 +16,6 @@
       "completato": false
     },
     {
-      "id": 1787697588173,
-      "nome": "Carta igienica",
-      "completato": false
-    },
-    {
-      "id": 1788970640136,
-      "nome": "Vino",
-      "completato": false
-    },
-    {
       "id": 1789895064083,
       "nome": "Regalo Roberta",
       "completato": false
@@ -213,6 +203,16 @@
     {
       "id": 1789893380992,
       "nome": "Biorepair",
+      "completato": true
+    },
+    {
+      "id": 1787697588173,
+      "nome": "Carta igienica",
+      "completato": true
+    },
+    {
+      "id": 1788970640136,
+      "nome": "Vino",
       "completato": true
     }
   ],
