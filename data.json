@@ -1,11 +1,6 @@
 {
   "spesa": [
     {
-      "id": 1786997939217,
-      "nome": "Coton fioc",
-      "completato": false
-    },
-    {
       "id": 1788970618184,
       "nome": "Carne Myra",
       "completato": false
@@ -213,6 +208,11 @@
     {
       "id": 1787251921634,
       "nome": "BBQ",
+      "completato": true
+    },
+    {
+      "id": 1786997939217,
+      "nome": "Coton fioc",
       "completato": true
     }
   ],
