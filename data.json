@@ -1,11 +1,6 @@
 {
   "spesa": [
     {
-      "id": 1788970618184,
-      "nome": "Carne Myra",
-      "completato": false
-    },
-    {
       "id": 1789405991409,
       "nome": "Verdure da congelare",
       "completato": false
@@ -213,6 +208,11 @@
     {
       "id": 1788970640136,
       "nome": "Vino",
+      "completato": true
+    },
+    {
+      "id": 1788970618184,
+      "nome": "Carne Myra",
       "completato": true
     }
   ],
