@@ -249,11 +249,6 @@
       "id": 1789895064083,
       "nome": "Regalo Roberta",
       "completato": true
-    },
-    {
-      "id": 1790618393344,
-      "nome": "Ho capito, ma sono fratelli o sorella",
-      "completato": true
     }
   ],
   "buoni": [
@@ -466,6 +461,15 @@
         "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1786966250497_fi55gq.jpg"
       },
       "posizioneOriginale": 0
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1790618393344,
+        "nome": "Ho capito, ma sono fratelli o sorella",
+        "completato": true
+      },
+      "posizioneOriginale": 50
     }
   ]
 }
