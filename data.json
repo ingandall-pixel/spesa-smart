@@ -46,11 +46,6 @@
       "completato": false
     },
     {
-      "id": 1790618393344,
-      "nome": "Ho capito, ma sono fratelli o sorella",
-      "completato": false
-    },
-    {
       "id": 1786970620258,
       "nome": "Caffè",
       "completato": true
@@ -253,6 +248,11 @@
     {
       "id": 1789895064083,
       "nome": "Regalo Roberta",
+      "completato": true
+    },
+    {
+      "id": 1790618393344,
+      "nome": "Ho capito, ma sono fratelli o sorella",
       "completato": true
     }
   ],
