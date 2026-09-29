@@ -236,11 +236,6 @@
       "completato": true
     },
     {
-      "id": 1789895064083,
-      "nome": "Regalo Roberta",
-      "completato": true
-    },
-    {
       "id": 1790264629088,
       "nome": "Zucchero",
       "completato": true
@@ -509,6 +504,15 @@
         "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1789901368353_r0fjdn.jpg"
       },
       "posizioneOriginale": 0
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1789895064083,
+        "nome": "Regalo Roberta",
+        "completato": true
+      },
+      "posizioneOriginale": 47
     }
   ]
 }
