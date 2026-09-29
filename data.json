@@ -6,11 +6,6 @@
       "completato": false
     },
     {
-      "id": 1789893350806,
-      "nome": "Cetrioli",
-      "completato": false
-    },
-    {
       "id": 1790264635092,
       "nome": "Vino",
       "completato": false
@@ -18,11 +13,6 @@
     {
       "id": 1790264676530,
       "nome": "Acqua",
-      "completato": false
-    },
-    {
-      "id": 1790618383411,
-      "nome": "Brie",
       "completato": false
     },
     {
@@ -283,6 +273,16 @@
     {
       "id": 1790691885456,
       "nome": "Zucchine",
+      "completato": true
+    },
+    {
+      "id": 1789893350806,
+      "nome": "Cetrioli",
+      "completato": true
+    },
+    {
+      "id": 1790618383411,
+      "nome": "Brie",
       "completato": true
     }
   ],
