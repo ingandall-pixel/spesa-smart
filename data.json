@@ -31,11 +31,6 @@
       "completato": false
     },
     {
-      "id": 1790691880178,
-      "nome": "Pane",
-      "completato": false
-    },
-    {
       "id": 1790691893550,
       "nome": "Prosciutto",
       "completato": false
@@ -283,6 +278,11 @@
     {
       "id": 1790691889352,
       "nome": "Piadina",
+      "completato": true
+    },
+    {
+      "id": 1790691880178,
+      "nome": "Pane",
       "completato": true
     }
   ],
