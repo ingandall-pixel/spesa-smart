@@ -11,18 +11,8 @@
       "completato": false
     },
     {
-      "id": 1790264632208,
-      "nome": "Caffe",
-      "completato": false
-    },
-    {
       "id": 1790264635092,
       "nome": "Vino",
-      "completato": false
-    },
-    {
-      "id": 1790264638611,
-      "nome": "Vitamine",
       "completato": false
     },
     {
@@ -253,6 +243,16 @@
     {
       "id": 1790264629088,
       "nome": "Zucchero",
+      "completato": true
+    },
+    {
+      "id": 1790264632208,
+      "nome": "Caffe",
+      "completato": true
+    },
+    {
+      "id": 1790264638611,
+      "nome": "Vitamine",
       "completato": true
     }
   ],
