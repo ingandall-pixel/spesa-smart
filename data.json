@@ -46,11 +46,6 @@
       "completato": false
     },
     {
-      "id": 1790691885456,
-      "nome": "Zucchine",
-      "completato": false
-    },
-    {
       "id": 1790691889352,
       "nome": "Piadina",
       "completato": false
@@ -283,6 +278,11 @@
     {
       "id": 1790618345382,
       "nome": "Carta da culo",
+      "completato": true
+    },
+    {
+      "id": 1790691885456,
+      "nome": "Zucchine",
       "completato": true
     }
   ],
