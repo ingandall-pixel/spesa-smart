@@ -304,6 +304,12 @@
       "titolo": "Altro",
       "scadenza": "2026-12-02",
       "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1789198736589_bc25rf.jpg"
+    },
+    {
+      "id": 1790705296162,
+      "titolo": "Altro",
+      "scadenza": "2026-12-22",
+      "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1790705294128_kopjfo.jpg"
     }
   ],
   "cestino": [
