@@ -36,11 +36,6 @@
       "completato": false
     },
     {
-      "id": 1790691889352,
-      "nome": "Piadina",
-      "completato": false
-    },
-    {
       "id": 1790691893550,
       "nome": "Prosciutto",
       "completato": false
@@ -283,6 +278,11 @@
     {
       "id": 1790618383411,
       "nome": "Brie",
+      "completato": true
+    },
+    {
+      "id": 1790691889352,
+      "nome": "Piadina",
       "completato": true
     }
   ],
