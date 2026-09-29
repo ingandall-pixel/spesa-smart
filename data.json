@@ -21,11 +21,6 @@
       "completato": false
     },
     {
-      "id": 1790691864914,
-      "nome": "Carne freezer",
-      "completato": false
-    },
-    {
       "id": 1790691869048,
       "nome": "Pranzi pronti",
       "completato": false
@@ -283,6 +278,11 @@
     {
       "id": 1790701877510,
       "nome": "Pane hamburger",
+      "completato": true
+    },
+    {
+      "id": 1790691864914,
+      "nome": "Carne freezer",
       "completato": true
     }
   ],
