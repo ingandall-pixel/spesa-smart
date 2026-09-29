@@ -11,11 +11,6 @@
       "completato": false
     },
     {
-      "id": 1790264629088,
-      "nome": "Zucchero",
-      "completato": false
-    },
-    {
       "id": 1790264632208,
       "nome": "Caffe",
       "completato": false
@@ -253,6 +248,11 @@
     {
       "id": 1789895064083,
       "nome": "Regalo Roberta",
+      "completato": true
+    },
+    {
+      "id": 1790264629088,
+      "nome": "Zucchero",
       "completato": true
     }
   ],
