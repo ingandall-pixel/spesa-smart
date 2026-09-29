@@ -21,11 +21,6 @@
       "completato": false
     },
     {
-      "id": 1790618345382,
-      "nome": "Carta da culo",
-      "completato": false
-    },
-    {
       "id": 1790618383411,
       "nome": "Brie",
       "completato": false
@@ -253,6 +248,11 @@
     {
       "id": 1790264638611,
       "nome": "Vitamine",
+      "completato": true
+    },
+    {
+      "id": 1790618345382,
+      "nome": "Carta da culo",
       "completato": true
     }
   ],
