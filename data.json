@@ -6,11 +6,6 @@
       "completato": false
     },
     {
-      "id": 1790264635092,
-      "nome": "Vino",
-      "completato": false
-    },
-    {
       "id": 1790618426525,
       "nome": "Ho capito, ma sono fratello",
       "completato": false
@@ -283,6 +278,11 @@
     {
       "id": 1790264676530,
       "nome": "Acqua",
+      "completato": true
+    },
+    {
+      "id": 1790264635092,
+      "nome": "Vino",
       "completato": true
     }
   ],
