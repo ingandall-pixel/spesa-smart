@@ -21,11 +21,6 @@
       "completato": false
     },
     {
-      "id": 1791220135128,
-      "nome": "Carne freezer",
-      "completato": false
-    },
-    {
       "id": 1786970620258,
       "nome": "Caffè",
       "completato": true
@@ -318,6 +313,11 @@
     {
       "id": 1791024520110,
       "nome": "Shampoo",
+      "completato": true
+    },
+    {
+      "id": 1791220135128,
+      "nome": "Carne freezer",
       "completato": true
     }
   ],
