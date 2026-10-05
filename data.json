@@ -16,11 +16,6 @@
       "completato": false
     },
     {
-      "id": 1791024516674,
-      "nome": "Deodorante bagno",
-      "completato": false
-    },
-    {
       "id": 1791024520110,
       "nome": "Shampoo",
       "completato": false
@@ -28,11 +23,6 @@
     {
       "id": 1791024529046,
       "nome": "Crema idratante viso x2",
-      "completato": false
-    },
-    {
-      "id": 1791024668953,
-      "nome": "Guanti in lattice",
       "completato": false
     },
     {
@@ -313,6 +303,16 @@
     {
       "id": 1791024510373,
       "nome": "WC NET",
+      "completato": true
+    },
+    {
+      "id": 1791024516674,
+      "nome": "Deodorante bagno",
+      "completato": true
+    },
+    {
+      "id": 1791024668953,
+      "nome": "Guanti in lattice",
       "completato": true
     }
   ],
