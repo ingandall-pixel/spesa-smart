@@ -16,11 +16,6 @@
       "completato": false
     },
     {
-      "id": 1791024510373,
-      "nome": "WC NET",
-      "completato": false
-    },
-    {
       "id": 1791024516674,
       "nome": "Deodorante bagno",
       "completato": false
@@ -313,6 +308,11 @@
     {
       "id": 1790264635092,
       "nome": "Vino",
+      "completato": true
+    },
+    {
+      "id": 1791024510373,
+      "nome": "WC NET",
       "completato": true
     }
   ],
