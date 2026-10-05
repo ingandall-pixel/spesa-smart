@@ -21,11 +21,6 @@
       "completato": false
     },
     {
-      "id": 1791024529046,
-      "nome": "Crema idratante viso x2",
-      "completato": false
-    },
-    {
       "id": 1791218309302,
       "nome": "Scavolini Andrea",
       "completato": false
@@ -313,6 +308,11 @@
     {
       "id": 1791024668953,
       "nome": "Guanti in lattice",
+      "completato": true
+    },
+    {
+      "id": 1791024529046,
+      "nome": "Crema idratante viso x2",
       "completato": true
     }
   ],
