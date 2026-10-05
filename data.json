@@ -1,11 +1,6 @@
 {
   "spesa": [
     {
-      "id": 1789405991409,
-      "nome": "Verdure da congelare",
-      "completato": false
-    },
-    {
       "id": 1790618426525,
       "nome": "Ho capito, ma sono fratello",
       "completato": false
@@ -13,11 +8,6 @@
     {
       "id": 1790691869048,
       "nome": "Pranzi pronti",
-      "completato": false
-    },
-    {
-      "id": 1791218309302,
-      "nome": "Scavolini Andrea",
       "completato": false
     },
     {
@@ -318,6 +308,16 @@
     {
       "id": 1791220135128,
       "nome": "Carne freezer",
+      "completato": true
+    },
+    {
+      "id": 1789405991409,
+      "nome": "Verdure da congelare",
+      "completato": true
+    },
+    {
+      "id": 1791218309302,
+      "nome": "Scavolini Andrea",
       "completato": true
     }
   ],
