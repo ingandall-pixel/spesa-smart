@@ -56,6 +56,11 @@
       "completato": false
     },
     {
+      "id": 1788970632022,
+      "nome": "Acqua",
+      "completato": false
+    },
+    {
       "id": 1786970620258,
       "nome": "Caffè",
       "completato": true
@@ -138,11 +143,6 @@
     {
       "id": 1788551897972,
       "nome": "Crema piedi profumata",
-      "completato": true
-    },
-    {
-      "id": 1788970632022,
-      "nome": "Acqua",
       "completato": true
     },
     {
