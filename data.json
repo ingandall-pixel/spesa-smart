@@ -101,11 +101,6 @@
       "completato": true
     },
     {
-      "id": 1786979231588,
-      "nome": "Cassetta ascigapiatti",
-      "completato": true
-    },
-    {
       "id": 1786979212204,
       "nome": "Pepe da macinare",
       "completato": true
@@ -660,6 +655,15 @@
         "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1789901267830_g1qbll.jpg"
       },
       "posizioneOriginale": 0
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1786979231588,
+        "nome": "Cassetta ascigapiatti",
+        "completato": true
+      },
+      "posizioneOriginale": 20
     }
   ]
 }
