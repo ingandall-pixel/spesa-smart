@@ -81,6 +81,11 @@
       "completato": false
     },
     {
+      "id": 1790701877510,
+      "nome": "Pane hamburger",
+      "completato": false
+    },
+    {
       "id": 1786970620258,
       "nome": "Caffè",
       "completato": true
@@ -288,11 +293,6 @@
     {
       "id": 1790691893550,
       "nome": "Prosciutto",
-      "completato": true
-    },
-    {
-      "id": 1790701877510,
-      "nome": "Pane hamburger",
       "completato": true
     },
     {
