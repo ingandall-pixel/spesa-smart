@@ -16,11 +16,6 @@
       "completato": false
     },
     {
-      "id": 1787333711443,
-      "nome": "Limoni",
-      "completato": false
-    },
-    {
       "id": 1791985657229,
       "nome": "Vino",
       "completato": false
@@ -348,6 +343,11 @@
     {
       "id": 1791985621961,
       "nome": "Formaggio",
+      "completato": true
+    },
+    {
+      "id": 1787333711443,
+      "nome": "Limoni",
       "completato": true
     }
   ],
