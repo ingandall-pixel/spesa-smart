@@ -136,11 +136,6 @@
       "completato": true
     },
     {
-      "id": 1788551897972,
-      "nome": "Crema piedi profumata",
-      "completato": true
-    },
-    {
       "id": 1788970636974,
       "nome": "Birre",
       "completato": true
@@ -664,6 +659,15 @@
         "completato": true
       },
       "posizioneOriginale": 20
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1788551897972,
+        "nome": "Crema piedi profumata",
+        "completato": true
+      },
+      "posizioneOriginale": 27
     }
   ]
 }
