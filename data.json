@@ -11,16 +11,6 @@
       "completato": false
     },
     {
-      "id": 1791985589178,
-      "nome": "Uva",
-      "completato": false
-    },
-    {
-      "id": 1791985607145,
-      "nome": "Pasta corta",
-      "completato": false
-    },
-    {
       "id": 1791985610922,
       "nome": "Fagioli",
       "completato": false
@@ -348,6 +338,16 @@
     {
       "id": 1791985585000,
       "nome": "Cipolle",
+      "completato": true
+    },
+    {
+      "id": 1791985589178,
+      "nome": "Uva",
+      "completato": true
+    },
+    {
+      "id": 1791985607145,
+      "nome": "Pasta corta",
       "completato": true
     }
   ],
