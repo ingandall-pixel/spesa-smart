@@ -11,11 +11,6 @@
       "completato": false
     },
     {
-      "id": 1791632472334,
-      "nome": "Olio",
-      "completato": false
-    },
-    {
       "id": 1791985580059,
       "nome": "Snack/merende scorta",
       "completato": false
@@ -348,6 +343,11 @@
     {
       "id": 1791218309302,
       "nome": "Scavolini Andrea",
+      "completato": true
+    },
+    {
+      "id": 1791632472334,
+      "nome": "Olio",
       "completato": true
     }
   ],
