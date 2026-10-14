@@ -21,11 +21,6 @@
       "completato": false
     },
     {
-      "id": 1791985660453,
-      "nome": "Piadine",
-      "completato": false
-    },
-    {
       "id": 1788970629009,
       "nome": "Carne rossa/bianca",
       "completato": false
@@ -348,6 +343,11 @@
     {
       "id": 1787333711443,
       "nome": "Limoni",
+      "completato": true
+    },
+    {
+      "id": 1791985660453,
+      "nome": "Piadine",
       "completato": true
     }
   ],
