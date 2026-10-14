@@ -11,16 +11,6 @@
       "completato": false
     },
     {
-      "id": 1791985610922,
-      "nome": "Fagioli",
-      "completato": false
-    },
-    {
-      "id": 1791985614863,
-      "nome": "Prosciutto",
-      "completato": false
-    },
-    {
       "id": 1791985618102,
       "nome": "Brie",
       "completato": false
@@ -348,6 +338,16 @@
     {
       "id": 1791985607145,
       "nome": "Pasta corta",
+      "completato": true
+    },
+    {
+      "id": 1791985610922,
+      "nome": "Fagioli",
+      "completato": true
+    },
+    {
+      "id": 1791985614863,
+      "nome": "Prosciutto",
       "completato": true
     }
   ],
