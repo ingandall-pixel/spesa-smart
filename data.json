@@ -435,6 +435,12 @@
       "titolo": "Alimentari",
       "scadenza": "2027-01-06",
       "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1792001700310_2u5hxb.jpg"
+    },
+    {
+      "id": 1792001736917,
+      "titolo": "Casa",
+      "scadenza": "2027-01-06",
+      "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1792001735077_fkl8mj.jpg"
     }
   ],
   "cestino": [
