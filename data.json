@@ -61,6 +61,11 @@
       "completato": false
     },
     {
+      "id": 1787333711443,
+      "nome": "Limoni",
+      "completato": false
+    },
+    {
       "id": 1786970620258,
       "nome": "Caffè",
       "completato": true
@@ -78,11 +83,6 @@
     {
       "id": 1787333722791,
       "nome": "Prezzemolo",
-      "completato": true
-    },
-    {
-      "id": 1787333711443,
-      "nome": "Limoni",
       "completato": true
     },
     {
