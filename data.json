@@ -76,6 +76,11 @@
       "completato": false
     },
     {
+      "id": 1788970629009,
+      "nome": "Carne rossa/bianca",
+      "completato": false
+    },
+    {
       "id": 1786970620258,
       "nome": "Caffè",
       "completato": true
@@ -208,11 +213,6 @@
     {
       "id": 1786997939217,
       "nome": "Coton fioc",
-      "completato": true
-    },
-    {
-      "id": 1788970629009,
-      "nome": "Carne rossa/bianca",
       "completato": true
     },
     {
