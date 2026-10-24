@@ -6,11 +6,6 @@
       "completato": false
     },
     {
-      "id": 1790701877510,
-      "nome": "Pane hamburger",
-      "completato": false
-    },
-    {
       "id": 1789405991409,
       "nome": "Verdure da congelare",
       "completato": false
@@ -393,6 +388,11 @@
     {
       "id": 1792832439029,
       "nome": "Bicarbonato",
+      "completato": true
+    },
+    {
+      "id": 1790701877510,
+      "nome": "Pane hamburger",
       "completato": true
     }
   ],
