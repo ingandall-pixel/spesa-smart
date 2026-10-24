@@ -11,11 +11,6 @@
       "completato": false
     },
     {
-      "id": 1791985657229,
-      "nome": "Vino",
-      "completato": false
-    },
-    {
       "id": 1788970629009,
       "nome": "Carne rossa/bianca",
       "completato": false
@@ -393,6 +388,11 @@
     {
       "id": 1787697588173,
       "nome": "Carta igienica",
+      "completato": true
+    },
+    {
+      "id": 1791985657229,
+      "nome": "Vino",
       "completato": true
     }
   ],
