@@ -6,11 +6,6 @@
       "completato": false
     },
     {
-      "id": 1788970629009,
-      "nome": "Carne rossa/bianca",
-      "completato": false
-    },
-    {
       "id": 1790701877510,
       "nome": "Pane hamburger",
       "completato": false
@@ -393,6 +388,11 @@
     {
       "id": 1792830998872,
       "nome": "Burro d’arachidi",
+      "completato": true
+    },
+    {
+      "id": 1788970629009,
+      "nome": "Carne rossa/bianca",
       "completato": true
     }
   ],
