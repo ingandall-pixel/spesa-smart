@@ -16,11 +16,6 @@
       "completato": false
     },
     {
-      "id": 1792781223885,
-      "nome": "Ravioli congelati",
-      "completato": false
-    },
-    {
       "id": 1792781228334,
       "nome": "Biorepair",
       "completato": false
@@ -393,6 +388,11 @@
     {
       "id": 1788970629009,
       "nome": "Carne rossa/bianca",
+      "completato": true
+    },
+    {
+      "id": 1792781223885,
+      "nome": "Ravioli congelati",
       "completato": true
     }
   ],
