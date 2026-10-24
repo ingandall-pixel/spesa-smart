@@ -61,11 +61,6 @@
       "completato": false
     },
     {
-      "id": 1792834146810,
-      "nome": "Dentifricio",
-      "completato": false
-    },
-    {
       "id": 1792837126815,
       "nome": "Fagioli",
       "completato": false
@@ -383,6 +378,11 @@
     {
       "id": 1792343651015,
       "nome": "Sacchi spazzatura",
+      "completato": true
+    },
+    {
+      "id": 1792834146810,
+      "nome": "Dentifricio",
       "completato": true
     }
   ],
