@@ -31,16 +31,6 @@
       "completato": false
     },
     {
-      "id": 1787697588173,
-      "nome": "Carta igienica",
-      "completato": false
-    },
-    {
-      "id": 1790691869048,
-      "nome": "Pranzi pronti",
-      "completato": false
-    },
-    {
       "id": 1792781223885,
       "nome": "Ravioli congelati",
       "completato": false
@@ -393,6 +383,16 @@
     {
       "id": 1792834146810,
       "nome": "Dentifricio",
+      "completato": true
+    },
+    {
+      "id": 1790691869048,
+      "nome": "Pranzi pronti",
+      "completato": true
+    },
+    {
+      "id": 1787697588173,
+      "nome": "Carta igienica",
       "completato": true
     }
   ],
