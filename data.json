@@ -36,11 +36,6 @@
       "completato": false
     },
     {
-      "id": 1792343651015,
-      "nome": "Sacchi spazzatura",
-      "completato": false
-    },
-    {
       "id": 1790691869048,
       "nome": "Pranzi pronti",
       "completato": false
@@ -383,6 +378,11 @@
     {
       "id": 1791985660453,
       "nome": "Piadine",
+      "completato": true
+    },
+    {
+      "id": 1792343651015,
+      "nome": "Sacchi spazzatura",
       "completato": true
     }
   ],
