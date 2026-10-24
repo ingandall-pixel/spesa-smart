@@ -31,11 +31,6 @@
       "completato": false
     },
     {
-      "id": 1792830998872,
-      "nome": "Burro d’arachidi",
-      "completato": false
-    },
-    {
       "id": 1792832439029,
       "nome": "Bicarbonato",
       "completato": false
@@ -43,11 +38,6 @@
     {
       "id": 1792837126815,
       "nome": "Fagioli",
-      "completato": false
-    },
-    {
-      "id": 1792838011373,
-      "nome": "Craker per colazione",
       "completato": false
     },
     {
@@ -393,6 +383,16 @@
     {
       "id": 1792837975086,
       "nome": "Formaggio gratuggiato",
+      "completato": true
+    },
+    {
+      "id": 1792838011373,
+      "nome": "Craker per colazione",
+      "completato": true
+    },
+    {
+      "id": 1792830998872,
+      "nome": "Burro d’arachidi",
       "completato": true
     }
   ],
