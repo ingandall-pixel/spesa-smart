@@ -21,16 +21,6 @@
       "completato": false
     },
     {
-      "id": 1792832439029,
-      "nome": "Bicarbonato",
-      "completato": false
-    },
-    {
-      "id": 1792837126815,
-      "nome": "Fagioli",
-      "completato": false
-    },
-    {
       "id": 1786970620258,
       "nome": "Caffè",
       "completato": true
@@ -393,6 +383,16 @@
     {
       "id": 1792781223885,
       "nome": "Ravioli congelati",
+      "completato": true
+    },
+    {
+      "id": 1792837126815,
+      "nome": "Fagioli",
+      "completato": true
+    },
+    {
+      "id": 1792832439029,
+      "nome": "Bicarbonato",
       "completato": true
     }
   ],
