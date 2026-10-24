@@ -46,11 +46,6 @@
       "completato": false
     },
     {
-      "id": 1792837975086,
-      "nome": "Formaggio gratuggiato",
-      "completato": false
-    },
-    {
       "id": 1792838011373,
       "nome": "Craker per colazione",
       "completato": false
@@ -393,6 +388,11 @@
     {
       "id": 1788970632022,
       "nome": "Acqua",
+      "completato": true
+    },
+    {
+      "id": 1792837975086,
+      "nome": "Formaggio gratuggiato",
       "completato": true
     }
   ],
