@@ -26,11 +26,6 @@
       "completato": false
     },
     {
-      "id": 1792925525332,
-      "nome": "Crocchette Myra",
-      "completato": false
-    },
-    {
       "id": 1786970620258,
       "nome": "Caffè",
       "completato": true
@@ -413,6 +408,11 @@
     {
       "id": 1792923560819,
       "nome": "Cipolle",
+      "completato": true
+    },
+    {
+      "id": 1792925525332,
+      "nome": "Crocchette Myra",
       "completato": true
     }
   ],
