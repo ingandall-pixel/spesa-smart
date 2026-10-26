@@ -21,11 +21,6 @@
       "completato": false
     },
     {
-      "id": 1792923560819,
-      "nome": "Cipolle",
-      "completato": false
-    },
-    {
       "id": 1792923563806,
       "nome": "Aglio",
       "completato": false
@@ -413,6 +408,11 @@
     {
       "id": 1790701877510,
       "nome": "Pane hamburger",
+      "completato": true
+    },
+    {
+      "id": 1792923560819,
+      "nome": "Cipolle",
       "completato": true
     }
   ],
