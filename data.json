@@ -16,11 +16,6 @@
       "completato": false
     },
     {
-      "id": 1792923563806,
-      "nome": "Aglio",
-      "completato": false
-    },
-    {
       "id": 1793016965736,
       "nome": "Carta igienica umida",
       "completato": false
@@ -433,6 +428,11 @@
     {
       "id": 1792781228334,
       "nome": "Biorepair",
+      "completato": true
+    },
+    {
+      "id": 1792923563806,
+      "nome": "Aglio",
       "completato": true
     }
   ],
