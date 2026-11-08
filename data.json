@@ -11,11 +11,6 @@
       "completato": false
     },
     {
-      "id": 1794055601957,
-      "nome": "Acqua",
-      "completato": false
-    },
-    {
       "id": 1794147816384,
       "nome": "Assorbenti monouso",
       "completato": false
@@ -433,6 +428,11 @@
     {
       "id": 1794055618290,
       "nome": "Vino",
+      "completato": true
+    },
+    {
+      "id": 1794055601957,
+      "nome": "Acqua",
       "completato": true
     }
   ],
