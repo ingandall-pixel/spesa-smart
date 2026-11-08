@@ -11,11 +11,6 @@
       "completato": false
     },
     {
-      "id": 1793016965736,
-      "nome": "Carta igienica umida",
-      "completato": false
-    },
-    {
       "id": 1794055601957,
       "nome": "Acqua",
       "completato": false
@@ -433,6 +428,11 @@
     {
       "id": 1792918208792,
       "nome": "ACE gentile",
+      "completato": true
+    },
+    {
+      "id": 1793016965736,
+      "nome": "Carta igienica umida",
       "completato": true
     }
   ],
