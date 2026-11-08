@@ -11,11 +11,6 @@
       "completato": false
     },
     {
-      "id": 1792781228334,
-      "nome": "Biorepair",
-      "completato": false
-    },
-    {
       "id": 1792918208792,
       "nome": "ACE gentile",
       "completato": false
@@ -433,6 +428,11 @@
     {
       "id": 1792925525332,
       "nome": "Crocchette Myra",
+      "completato": true
+    },
+    {
+      "id": 1792781228334,
+      "nome": "Biorepair",
       "completato": true
     }
   ],
