@@ -16,11 +16,6 @@
       "completato": false
     },
     {
-      "id": 1794055618290,
-      "nome": "Vino",
-      "completato": false
-    },
-    {
       "id": 1794147816384,
       "nome": "Assorbenti monouso",
       "completato": false
@@ -433,6 +428,11 @@
     {
       "id": 1793016965736,
       "nome": "Carta igienica umida",
+      "completato": true
+    },
+    {
+      "id": 1794055618290,
+      "nome": "Vino",
       "completato": true
     }
   ],
