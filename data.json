@@ -6,11 +6,6 @@
       "completato": false
     },
     {
-      "id": 1790618426525,
-      "nome": "Ho capito, ma sono fratello",
-      "completato": false
-    },
-    {
       "id": 1794650247945,
       "nome": "Quasar per pavimenti",
       "completato": false
@@ -856,6 +851,15 @@
         "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1792927913047_0pt8ye.jpg"
       },
       "posizioneOriginale": 0
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1790618426525,
+        "nome": "Ho capito, ma sono fratello",
+        "completato": false
+      },
+      "posizioneOriginale": 1
     }
   ]
 }
