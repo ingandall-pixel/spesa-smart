@@ -504,12 +504,6 @@
       "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1791222522166_sid67t.jpg"
     },
     {
-      "id": 1794150761079,
-      "titolo": "Alimentari",
-      "scadenza": "2026-11-13",
-      "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1794150759388_2v5ewe.jpg"
-    },
-    {
       "id": 1789198738099,
       "titolo": "Altro",
       "scadenza": "2026-12-02",
@@ -908,6 +902,16 @@
         "id": 1790618426525,
         "nome": "Ho capito, ma sono fratello",
         "completato": false
+      },
+      "posizioneOriginale": 1
+    },
+    {
+      "tipo": "buono",
+      "data": {
+        "id": 1794150761079,
+        "titolo": "Alimentari",
+        "scadenza": "2026-11-13",
+        "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1794150759388_2v5ewe.jpg"
       },
       "posizioneOriginale": 1
     }
