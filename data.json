@@ -21,21 +21,6 @@
       "completato": false
     },
     {
-      "id": 1788970618184,
-      "nome": "Carne Myra",
-      "completato": true
-    },
-    {
-      "id": 1790264629088,
-      "nome": "Zucchero",
-      "completato": true
-    },
-    {
-      "id": 1790264632208,
-      "nome": "Caffe",
-      "completato": true
-    },
-    {
       "id": 1790264638611,
       "nome": "Vitamine",
       "completato": true
@@ -1045,6 +1030,33 @@
       "data": {
         "id": 1788970640136,
         "nome": "Vino",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1788970618184,
+        "nome": "Carne Myra",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1790264629088,
+        "nome": "Zucchero",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1790264632208,
+        "nome": "Caffe",
         "completato": true
       },
       "posizioneOriginale": 4
