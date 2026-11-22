@@ -21,21 +21,6 @@
       "completato": false
     },
     {
-      "id": 1790691893550,
-      "nome": "Prosciutto",
-      "completato": true
-    },
-    {
-      "id": 1790691864914,
-      "nome": "Carne freezer",
-      "completato": true
-    },
-    {
-      "id": 1790264676530,
-      "nome": "Acqua",
-      "completato": true
-    },
-    {
       "id": 1790264635092,
       "nome": "Vino",
       "completato": true
@@ -1085,6 +1070,33 @@
       "data": {
         "id": 1790691880178,
         "nome": "Pane",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1790691893550,
+        "nome": "Prosciutto",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1790691864914,
+        "nome": "Carne freezer",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1790264676530,
+        "nome": "Acqua",
         "completato": true
       },
       "posizioneOriginale": 4
