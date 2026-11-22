@@ -21,11 +21,6 @@
       "completato": false
     },
     {
-      "id": 1795248023366,
-      "nome": "Carne da congelare",
-      "completato": false
-    },
-    {
       "id": 1795252501186,
       "nome": "Cavoletti di bruxeles",
       "completato": false
@@ -493,6 +488,11 @@
     {
       "id": 1794650247945,
       "nome": "Quasar per pavimenti",
+      "completato": true
+    },
+    {
+      "id": 1795248023366,
+      "nome": "Carne da congelare",
       "completato": true
     }
   ],
