@@ -21,16 +21,6 @@
       "completato": false
     },
     {
-      "id": 1789893343077,
-      "nome": "Piadine",
-      "completato": true
-    },
-    {
-      "id": 1789893346795,
-      "nome": "Pomodori",
-      "completato": true
-    },
-    {
       "id": 1789893361436,
       "nome": "Frullati snack",
       "completato": true
@@ -997,6 +987,24 @@
       "data": {
         "id": 1789895058037,
         "nome": "Deodorante",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1789893343077,
+        "nome": "Piadine",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1789893346795,
+        "nome": "Pomodori",
         "completato": true
       },
       "posizioneOriginale": 4
