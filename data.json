@@ -51,11 +51,6 @@
       "completato": false
     },
     {
-      "id": 1795252493102,
-      "nome": "Pane hamburger",
-      "completato": false
-    },
-    {
       "id": 1795252501186,
       "nome": "Cavoletti di bruxeles",
       "completato": false
@@ -493,6 +488,11 @@
     {
       "id": 1794980730989,
       "nome": "Fondo tinta",
+      "completato": true
+    },
+    {
+      "id": 1795252493102,
+      "nome": "Pane hamburger",
       "completato": true
     }
   ],
