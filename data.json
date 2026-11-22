@@ -21,16 +21,6 @@
       "completato": false
     },
     {
-      "id": 1790264635092,
-      "nome": "Vino",
-      "completato": true
-    },
-    {
-      "id": 1791024510373,
-      "nome": "WC NET",
-      "completato": true
-    },
-    {
       "id": 1791024516674,
       "nome": "Deodorante bagno",
       "completato": true
@@ -1097,6 +1087,24 @@
       "data": {
         "id": 1790264676530,
         "nome": "Acqua",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1790264635092,
+        "nome": "Vino",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1791024510373,
+        "nome": "WC NET",
         "completato": true
       },
       "posizioneOriginale": 4
