@@ -21,16 +21,6 @@
       "completato": false
     },
     {
-      "id": 1788970610556,
-      "nome": "Insalata",
-      "completato": true
-    },
-    {
-      "id": 1788970709492,
-      "nome": "Snack",
-      "completato": true
-    },
-    {
       "id": 1788970707155,
       "nome": "Pane",
       "completato": true
@@ -961,6 +951,24 @@
       "data": {
         "id": 1788970607211,
         "nome": "Pomodori",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1788970610556,
+        "nome": "Insalata",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1788970709492,
+        "nome": "Snack",
         "completato": true
       },
       "posizioneOriginale": 4
