@@ -21,16 +21,6 @@
       "completato": false
     },
     {
-      "id": 1789893361436,
-      "nome": "Frullati snack",
-      "completato": true
-    },
-    {
-      "id": 1789893427259,
-      "nome": "Prosciutto crudo",
-      "completato": true
-    },
-    {
       "id": 1789893431958,
       "nome": "Pane confezionato",
       "completato": true
@@ -1005,6 +995,24 @@
       "data": {
         "id": 1789893346795,
         "nome": "Pomodori",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1789893361436,
+        "nome": "Frullati snack",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1789893427259,
+        "nome": "Prosciutto crudo",
         "completato": true
       },
       "posizioneOriginale": 4
