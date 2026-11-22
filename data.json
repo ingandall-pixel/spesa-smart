@@ -21,21 +21,6 @@
       "completato": false
     },
     {
-      "id": 1790618383411,
-      "nome": "Brie",
-      "completato": true
-    },
-    {
-      "id": 1790691889352,
-      "nome": "Piadina",
-      "completato": true
-    },
-    {
-      "id": 1790691880178,
-      "nome": "Pane",
-      "completato": true
-    },
-    {
       "id": 1790691893550,
       "nome": "Prosciutto",
       "completato": true
@@ -1073,6 +1058,33 @@
       "data": {
         "id": 1789893350806,
         "nome": "Cetrioli",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1790618383411,
+        "nome": "Brie",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1790691889352,
+        "nome": "Piadina",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1790691880178,
+        "nome": "Pane",
         "completato": true
       },
       "posizioneOriginale": 4
