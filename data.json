@@ -31,11 +31,6 @@
       "completato": false
     },
     {
-      "id": 1795248027786,
-      "nome": "Pranzi pronti",
-      "completato": false
-    },
-    {
       "id": 1795252501186,
       "nome": "Cavoletti di bruxeles",
       "completato": false
@@ -493,6 +488,11 @@
     {
       "id": 1795252488590,
       "nome": "Cavolfiore",
+      "completato": true
+    },
+    {
+      "id": 1795248027786,
+      "nome": "Pranzi pronti",
       "completato": true
     }
   ],
