@@ -21,16 +21,6 @@
       "completato": false
     },
     {
-      "id": 1788970612342,
-      "nome": "Porri",
-      "completato": true
-    },
-    {
-      "id": 1788970703627,
-      "nome": "Formaggio brie",
-      "completato": true
-    },
-    {
       "id": 1787251921634,
       "nome": "BBQ",
       "completato": true
@@ -1017,6 +1007,24 @@
       "data": {
         "id": 1789893431958,
         "nome": "Pane confezionato",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1788970612342,
+        "nome": "Porri",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1788970703627,
+        "nome": "Formaggio brie",
         "completato": true
       },
       "posizioneOriginale": 4
