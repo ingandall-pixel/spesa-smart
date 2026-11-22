@@ -21,21 +21,6 @@
       "completato": false
     },
     {
-      "id": 1791024668953,
-      "nome": "Guanti in lattice",
-      "completato": true
-    },
-    {
-      "id": 1791024529046,
-      "nome": "Crema idratante viso x2",
-      "completato": true
-    },
-    {
-      "id": 1791024520110,
-      "nome": "Shampoo",
-      "completato": true
-    },
-    {
       "id": 1791220135128,
       "nome": "Carne freezer",
       "completato": true
@@ -1109,6 +1094,33 @@
       "data": {
         "id": 1791024516674,
         "nome": "Deodorante bagno",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1791024668953,
+        "nome": "Guanti in lattice",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1791024529046,
+        "nome": "Crema idratante viso x2",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1791024520110,
+        "nome": "Shampoo",
         "completato": true
       },
       "posizioneOriginale": 4
