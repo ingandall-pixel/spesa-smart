@@ -21,11 +21,6 @@
       "completato": false
     },
     {
-      "id": 1789893350806,
-      "nome": "Cetrioli",
-      "completato": true
-    },
-    {
       "id": 1790618383411,
       "nome": "Brie",
       "completato": true
@@ -1069,6 +1064,15 @@
       "data": {
         "id": 1790691885456,
         "nome": "Zucchine",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1789893350806,
+        "nome": "Cetrioli",
         "completato": true
       },
       "posizioneOriginale": 4
