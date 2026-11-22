@@ -21,16 +21,6 @@
       "completato": false
     },
     {
-      "id": 1788970711346,
-      "nome": "Patatine",
-      "completato": true
-    },
-    {
-      "id": 1786966678963,
-      "nome": "Origano in gambi",
-      "completato": true
-    },
-    {
       "id": 1789895058037,
       "nome": "Deodorante",
       "completato": true
@@ -985,6 +975,24 @@
       "data": {
         "id": 1788970636974,
         "nome": "Birre",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1788970711346,
+        "nome": "Patatine",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1786966678963,
+        "nome": "Origano in gambi",
         "completato": true
       },
       "posizioneOriginale": 4
