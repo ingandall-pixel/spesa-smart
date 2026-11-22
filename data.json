@@ -21,11 +21,6 @@
       "completato": false
     },
     {
-      "id": 1794980723261,
-      "nome": "Mascara",
-      "completato": false
-    },
-    {
       "id": 1794980730989,
       "nome": "Fondo tinta",
       "completato": false
@@ -493,6 +488,11 @@
     {
       "id": 1794147816384,
       "nome": "Assorbenti monouso",
+      "completato": true
+    },
+    {
+      "id": 1794980723261,
+      "nome": "Mascara",
       "completato": true
     }
   ],
