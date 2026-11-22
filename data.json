@@ -36,11 +36,6 @@
       "completato": false
     },
     {
-      "id": 1795252488590,
-      "nome": "Cavolfiore",
-      "completato": false
-    },
-    {
       "id": 1795252501186,
       "nome": "Cavoletti di bruxeles",
       "completato": false
@@ -493,6 +488,11 @@
     {
       "id": 1795252463446,
       "nome": "Cipolle",
+      "completato": true
+    },
+    {
+      "id": 1795252488590,
+      "nome": "Cavolfiore",
       "completato": true
     }
   ],
