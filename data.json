@@ -6,11 +6,6 @@
       "completato": false
     },
     {
-      "id": 1795248010728,
-      "nome": "Struccante",
-      "completato": false
-    },
-    {
       "id": 1795252501186,
       "nome": "Cavoletti di bruxeles",
       "completato": false
@@ -493,6 +488,11 @@
     {
       "id": 1794653880416,
       "nome": "Ammorbidente",
+      "completato": true
+    },
+    {
+      "id": 1795248010728,
+      "nome": "Struccante",
       "completato": true
     }
   ],
