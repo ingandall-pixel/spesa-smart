@@ -21,11 +21,6 @@
       "completato": false
     },
     {
-      "id": 1789895058037,
-      "nome": "Deodorante",
-      "completato": true
-    },
-    {
       "id": 1789893343077,
       "nome": "Piadine",
       "completato": true
@@ -993,6 +988,15 @@
       "data": {
         "id": 1786966678963,
         "nome": "Origano in gambi",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1789895058037,
+        "nome": "Deodorante",
         "completato": true
       },
       "posizioneOriginale": 4
