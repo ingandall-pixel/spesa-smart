@@ -21,11 +21,6 @@
       "completato": false
     },
     {
-      "id": 1788002372521,
-      "nome": "Ketchup",
-      "completato": true
-    },
-    {
       "id": 1787697580264,
       "nome": "Ghiaccioli",
       "completato": true
@@ -941,6 +936,15 @@
       "data": {
         "id": 1787333722791,
         "nome": "Prezzemolo",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1788002372521,
+        "nome": "Ketchup",
         "completato": true
       },
       "posizioneOriginale": 4
