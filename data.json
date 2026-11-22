@@ -36,16 +36,6 @@
       "completato": false
     },
     {
-      "id": 1795248032123,
-      "nome": "Snack",
-      "completato": false
-    },
-    {
-      "id": 1795252463446,
-      "nome": "Cipolle",
-      "completato": false
-    },
-    {
       "id": 1795252488590,
       "nome": "Cavolfiore",
       "completato": false
@@ -493,6 +483,16 @@
     {
       "id": 1795252493102,
       "nome": "Pane hamburger",
+      "completato": true
+    },
+    {
+      "id": 1795248032123,
+      "nome": "Snack",
+      "completato": true
+    },
+    {
+      "id": 1795252463446,
+      "nome": "Cipolle",
       "completato": true
     }
   ],
