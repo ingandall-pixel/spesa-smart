@@ -21,26 +21,6 @@
       "completato": false
     },
     {
-      "id": 1788970707155,
-      "nome": "Pane",
-      "completato": true
-    },
-    {
-      "id": 1786966666249,
-      "nome": "Acido salicilico",
-      "completato": true
-    },
-    {
-      "id": 1787475263142,
-      "nome": "Mascara",
-      "completato": true
-    },
-    {
-      "id": 1788970636974,
-      "nome": "Birre",
-      "completato": true
-    },
-    {
       "id": 1788970711346,
       "nome": "Patatine",
       "completato": true
@@ -969,6 +949,42 @@
       "data": {
         "id": 1788970709492,
         "nome": "Snack",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1788970707155,
+        "nome": "Pane",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1786966666249,
+        "nome": "Acido salicilico",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1787475263142,
+        "nome": "Mascara",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1788970636974,
+        "nome": "Birre",
         "completato": true
       },
       "posizioneOriginale": 4
