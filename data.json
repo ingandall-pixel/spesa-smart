@@ -21,16 +21,6 @@
       "completato": false
     },
     {
-      "id": 1787697580264,
-      "nome": "Ghiaccioli",
-      "completato": true
-    },
-    {
-      "id": 1786966643605,
-      "nome": "Frutti rossi per colazione",
-      "completato": true
-    },
-    {
       "id": 1786979212204,
       "nome": "Pepe da macinare",
       "completato": true
@@ -945,6 +935,24 @@
       "data": {
         "id": 1788002372521,
         "nome": "Ketchup",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1787697580264,
+        "nome": "Ghiaccioli",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1786966643605,
+        "nome": "Frutti rossi per colazione",
         "completato": true
       },
       "posizioneOriginale": 4
