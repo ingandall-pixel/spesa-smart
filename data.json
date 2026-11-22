@@ -21,11 +21,6 @@
       "completato": false
     },
     {
-      "id": 1786970620258,
-      "nome": "Caffè",
-      "completato": true
-    },
-    {
       "id": 1787315312504,
       "nome": "Sgrassatore",
       "completato": true
@@ -928,6 +923,15 @@
         "foto": "https://raw.githubusercontent.com/ingandall-pixel/spesa-smart/main/images/buono_1791222522166_sid67t.jpg"
       },
       "posizioneOriginale": 0
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1786970620258,
+        "nome": "Caffè",
+        "completato": true
+      },
+      "posizioneOriginale": 4
     }
   ]
 }
