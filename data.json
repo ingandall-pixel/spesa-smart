@@ -6,11 +6,6 @@
       "completato": false
     },
     {
-      "id": 1794650247945,
-      "nome": "Quasar per pavimenti",
-      "completato": false
-    },
-    {
       "id": 1794653880416,
       "nome": "Ammorbidente",
       "completato": false
@@ -493,6 +488,11 @@
     {
       "id": 1795248027786,
       "nome": "Pranzi pronti",
+      "completato": true
+    },
+    {
+      "id": 1794650247945,
+      "nome": "Quasar per pavimenti",
       "completato": true
     }
   ],
