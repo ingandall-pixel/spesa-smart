@@ -21,16 +21,6 @@
       "completato": false
     },
     {
-      "id": 1789893380992,
-      "nome": "Biorepair",
-      "completato": true
-    },
-    {
-      "id": 1788970640136,
-      "nome": "Vino",
-      "completato": true
-    },
-    {
       "id": 1788970618184,
       "nome": "Carne Myra",
       "completato": true
@@ -1037,6 +1027,24 @@
       "data": {
         "id": 1789893356417,
         "nome": "Barrette snack",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1789893380992,
+        "nome": "Biorepair",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1788970640136,
+        "nome": "Vino",
         "completato": true
       },
       "posizioneOriginale": 4
