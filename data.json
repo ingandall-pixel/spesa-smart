@@ -21,16 +21,6 @@
       "completato": false
     },
     {
-      "id": 1786997939217,
-      "nome": "Coton fioc",
-      "completato": true
-    },
-    {
-      "id": 1789893356417,
-      "nome": "Barrette snack",
-      "completato": true
-    },
-    {
       "id": 1789893380992,
       "nome": "Biorepair",
       "completato": true
@@ -1029,6 +1019,24 @@
       "data": {
         "id": 1787251921634,
         "nome": "BBQ",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1786997939217,
+        "nome": "Coton fioc",
+        "completato": true
+      },
+      "posizioneOriginale": 4
+    },
+    {
+      "tipo": "spesa",
+      "data": {
+        "id": 1789893356417,
+        "nome": "Barrette snack",
         "completato": true
       },
       "posizioneOriginale": 4
